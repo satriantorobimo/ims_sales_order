@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "980697735359",
+    "project_id": "ims-sales-order-dev",
+    "storage_bucket": "ims-sales-order-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980697735359:android:2982af71cd3d5860aca60a",
+        "android_client_info": {
+          "package_name": "com.ims.sales_order.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCadoUhG6pKQs0QyUaTvt0nlLCILya3IAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
