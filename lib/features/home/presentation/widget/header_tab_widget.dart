@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:sales_order/utility/database_helper.dart';
 
-class HeaderTabWidget extends StatelessWidget {
+class HeaderTabWidget extends StatefulWidget {
   const HeaderTabWidget({super.key});
+
+  @override
+  State<HeaderTabWidget> createState() => _HeaderTabWidgetState();
+}
+
+class _HeaderTabWidgetState extends State<HeaderTabWidget> {
+  String name = '';
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  getData() async {
+    final data = await DatabaseHelper.getUserData(1);
+    setState(() {
+      name = data[0]['name'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +46,9 @@ class HeaderTabWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            const Text(
-              'Bagas Hari',
-              style: TextStyle(
+            Text(
+              name,
+              style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),

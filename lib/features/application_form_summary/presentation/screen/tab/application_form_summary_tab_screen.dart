@@ -8,7 +8,9 @@ import 'package:sales_order/utility/string_router_util.dart';
 import 'package:signature/signature.dart';
 
 class ApplicationFormSummaryTabScreen extends StatefulWidget {
-  const ApplicationFormSummaryTabScreen({super.key});
+  const ApplicationFormSummaryTabScreen(
+      {super.key, required this.applicationNo});
+  final String applicationNo;
 
   @override
   State<ApplicationFormSummaryTabScreen> createState() =>

@@ -1,13 +1,23 @@
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sales_order/features/application_form_1/data/bank_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
+import 'package:sales_order/features/application_form_2/domain/repo/form_2_repo.dart';
+import 'package:sales_order/features/application_form_2/presentation/bloc/bank_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_2/presentation/bloc/client_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_2/presentation/bloc/family_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_2/presentation/bloc/work_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm2TabScreen extends StatefulWidget {
-  const ApplicationForm2TabScreen({super.key});
+  const ApplicationForm2TabScreen(
+      {super.key, required this.addClientRequestModel});
+  final AddClientRequestModel addClientRequestModel;
 
   @override
   State<ApplicationForm2TabScreen> createState() =>
@@ -19,43 +29,39 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
   bool isPresent = false;
   int selectIndexFamily = 0;
   String selectFamily = '';
+  String selectFamilyCode = '';
   int selectIndexWorkType = 0;
   String selectWorkType = '';
-  int selectIndexDepartment = 0;
-  String selectDepartment = '';
+  String selectWorkTypeCode = '';
   int selectIndexBank = 0;
   String selectBank = '';
-
-  List<Data> bank = [];
-  List<String> family = ['Brother', 'Sister', 'Mother', 'Father'];
-  List<String> worktype = [
-    'Work Type 1',
-    'Work Type 2',
-    'Work Type 3',
-    'Work Type 4'
-  ];
-  List<String> depertment = ['SDM', 'IT', 'Finance', 'Operation'];
+  String selectBankCode = '';
+  String dataSendStart = '';
+  String dataSendEnd = '';
+  String appNo = '';
+  BankBloc bankBloc = BankBloc(form2repo: Form2Repo());
+  WorkBloc workBloc = WorkBloc(form2repo: Form2Repo());
+  FamilyBloc familyBloc = FamilyBloc(form2repo: Form2Repo());
+  ClientBloc clientBloc = ClientBloc(form2repo: Form2Repo());
+  TextEditingController ctrlBankNo = TextEditingController();
+  TextEditingController ctrlBankName = TextEditingController();
+  TextEditingController ctrlIdNo = TextEditingController();
+  TextEditingController ctrlFullName = TextEditingController();
+  TextEditingController ctrlCompanyName = TextEditingController();
+  TextEditingController ctrlDepartment = TextEditingController();
+  TextEditingController ctrlWorkPosition = TextEditingController();
+  TextEditingController ctrlStart = TextEditingController();
+  TextEditingController ctrlEnd = TextEditingController();
 
   @override
   void initState() {
-    loadData();
+    bankBloc.add(const BankAttempt(''));
+    familyBloc.add(const FamilyAttempt('FMLYT'));
+    workBloc.add(const WorkAttempt('JOB'));
     super.initState();
   }
 
-  Future<void> loadData() async {
-    var dataProv = await rootBundle.loadString('assets/data/bank.json');
-    var jsonResultProv = await json.decode(dataProv);
-
-    jsonResultProv['data']
-        .forEach((element) => bank.add(Data.fromJson(element)));
-
-    selectIndexBank = bank.length + 1;
-    selectIndexFamily = family.length;
-    selectIndexWorkType = worktype.length;
-    selectIndexDepartment = depertment.length;
-  }
-
-  Future<void> _showBottom() {
+  Future<void> _showBottom(LookUpMsoResponseModel lookUpMsoResponseModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -111,7 +117,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: family.length,
+                      itemCount: lookUpMsoResponseModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -124,9 +130,13 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             setState(() {
                               if (selectIndexFamily == index) {
                                 selectFamily = '';
-                                selectIndexFamily = family.length + 1;
+                                selectFamilyCode = '';
+                                selectIndexFamily = 1000;
                               } else {
-                                selectFamily = family[index];
+                                selectFamily = lookUpMsoResponseModel
+                                    .data![index].description!;
+                                selectFamilyCode =
+                                    lookUpMsoResponseModel.data![index].code!;
                                 selectIndexFamily = index;
                               }
                             });
@@ -136,7 +146,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                family[index],
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -157,7 +168,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
         });
   }
 
-  Future<void> _showBottomWorktype() {
+  Future<void> _showBottomWorktype(
+      LookUpMsoResponseModel lookUpMsoResponseModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -213,7 +225,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: worktype.length,
+                      itemCount: lookUpMsoResponseModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -226,9 +238,13 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             setState(() {
                               if (selectIndexWorkType == index) {
                                 selectWorkType = '';
-                                selectIndexWorkType = worktype.length + 1;
+                                selectWorkTypeCode = '';
+                                selectIndexWorkType = 1000;
                               } else {
-                                selectWorkType = worktype[index];
+                                selectWorkType = lookUpMsoResponseModel
+                                    .data![index].description!;
+                                selectWorkTypeCode =
+                                    lookUpMsoResponseModel.data![index].code!;
                                 selectIndexWorkType = index;
                               }
                             });
@@ -238,7 +254,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                worktype[index],
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -259,109 +276,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
         });
   }
 
-  Future<void> _showBottomDepartment() {
-    return showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Department',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: depertment.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexDepartment == index) {
-                                selectDepartment = '';
-                                selectIndexDepartment = depertment.length + 1;
-                              } else {
-                                selectDepartment = depertment[index];
-                                selectIndexDepartment = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                depertment[index],
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexDepartment == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
-                          ),
-                        );
-                      }),
-                ),
-              ],
-            ),
-          );
-        });
-  }
-
-  Future<void> _showBottomBank() {
+  Future<void> _showBottomBank(LookUpMsoResponseModel lookUpMsoResponseModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -417,7 +332,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: bank.length,
+                      itemCount: lookUpMsoResponseModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -430,9 +345,13 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             setState(() {
                               if (selectIndexBank == index) {
                                 selectBank = '';
-                                selectIndexBank = bank.length + 1;
+                                selectBankCode = '';
+                                selectIndexBank = 1000;
                               } else {
-                                selectBank = bank[index].name!;
+                                selectBank = lookUpMsoResponseModel
+                                    .data![index].description!;
+                                selectBankCode =
+                                    lookUpMsoResponseModel.data![index].code!;
                                 selectIndexBank = index;
                               }
                             });
@@ -442,7 +361,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                bank[index].name!,
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -461,6 +381,46 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
             ),
           );
         });
+  }
+
+  void _startDatePicker() {
+    showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            context: context,
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now(),
+            firstDate: DateTime.now().add(const Duration(days: -15000)))
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        setState(() {
+          ctrlStart.text = DateFormat('dd MMMM yyyy').format(pickedDate);
+          dataSendStart = DateFormat('yyyy-MM-dd').format(pickedDate);
+        });
+      });
+    });
+  }
+
+  void _endDatePicker() {
+    showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            context: context,
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now(),
+            firstDate: DateTime.now().add(const Duration(days: -15000)))
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        setState(() {
+          ctrlEnd.text = DateFormat('dd MMMM yyyy').format(pickedDate);
+          dataSendEnd = DateFormat('yyyy-MM-dd').format(pickedDate);
+        });
+      });
+    });
   }
 
   @override
@@ -807,45 +767,120 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                   Stack(
                                     alignment: const Alignment(0, 0),
                                     children: [
-                                      InkWell(
-                                        onTap: _showBottomBank,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectBank == ''
-                                                  ? 'Bank'
-                                                  : selectBank,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      BlocListener(
+                                          bloc: bankBloc,
+                                          listener: (_, BankState state) {
+                                            if (state is BankLoading) {}
+                                            if (state is BankLoaded) {
+                                              setState(() {
+                                                selectIndexBank = 1000;
+                                              });
+                                            }
+                                            if (state is BankError) {}
+                                            if (state is BankException) {}
+                                          },
+                                          child: BlocBuilder(
+                                              bloc: bankBloc,
+                                              builder: (_, BankState state) {
+                                                if (state is BankLoading) {}
+                                                if (state is BankLoaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _showBottomBank(state
+                                                          .lookUpMsoResponseModel);
+                                                    },
+                                                    child: Container(
+                                                      width: 280,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          selectBank == ''
+                                                              ? 'Select Bank'
+                                                              : selectBank,
+                                                          style: TextStyle(
+                                                              color: selectBank ==
+                                                                      ''
+                                                                  ? Colors.grey
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : Colors
+                                                                      .black,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  width: 280,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1)),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(-6,
+                                                            4), // Shadow position
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
                                       const Positioned(
                                         right: 16,
                                         child: Icon(
@@ -894,6 +929,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlBankNo,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Bank Account No',
@@ -953,6 +989,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlBankName,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Bank Account Name',
@@ -1018,6 +1055,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlIdNo,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'ID No',
@@ -1077,6 +1115,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlFullName,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Family Full Name',
@@ -1127,45 +1166,120 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                   Stack(
                                     alignment: const Alignment(0, 0),
                                     children: [
-                                      InkWell(
-                                        onTap: _showBottom,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectFamily == ''
-                                                  ? 'Family Type'
-                                                  : selectFamily,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      BlocListener(
+                                          bloc: familyBloc,
+                                          listener: (_, FamilyState state) {
+                                            if (state is FamilyLoading) {}
+                                            if (state is FamilyLoaded) {
+                                              setState(() {
+                                                selectIndexFamily = 1000;
+                                              });
+                                            }
+                                            if (state is FamilyError) {}
+                                            if (state is FamilyException) {}
+                                          },
+                                          child: BlocBuilder(
+                                              bloc: familyBloc,
+                                              builder: (_, FamilyState state) {
+                                                if (state is FamilyLoading) {}
+                                                if (state is FamilyLoaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _showBottom(state
+                                                          .lookUpMsoResponseModel);
+                                                    },
+                                                    child: Container(
+                                                      width: 280,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          selectFamily == ''
+                                                              ? 'Select Family Type'
+                                                              : selectFamily,
+                                                          style: TextStyle(
+                                                              color: selectFamily ==
+                                                                      ''
+                                                                  ? Colors.grey
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : Colors
+                                                                      .black,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  width: 280,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1)),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(-6,
+                                                            4), // Shadow position
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
                                       const Positioned(
                                         right: 16,
                                         child: Icon(
@@ -1305,6 +1419,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlCompanyName,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Company Name',
@@ -1355,45 +1470,120 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                   Stack(
                                     alignment: const Alignment(0, 0),
                                     children: [
-                                      InkWell(
-                                        onTap: _showBottomWorktype,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectWorkType == ''
-                                                  ? 'Work Type'
-                                                  : selectWorkType,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      BlocListener(
+                                          bloc: workBloc,
+                                          listener: (_, WorkState state) {
+                                            if (state is WorkLoading) {}
+                                            if (state is WorkLoaded) {
+                                              setState(() {
+                                                selectIndexWorkType = 1000;
+                                              });
+                                            }
+                                            if (state is WorkError) {}
+                                            if (state is WorkException) {}
+                                          },
+                                          child: BlocBuilder(
+                                              bloc: workBloc,
+                                              builder: (_, WorkState state) {
+                                                if (state is WorkLoading) {}
+                                                if (state is WorkLoaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _showBottomWorktype(state
+                                                          .lookUpMsoResponseModel);
+                                                    },
+                                                    child: Container(
+                                                      width: 280,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          selectWorkType == ''
+                                                              ? 'Select Work Type'
+                                                              : selectWorkType,
+                                                          style: TextStyle(
+                                                              color: selectWorkType ==
+                                                                      ''
+                                                                  ? Colors.grey
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : Colors
+                                                                      .black,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  width: 280,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1)),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(-6,
+                                                            4), // Shadow position
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
                                       const Positioned(
                                         right: 16,
                                         child: Icon(
@@ -1430,56 +1620,38 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 8),
-                                  Stack(
-                                    alignment: const Alignment(0, 0),
-                                    children: [
-                                      InkWell(
-                                        onTap: _showBottomDepartment,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
+                                  Material(
+                                    elevation: 6,
+                                    shadowColor: Colors.grey.withOpacity(0.4),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: const BorderSide(
+                                            width: 1.0,
+                                            color: Color(0xFFEAEAEA))),
+                                    child: SizedBox(
+                                      width: 280,
+                                      height: 50,
+                                      child: TextFormField(
+                                        controller: ctrlDepartment,
+                                        keyboardType: TextInputType.text,
+                                        decoration: InputDecoration(
+                                            hintText: 'Department',
+                                            isDense: true,
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    16.0, 20.0, 20.0, 16.0),
+                                            hintStyle: TextStyle(
                                                 color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectDepartment == ''
-                                                  ? 'Department'
-                                                  : selectDepartment,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
+                                                    .withOpacity(0.5)),
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide.none,
+                                            )),
                                       ),
-                                      const Positioned(
-                                        right: 16,
-                                        child: Icon(
-                                          Icons.search_rounded,
-                                          color: Color(0xFF3D3D3D),
-                                        ),
-                                      )
-                                    ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1520,6 +1692,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 280,
                                       height: 50,
                                       child: TextFormField(
+                                        controller: ctrlWorkPosition,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Work Position',
@@ -1585,6 +1758,9 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       width: 190,
                                       height: 50,
                                       child: TextFormField(
+                                        readOnly: true,
+                                        controller: ctrlStart,
+                                        onTap: _startDatePicker,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Start Date',
@@ -1648,6 +1824,9 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                           width: 190,
                                           height: 50,
                                           child: TextFormField(
+                                            controller: ctrlEnd,
+                                            readOnly: true,
+                                            onTap: _endDatePicker,
                                             keyboardType: TextInputType.text,
                                             decoration: InputDecoration(
                                                 hintText: 'End Date',
@@ -1678,6 +1857,17 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                           onChanged: (newValue) {
                                             setState(() {
                                               isPresent = newValue!;
+                                              if (newValue) {
+                                                DateTime temp = DateTime.now();
+                                                ctrlEnd.text =
+                                                    DateFormat('dd MMMM yyyy')
+                                                        .format(temp);
+                                                dataSendEnd =
+                                                    DateFormat('yyyy-MM-dd')
+                                                        .format(temp);
+                                              } else {
+                                                ctrlEnd.clear();
+                                              }
                                             });
                                           },
                                         ),
@@ -1708,6 +1898,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                   children: [
                     InkWell(
                       onTap: () {
+                        log('${widget.addClientRequestModel.toJsonNewClient()}');
                         Navigator.of(context).pop();
                       },
                       child: Container(
@@ -1726,26 +1917,146 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context,
-                            StringRouterUtil.applicationForm3ScreenTabRoute);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: thirdColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                            child: Text('NEXT',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600))),
-                      ),
-                    ),
+                    BlocListener(
+                        bloc: clientBloc,
+                        listener: (_, ClientState state) {
+                          if (state is ClientLoading) {}
+                          if (state is ClientAddLoaded) {
+                            appNo = state.addClientResponseModel.code!;
+                            clientBloc.add(ClientUpdateAttempt(AddClientRequestModel(
+                                pApplicationNo:
+                                    state.addClientResponseModel.code,
+                                pBankCode: selectBankCode,
+                                pBankName: selectBank,
+                                pBankAccountNo: ctrlBankNo.text,
+                                pBankAccountName: ctrlBankName.text,
+                                pFamilyFullName: ctrlFullName.text,
+                                pFamilyIdNo: ctrlIdNo.text,
+                                pFamilyTypeCode: selectFamilyCode,
+                                pFamilyGenderCode: gender == 'Male' ? 'M' : 'F',
+                                pWorkCompanyName: ctrlCompanyName.text,
+                                pWorkTypeCode: selectWorkTypeCode,
+                                pWorkDepartmentName: ctrlDepartment.text,
+                                pWorkPosition: ctrlWorkPosition.text,
+                                pWorkStartDate: dataSendStart,
+                                pWorkIsLatest: isPresent,
+                                pClientType:
+                                    widget.addClientRequestModel.pClientType,
+                                pClientIdNo: widget.addClientRequestModel.pIdNo,
+                                pClientFullName:
+                                    widget.addClientRequestModel.pFullName,
+                                pClientAreaMobileNo: widget
+                                    .addClientRequestModel.pClientAreaMobileNo,
+                                pClientMobileNo: widget
+                                    .addClientRequestModel.pClientMobileNo,
+                                pClientEmail:
+                                    widget.addClientRequestModel.pClientEmail,
+                                pClientPlaceOfBirth:
+                                    widget.addClientRequestModel.pPlaceOfBirth,
+                                pClientDateOfBirth:
+                                    widget.addClientRequestModel.pDateOfBirth,
+                                pClientMotherMaidenName: widget
+                                    .addClientRequestModel.pMotherMaidenName,
+                                pClientGenderCode: widget
+                                    .addClientRequestModel.pClientGenderCode,
+                                pClientMaritalStatusCode: widget
+                                    .addClientRequestModel
+                                    .pClientMaritalStatusCode,
+                                pClientSpouseName: widget
+                                    .addClientRequestModel.pClientSpouseName,
+                                pClientSpouseIdNo:
+                                    widget.addClientRequestModel.pClientSpouseIdNo,
+                                pAddressProvinceCode: widget.addClientRequestModel.pAddressProvinceCode,
+                                pAddressProvinceName: widget.addClientRequestModel.pAddressProvinceName,
+                                pAddressCityCode: widget.addClientRequestModel.pAddressCityCode,
+                                pAddressCityName: widget.addClientRequestModel.pAddressCityName,
+                                pAddressZipCodeCode: widget.addClientRequestModel.pAddressZipCodeCode,
+                                pAddressZipCode: widget.addClientRequestModel.pAddressZipCode,
+                                pAddressZipName: widget.addClientRequestModel.pAddressZipName,
+                                pAddressSubDistrict: widget.addClientRequestModel.pAddressSubDistrict,
+                                pAddressVillage: widget.addClientRequestModel.pAddressSubDistrict,
+                                pAddressAddress: widget.addClientRequestModel.pAddressAddress,
+                                pAddressRt: widget.addClientRequestModel.pAddressRt,
+                                pAddressRw: widget.addClientRequestModel.pAddressRw,
+                                pWorkEndDate: dataSendEnd)));
+                          }
+                          if (state is ClientUpdateLoaded) {
+                            Navigator.pushNamed(context,
+                                StringRouterUtil.applicationForm3ScreenTabRoute,
+                                arguments: UpdateLoanDataRequestModel(
+                                    pApplicationNo: appNo,
+                                    pMarketingCode: widget
+                                        .addClientRequestModel.pMarketingCode,
+                                    pMarketingName: widget
+                                        .addClientRequestModel.pMarketingName));
+                          }
+                          if (state is ClientError) {}
+                          if (state is ClientException) {}
+                        },
+                        child: BlocBuilder(
+                            bloc: clientBloc,
+                            builder: (_, ClientState state) {
+                              if (state is ClientLoading) {
+                                return const SizedBox(
+                                  width: 200,
+                                  height: 45,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (state is ClientAddLoaded) {
+                                return const SizedBox(
+                                  width: 200,
+                                  height: 45,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (state is ClientUpdateLoaded) {
+                                return InkWell(
+                                  onTap: () {
+                                    clientBloc.add(ClientAddAttempt(
+                                        widget.addClientRequestModel));
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                        child: Text('NEXT',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600))),
+                                  ),
+                                );
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  clientBloc.add(ClientAddAttempt(
+                                      widget.addClientRequestModel));
+                                },
+                                child: Container(
+                                  width: 200,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: thirdColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                      child: Text('NEXT',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600))),
+                                ),
+                              );
+                            })),
                   ],
                 ),
               ),

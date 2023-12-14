@@ -261,7 +261,7 @@ class _ApplicationListMobileScreenState
                       InkWell(
                         onTap: () {
                           Navigator.pushNamed(context,
-                              StringRouterUtil.clientListScreenTabRoute);
+                              StringRouterUtil.clientListScreenMobileRoute);
                         },
                         child: Container(
                           width: 180,

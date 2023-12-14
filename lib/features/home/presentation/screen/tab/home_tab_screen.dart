@@ -3,7 +3,6 @@ import 'package:sales_order/features/home/presentation/widget/header_tab_widget.
 import 'package:sales_order/features/home/presentation/widget/new_applications_tab_widget.dart';
 import 'package:sales_order/features/home/presentation/widget/notification_tab_widget.dart';
 import 'package:sales_order/features/home/presentation/widget/status_tab_widget.dart';
-import 'package:sales_order/utility/color_util.dart';
 
 class HomeTabScreen extends StatelessWidget {
   const HomeTabScreen({super.key});
@@ -22,7 +21,7 @@ class HomeTabScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Padding(
-                  padding: const EdgeInsets.only(top : 16.0),
+                  padding: const EdgeInsets.only(top: 16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
@@ -39,7 +38,6 @@ class HomeTabScreen extends StatelessWidget {
             ),
             //Notification
             const NotificationTabWidget()
-
           ],
         ));
   }

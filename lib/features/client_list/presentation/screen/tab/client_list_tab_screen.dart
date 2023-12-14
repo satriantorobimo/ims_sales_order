@@ -1,87 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sales_order/features/application_list/presentation/widget/detail_info_widget.dart';
 import 'package:sales_order/features/client_list/data/client_list_model.dart';
+import 'package:sales_order/features/client_list/domain/repo/client_matching_repo.dart';
+import 'package:sales_order/features/client_list/presentation/bloc/client_match_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
+import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ClientListTabScreen extends StatefulWidget {
-  const ClientListTabScreen({super.key});
+  const ClientListTabScreen({super.key, required this.clientMathcingModel});
+  final ClientMathcingModel clientMathcingModel;
 
   @override
   State<ClientListTabScreen> createState() => _ClientListTabScreenState();
 }
 
 class _ClientListTabScreenState extends State<ClientListTabScreen> {
-  bool isLoading = true;
+  bool isEmpty = false;
   List<ClientListModel> menu = [];
   var selectedPageNumber = 0;
   var pagination = 5;
+  ClientMatchBloc clientMatchBloc =
+      ClientMatchBloc(clientMatchingRepo: ClientMatchingRepo());
 
   @override
   void initState() {
-    getData();
-    super.initState();
-  }
-
-  getData() {
-    getMenu().then((value) {
+    if (widget.clientMathcingModel.pDocumentType == 'NPWP' &&
+        widget.clientMathcingModel.pDocumentNo != "") {
+      clientMatchBloc.add(ClientMatchCorpAttempt(widget.clientMathcingModel));
+    } else if (widget.clientMathcingModel.pDocumentType == 'KTP' &&
+        widget.clientMathcingModel.pDocumentNo != "") {
+      clientMatchBloc
+          .add(ClientMatchPersonalAttempt(widget.clientMathcingModel));
+    } else {
       setState(() {
-        isLoading = false;
+        isEmpty = true;
       });
-    });
-  }
-
-  Future<void> getMenu() async {
-    setState(() {
-      menu.add(ClientListModel(
-          status: 'Clear',
-          name: 'Wawan Setiawan',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: true));
-      menu.add(ClientListModel(
-          status: 'Warning',
-          name: 'Baswedan',
-          id: 'External',
-          no: '763284639753659334',
-          used: true));
-      menu.add(ClientListModel(
-          status: 'Negative',
-          name: 'Rizky Maulana',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: false));
-      menu.add(ClientListModel(
-          status: 'Clear',
-          name: 'Dicky Jr',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: false));
-      menu.add(ClientListModel(
-          status: 'Clear',
-          name: 'Wawan Setiawan',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: true));
-      menu.add(ClientListModel(
-          status: 'Warning',
-          name: 'Baswedan',
-          id: 'External',
-          no: '763284639753659334',
-          used: true));
-      menu.add(ClientListModel(
-          status: 'Negative',
-          name: 'Rizky Maulana',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: false));
-      menu.add(ClientListModel(
-          status: 'Clear',
-          name: 'Dicky Jr',
-          id: 'PSN.2103.00005',
-          no: '763284639753659334',
-          used: false));
-    });
+    }
+    super.initState();
   }
 
   Future<void> _showAlertDialogDetail() async {
@@ -267,189 +225,575 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
             )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(28.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Material(
-                  elevation: 6,
-                  shadowColor: Colors.grey.withOpacity(0.4),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: const BorderSide(
-                          width: 1.0, color: Color(0xFFEAEAEA))),
-                  child: SizedBox(
-                    width: 350,
-                    height: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                          hintText: 'search record',
-                          isDense: true,
-                          contentPadding: const EdgeInsets.all(24),
-                          hintStyle:
-                              TextStyle(color: Colors.grey.withOpacity(0.5)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
+        body: isEmpty
+            ? Container()
+            : Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          )),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.66,
-                  child: Center(
-                    child: isLoading
-                        ? Container()
-                        : GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 4,
-                            mainAxisSpacing: 24,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 2 / 1,
-                            padding: const EdgeInsets.all(8.0),
-                            children: List.generate(menu.length, (int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  _showAlertDialogDetail();
-                                },
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(18),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.05)),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          blurRadius: 6,
-                                          offset: const Offset(
-                                              -6, 4), // Shadow position
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Container(
-                                            width: 109,
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                                color: menu[index].status ==
-                                                        'Clear'
-                                                    ? const Color(0xFFDA9BDA)
-                                                    : menu[index].status ==
-                                                            'Warning'
-                                                        ? const Color(
-                                                            0xFF70B96E)
-                                                        : const Color(
-                                                            0xFFFF6C6C),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: 350,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                                hintText: 'search record',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      BlocListener(
+                          bloc: clientMatchBloc,
+                          listener: (_, ClientMatchState state) {
+                            if (state is ClientMatchLoading) {}
+                            if (state is ClientMatchCorpLoaded) {}
+                            if (state is ClientMatchPersonalLoaded) {}
+                            if (state is ClientMatchError) {}
+                            if (state is ClientMatchException) {}
+                          },
+                          child: BlocBuilder(
+                              bloc: clientMatchBloc,
+                              builder: (_, ClientMatchState state) {
+                                if (state is ClientMatchLoading) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.66,
+                                    child: Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: GridView.count(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        crossAxisCount: 4,
+                                        mainAxisSpacing: 24,
+                                        crossAxisSpacing: 16,
+                                        childAspectRatio: 2 / 1,
+                                        padding: const EdgeInsets.all(8.0),
+                                        children:
+                                            List.generate(12, (int index) {
+                                          return Container(
+                                              decoration: BoxDecoration(
                                                 borderRadius:
-                                                    const BorderRadius.only(
-                                                  topRight:
-                                                      Radius.circular(18.0),
-                                                  bottomLeft:
-                                                      Radius.circular(8.0),
-                                                )),
-                                            child: Center(
-                                              child: Text(
-                                                menu[index]
-                                                    .status
-                                                    .toUpperCase(),
-                                                style: const TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                menu[index].name,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              Text(
-                                                menu[index].id,
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: Colors.black),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    menu[index].no,
-                                                    style: const TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.black),
-                                                  ),
-                                                  Container(
-                                                    width: 80,
-                                                    height: 30,
-                                                    decoration: BoxDecoration(
-                                                        color: menu[index].used
-                                                            ? primaryColor
-                                                            : const Color(
-                                                                0xFFC6C6C6),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6)),
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: const Center(
-                                                      child: Text(
-                                                        'Use',
-                                                        style: TextStyle(
-                                                            fontSize: 11,
-                                                            fontWeight:
-                                                                FontWeight.w300,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
+                                                    BorderRadius.circular(18),
+                                                border: Border.all(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.05)),
+                                                color: Colors.white,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(-6,
+                                                        4), // Shadow position
                                                   ),
                                                 ],
                                               ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    )),
-                              );
-                            }),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                isLoading
-                    ? Container()
-                    : SizedBox(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors.grey
+                                                                  .shade300),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 16),
+                                                        Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300,
+                                                              color: Colors.grey
+                                                                  .shade300),
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade300),
+                                                            ),
+                                                            Container(
+                                                              width: 80,
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade300,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ));
+                                        }),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                if (state is ClientMatchCorpLoaded) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.66,
+                                    child: Center(
+                                      child: GridView.count(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        crossAxisCount: 4,
+                                        mainAxisSpacing: 24,
+                                        crossAxisSpacing: 16,
+                                        childAspectRatio: 2 / 1,
+                                        padding: const EdgeInsets.all(8.0),
+                                        children: List.generate(
+                                            state.clientMathcingCorpResponseModel
+                                                        .data!.length >
+                                                    12
+                                                ? 12
+                                                : state
+                                                    .clientMathcingCorpResponseModel
+                                                    .data!
+                                                    .length, (int index) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              _showAlertDialogDetail();
+                                            },
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(18),
+                                                  border: Border.all(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.05)),
+                                                  color: Colors.white,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.1),
+                                                      blurRadius: 6,
+                                                      offset: const Offset(-6,
+                                                          4), // Shadow position
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Container(
+                                                        width: 109,
+                                                        height: 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: state
+                                                                            .clientMathcingCorpResponseModel
+                                                                            .data![
+                                                                                index]
+                                                                            .checkStatus ==
+                                                                        'CLEAR'
+                                                                    ? const Color(
+                                                                        0xFFDA9BDA)
+                                                                    : state.clientMathcingCorpResponseModel.data![index].checkStatus ==
+                                                                            'RELEASE'
+                                                                        ? const Color(
+                                                                            0xFF70B96E)
+                                                                        : const Color(
+                                                                            0xFFFF6C6C),
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          18.0),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          8.0),
+                                                                )),
+                                                        child: Center(
+                                                          child: Text(
+                                                            state
+                                                                .clientMathcingCorpResponseModel
+                                                                .data![index]
+                                                                .checkStatus!,
+                                                            style: const TextStyle(
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            state
+                                                                .clientMathcingCorpResponseModel
+                                                                .data![index]
+                                                                .fullName!,
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 16),
+                                                          Text(
+                                                            state
+                                                                .clientMathcingCorpResponseModel
+                                                                .data![index]
+                                                                .clientCode!,
+                                                            style: const TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                state
+                                                                    .clientMathcingCorpResponseModel
+                                                                    .data![
+                                                                        index]
+                                                                    .clientNo!,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              Container(
+                                                                width: 80,
+                                                                height: 30,
+                                                                decoration: BoxDecoration(
+                                                                    color: state.clientMathcingCorpResponseModel.data![index].checkStatus ==
+                                                                            'CLEAR'
+                                                                        ? primaryColor
+                                                                        : const Color(
+                                                                            0xFFC6C6C6),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            6)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child:
+                                                                    const Center(
+                                                                  child: Text(
+                                                                    'Use',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w300,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                )),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                if (state is ClientMatchPersonalLoaded) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.66,
+                                    child: Center(
+                                      child: GridView.count(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        crossAxisCount: 4,
+                                        mainAxisSpacing: 24,
+                                        crossAxisSpacing: 16,
+                                        childAspectRatio: 2 / 1,
+                                        padding: const EdgeInsets.all(8.0),
+                                        children: List.generate(
+                                            state.clientMathcingPersonalResponseModel
+                                                        .data!.length >
+                                                    12
+                                                ? 12
+                                                : state
+                                                    .clientMathcingPersonalResponseModel
+                                                    .data!
+                                                    .length, (int index) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              _showAlertDialogDetail();
+                                            },
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(18),
+                                                  border: Border.all(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.05)),
+                                                  color: Colors.white,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.1),
+                                                      blurRadius: 6,
+                                                      offset: const Offset(-6,
+                                                          4), // Shadow position
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Container(
+                                                        width: 109,
+                                                        height: 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: state
+                                                                            .clientMathcingPersonalResponseModel
+                                                                            .data![
+                                                                                index]
+                                                                            .checkStatus ==
+                                                                        'CLEAR'
+                                                                    ? const Color(
+                                                                        0xFFDA9BDA)
+                                                                    : state.clientMathcingPersonalResponseModel.data![index].checkStatus ==
+                                                                            'RELEASE'
+                                                                        ? const Color(
+                                                                            0xFF70B96E)
+                                                                        : const Color(
+                                                                            0xFFFF6C6C),
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          18.0),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          8.0),
+                                                                )),
+                                                        child: Center(
+                                                          child: Text(
+                                                            state
+                                                                    .clientMathcingPersonalResponseModel
+                                                                    .data![
+                                                                        index]
+                                                                    .checkStatus ??
+                                                                '-',
+                                                            style: const TextStyle(
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            state
+                                                                    .clientMathcingPersonalResponseModel
+                                                                    .data![
+                                                                        index]
+                                                                    .fullName ??
+                                                                '-',
+                                                            style: const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 16),
+                                                          Text(
+                                                            state
+                                                                    .clientMathcingPersonalResponseModel
+                                                                    .data![
+                                                                        index]
+                                                                    .clientCode ??
+                                                                '-',
+                                                            style: const TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                state
+                                                                        .clientMathcingPersonalResponseModel
+                                                                        .data![
+                                                                            index]
+                                                                        .clientNo ??
+                                                                    '-',
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              Container(
+                                                                width: 80,
+                                                                height: 30,
+                                                                decoration: BoxDecoration(
+                                                                    color: state.clientMathcingPersonalResponseModel.data![index].checkStatus ==
+                                                                            'CLEAR'
+                                                                        ? primaryColor
+                                                                        : const Color(
+                                                                            0xFFC6C6C6),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            6)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child:
+                                                                    const Center(
+                                                                  child: Text(
+                                                                    'Use',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w300,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                )),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              })),
+                      const SizedBox(height: 16),
+                      SizedBox(
                         height: 35,
                         width: double.infinity,
                         child: Row(
@@ -530,9 +874,9 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                           ],
                         ),
                       )
-              ],
-            ),
-          ),
-        ));
+                    ],
+                  ),
+                ),
+              ));
   }
 }

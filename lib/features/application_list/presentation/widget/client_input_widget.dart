@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sales_order/utility/color_util.dart';
 
 class ClientInputWidget extends StatelessWidget {
   final String title;
   final String content;
+  final TextEditingController ctrl;
 
   const ClientInputWidget(
-      {super.key, required this.title, required this.content});
+      {super.key,
+      required this.title,
+      required this.content,
+      required this.ctrl});
 
   @override
   Widget build(BuildContext context) {
@@ -22,30 +25,29 @@ class ClientInputWidget extends StatelessWidget {
                 color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
-          Container(
-            width: 290,
-            height: 55,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(-6, 4), // Shadow position
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                content,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400),
+          Material(
+            elevation: 6,
+            shadowColor: Colors.grey.withOpacity(0.4),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: const BorderSide(width: 1.0, color: Color(0xFFEAEAEA))),
+            child: SizedBox(
+              width: 290,
+              height: 55,
+              child: TextFormField(
+                keyboardType: TextInputType.text,
+                controller: ctrl,
+                decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding:
+                        const EdgeInsets.fromLTRB(16.0, 20.0, 20.0, 16.0),
+                    hintStyle: TextStyle(color: Colors.grey.withOpacity(0.5)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    )),
               ),
             ),
           )

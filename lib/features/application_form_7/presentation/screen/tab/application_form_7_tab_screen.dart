@@ -3,7 +3,8 @@ import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm7TabScreen extends StatefulWidget {
-  const ApplicationForm7TabScreen({super.key});
+  const ApplicationForm7TabScreen({super.key, required this.applicationNo});
+  final String applicationNo;
 
   @override
   State<ApplicationForm7TabScreen> createState() =>

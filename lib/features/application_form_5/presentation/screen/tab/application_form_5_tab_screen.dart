@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sales_order/features/application_form_5/data/update_tnc_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm5TabScreen extends StatefulWidget {
-  const ApplicationForm5TabScreen({super.key});
+  const ApplicationForm5TabScreen(
+      {super.key, required this.updateTncRequestModel});
+  final UpdateTncRequestModel updateTncRequestModel;
 
   @override
   State<ApplicationForm5TabScreen> createState() =>
@@ -448,68 +451,6 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: const [
-                                          Text(
-                                            'Asset Amount',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            ' *',
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Material(
-                                        elevation: 6,
-                                        shadowColor:
-                                            Colors.grey.withOpacity(0.4),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            side: const BorderSide(
-                                                width: 1.0,
-                                                color: Color(0xFFEAEAEA))),
-                                        child: SizedBox(
-                                          width: 280,
-                                          height: 50,
-                                          child: TextFormField(
-                                            keyboardType: TextInputType.text,
-                                            decoration: InputDecoration(
-                                                hintText: 'Asset Amount',
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        16.0, 20.0, 20.0, 16.0),
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5)),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide.none,
-                                                )),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

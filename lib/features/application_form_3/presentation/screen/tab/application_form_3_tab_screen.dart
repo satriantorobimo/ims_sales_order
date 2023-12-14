@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_3/data/look_up_dealer_model.dart';
+import 'package:sales_order/features/application_form_3/data/look_up_package_model.dart';
+import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
+import 'package:sales_order/features/application_form_3/domain/repo/form_3_repo.dart';
+import 'package:sales_order/features/application_form_3/presentation/bloc/dealer_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_3/presentation/bloc/loan_data_detail_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_3/presentation/bloc/package_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_3/presentation/bloc/update_loan_data_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm3TabScreen extends StatefulWidget {
-  const ApplicationForm3TabScreen({super.key});
+  const ApplicationForm3TabScreen(
+      {super.key, required this.updateLoanDataRequestModel});
+  final UpdateLoanDataRequestModel updateLoanDataRequestModel;
 
   @override
   State<ApplicationForm3TabScreen> createState() =>
@@ -11,22 +22,32 @@ class ApplicationForm3TabScreen extends StatefulWidget {
 }
 
 class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
-  String gender = 'Male';
   int selectIndexPackage = 0;
   String selectPackage = '';
+  String selectPackageCode = '';
   int selectIndexDealer = 0;
   String selectDealer = '';
+  String selectDealerCode = '';
   List<String> package = ['Package 1', 'Package 2', 'Package 3', 'Package 4'];
   List<String> dealer = ['Dealer 1', 'Dealer 2', 'Dealer 3', 'Dealer 4'];
+  LoanDataDetailBloc loanDataDetailBloc =
+      LoanDataDetailBloc(form3repo: Form3Repo());
+  UpdateLoanDataBloc updateLoanDataBloc =
+      UpdateLoanDataBloc(form3repo: Form3Repo());
+  PackageBloc packageBloc = PackageBloc(form3repo: Form3Repo());
+  DealerBloc dealerBloc = DealerBloc(form3repo: Form3Repo());
+  TextEditingController ctrlRemark = TextEditingController();
 
   @override
   void initState() {
-    selectIndexPackage = package.length;
-    selectIndexDealer = dealer.length;
+    loanDataDetailBloc.add(LoanDataDetailAttempt(
+        widget.updateLoanDataRequestModel.pApplicationNo!));
+    packageBloc.add(const PackageAttempt(''));
+    dealerBloc.add(const DealerAttempt(''));
     super.initState();
   }
 
-  Future<void> _showBottom() {
+  Future<void> _showBottom(LookUpPackageModel lookUpPackageModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -82,7 +103,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: package.length,
+                      itemCount: lookUpPackageModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -95,9 +116,13 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                             setState(() {
                               if (selectIndexPackage == index) {
                                 selectPackage = '';
-                                selectIndexPackage = package.length + 1;
+                                selectPackageCode = '';
+                                selectIndexPackage = 10000;
                               } else {
-                                selectPackage = package[index];
+                                selectPackage = lookUpPackageModel
+                                    .data![index].packageDescription!;
+                                selectPackageCode =
+                                    lookUpPackageModel.data![index].code!;
                                 selectIndexPackage = index;
                               }
                             });
@@ -107,7 +132,8 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                package[index],
+                                lookUpPackageModel
+                                    .data![index].packageDescription!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -128,7 +154,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
         });
   }
 
-  Future<void> _showBottomDealer() {
+  Future<void> _showBottomDealer(LookUpDealerModel lookUpDealerModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -184,7 +210,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: dealer.length,
+                      itemCount: lookUpDealerModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -197,9 +223,13 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                             setState(() {
                               if (selectIndexDealer == index) {
                                 selectDealer = '';
-                                selectIndexDealer = dealer.length + 1;
+                                selectDealerCode = '';
+                                selectIndexDealer = 100000;
                               } else {
-                                selectDealer = dealer[index];
+                                selectDealer =
+                                    lookUpDealerModel.data![index].vendorName!;
+                                selectDealerCode =
+                                    lookUpDealerModel.data![index].code!;
                                 selectIndexDealer = index;
                               }
                             });
@@ -209,7 +239,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                dealer[index],
+                                lookUpDealerModel.data![index].vendorName!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -572,45 +602,120 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                   Stack(
                                     alignment: const Alignment(0, 0),
                                     children: [
-                                      InkWell(
-                                        onTap: _showBottom,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectPackage == ''
-                                                  ? 'Package'
-                                                  : selectPackage,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      BlocListener(
+                                          bloc: packageBloc,
+                                          listener: (_, PackageState state) {
+                                            if (state is PackageLoading) {}
+                                            if (state is PackageLoaded) {
+                                              setState(() {
+                                                selectIndexPackage = 1000;
+                                              });
+                                            }
+                                            if (state is PackageError) {}
+                                            if (state is PackageException) {}
+                                          },
+                                          child: BlocBuilder(
+                                              bloc: packageBloc,
+                                              builder: (_, PackageState state) {
+                                                if (state is PackageLoading) {}
+                                                if (state is PackageLoaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _showBottom(state
+                                                          .lookUpPackageModel);
+                                                    },
+                                                    child: Container(
+                                                      width: 280,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          selectPackage == ''
+                                                              ? 'Select Package'
+                                                              : selectPackage,
+                                                          style: TextStyle(
+                                                              color: selectPackage ==
+                                                                      ''
+                                                                  ? Colors.grey
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : Colors
+                                                                      .black,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  width: 280,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1)),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(-6,
+                                                            4), // Shadow position
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
                                       const Positioned(
                                         right: 16,
                                         child: Icon(
@@ -650,45 +755,120 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                   Stack(
                                     alignment: const Alignment(0, 0),
                                     children: [
-                                      InkWell(
-                                        onTap: _showBottomDealer,
-                                        child: Container(
-                                          width: 280,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              selectDealer == ''
-                                                  ? 'Dealer'
-                                                  : selectDealer,
-                                              style: TextStyle(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      BlocListener(
+                                          bloc: dealerBloc,
+                                          listener: (_, DealerState state) {
+                                            if (state is DealerLoading) {}
+                                            if (state is DealerLoaded) {
+                                              setState(() {
+                                                selectIndexDealer = 1000;
+                                              });
+                                            }
+                                            if (state is DealerError) {}
+                                            if (state is DealerException) {}
+                                          },
+                                          child: BlocBuilder(
+                                              bloc: dealerBloc,
+                                              builder: (_, DealerState state) {
+                                                if (state is DealerLoading) {}
+                                                if (state is DealerLoaded) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _showBottomDealer(state
+                                                          .lookUpDealerModel);
+                                                    },
+                                                    child: Container(
+                                                      width: 280,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          selectDealer == ''
+                                                              ? 'Select Dealer'
+                                                              : selectDealer,
+                                                          style: TextStyle(
+                                                              color: selectDealer ==
+                                                                      ''
+                                                                  ? Colors.grey
+                                                                      .withOpacity(
+                                                                          0.5)
+                                                                  : Colors
+                                                                      .black,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Container(
+                                                  width: 280,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1)),
+                                                    color: Colors.white,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(-6,
+                                                            4), // Shadow position
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.5),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
                                       const Positioned(
                                         right: 16,
                                         child: Icon(
@@ -740,6 +920,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.text,
                                     maxLines: 6,
+                                    controller: ctrlRemark,
                                     decoration: InputDecoration(
                                         hintText: 'Remark',
                                         isDense: true,
@@ -791,26 +972,83 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context,
-                            StringRouterUtil.applicationForm4ScreenTabRoute);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: thirdColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                            child: Text('NEXT',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600))),
-                      ),
-                    ),
+                    BlocListener(
+                        bloc: updateLoanDataBloc,
+                        listener: (_, UpdateLoanDataState state) {
+                          if (state is UpdateLoanDataLoading) {}
+                          if (state is UpdateLoanDataLoaded) {
+                            Navigator.pushNamed(
+                                context,
+                                StringRouterUtil
+                                    .applicationForm4ScreenTabRoute);
+                          }
+                          if (state is UpdateLoanDataError) {}
+                          if (state is UpdateLoanDataException) {}
+                        },
+                        child: BlocBuilder(
+                            bloc: updateLoanDataBloc,
+                            builder: (_, UpdateLoanDataState state) {
+                              if (state is UpdateLoanDataLoading) {
+                                return const SizedBox(
+                                  width: 200,
+                                  height: 45,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (state is UpdateLoanDataLoaded) {
+                                return InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    width: 200,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                        child: Text('NEXT',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600))),
+                                  ),
+                                );
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  updateLoanDataBloc.add(UpdateLoanDataAttempt(
+                                      UpdateLoanDataRequestModel(
+                                          pApplicationNo: widget
+                                              .updateLoanDataRequestModel
+                                              .pApplicationNo,
+                                          pDealerCode: selectDealerCode,
+                                          pMarketingCode: widget
+                                              .updateLoanDataRequestModel
+                                              .pMarketingCode,
+                                          pMarketingName: widget
+                                              .updateLoanDataRequestModel
+                                              .pMarketingName,
+                                          pPackageCode: selectPackageCode,
+                                          pRemark: ctrlRemark.text)));
+                                },
+                                child: Container(
+                                  width: 200,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: thirdColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                      child: Text('NEXT',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600))),
+                                ),
+                              );
+                            })),
                   ],
                 ),
               ),

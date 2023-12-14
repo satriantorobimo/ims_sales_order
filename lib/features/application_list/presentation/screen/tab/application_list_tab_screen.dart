@@ -1,11 +1,19 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:number_pagination/number_pagination.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_list/presentation/widget/client_display_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/detail_info_widget.dart';
-import 'package:sales_order/features/home/data/application_model.dart';
+import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
+import 'package:sales_order/features/home/domain/repo/home_repo.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/drop_down_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../../../home/data/app_list_response_model.dart';
+import '../../../../home/presentation/bloc/app_list_bloc/bloc.dart';
 
 class ApplicationListTabScreen extends StatefulWidget {
   const ApplicationListTabScreen({super.key});
@@ -16,127 +24,36 @@ class ApplicationListTabScreen extends StatefulWidget {
 }
 
 class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
-  bool isLoading = true;
-  List<ApplicationModel> menu = [];
+  AppListBloc appListBloc = AppListBloc(homeRepo: HomeRepo());
+
   var selectedPageNumber = 0;
-  var pagination = 5;
+  var pagination = 0;
   var selectedClientType = 0;
+  late List<Data> data = [];
   late List<CustDropdownMenuItem> clientType = [];
 
   @override
   void initState() {
-    getData();
+    getMenu();
+    appListBloc.add(const AppListAttempt());
     super.initState();
   }
 
-  getData() {
-    getMenu().then((value) {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
-  Future<void> getMenu() async {
-    setState(() {
-      menu.add(ApplicationModel(
-          status: 'On Process',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Approve',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Cancel',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Hold',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Reject',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Reject',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'On Process',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Approve',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Cancel',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Hold',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Reject',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      menu.add(ApplicationModel(
-          status: 'Reject',
-          name: 'Johnny Iskandar',
-          id: 'PSN.2103.00005',
-          amount: '50.000.000',
-          date: '01/02/2021',
-          type: 'VEHICLE'));
-      clientType
-          .add(const CustDropdownMenuItem(value: 0, child: Text("PERSONAL")));
-      clientType
-          .add(const CustDropdownMenuItem(value: 1, child: Text("CORPORATE")));
-    });
-  }
-
-  Future<void> _showAlertDialogDetail() async {
+  Future<void> _showAlertDialogDetail(Data data) async {
+    String date;
+    if (data.applicationDate != null) {
+      DateTime tempDate = DateFormat('yyyy-MM-dd').parse(data.applicationDate!);
+      var inputDate = DateTime.parse(tempDate.toString());
+      var outputFormat = DateFormat('dd/MM/yyyy');
+      date = outputFormat.format(inputDate);
+    } else {
+      date = '';
+    }
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          // <-- SEE HERE
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,41 +89,43 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         DetailInfoWidget(
                             title: 'Application No',
-                            content: '0000.LAP.2307.0000008.BCA MULTIFINANCE',
+                            content: data.applicationNo!,
                             type: false),
                         DetailInfoWidget(
                             title: 'Branch',
-                            content: 'HEAD OFFICE',
+                            content: data.branchName!,
                             type: false),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         DetailInfoWidget(
                             title: 'Application Date',
-                            content: '11/11/2022',
+                            content: date,
                             type: false),
                         DetailInfoWidget(
                             title: 'Facility Name',
-                            content: 'VEHICLE',
+                            content: data.facilityDesc ?? '',
                             type: true),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         DetailInfoWidget(
                             title: 'Purpose',
-                            content: 'MULTI GUNA FASILITAS DANA',
+                            content: data.purposeLoanName ?? '-',
                             type: false),
                         DetailInfoWidget(
-                            title: 'Agreement No', content: '0', type: false),
+                            title: 'Agreement No',
+                            content: data.agreementNo ?? '-',
+                            type: false),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -230,7 +149,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(
-                      child: Text('CLOSE',
+                      child: Text('VIEW',
                           style: TextStyle(
                               fontSize: 15,
                               color: Colors.black,
@@ -245,9 +164,14 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
   }
 
   Future<void> _showAlertDialogClient() async {
+    final TextEditingController ctrlMotherMaiden = TextEditingController();
+    final TextEditingController ctrlKtpNo = TextEditingController();
+    final TextEditingController ctrlFullName = TextEditingController();
+    final TextEditingController ctrlPob = TextEditingController();
+    final TextEditingController ctrlNpwp = TextEditingController();
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setStates) {
@@ -282,119 +206,138 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                 height: MediaQuery.of(context).size.height * 0.55,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 290,
-                            height: 90,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Client Type',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  width: 290,
-                                  height: 55,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: Colors.grey.withOpacity(0.1)),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        blurRadius: 6,
-                                        offset: const Offset(
-                                            -6, 4), // Shadow position
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: 290,
+                              height: 90,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Client Type',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    width: 290,
+                                    height: 55,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.grey.withOpacity(0.1)),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          blurRadius: 6,
+                                          offset: const Offset(
+                                              -6, 4), // Shadow position
+                                        ),
+                                      ],
+                                    ),
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, right: 16.0),
+                                    child: CustDropDown(
+                                      items: clientType,
+                                      hintText: "Select Type",
+                                      borderRadius: 5,
+                                      defaultSelectedIndex: 0,
+                                      onChanged: (val) {
+                                        setStates(() {
+                                          selectedClientType = val;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            selectedClientType == 0
+                                ? const ClientDisplayWidget(
+                                    title: 'Document Type', content: 'KTP')
+                                : const ClientDisplayWidget(
+                                    title: 'Document Type', content: 'NPWP'),
+                          ],
+                        ),
+                        selectedClientType == 0
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ClientInputWidget(
+                                          title: 'Mother Maiden Name',
+                                          content: '',
+                                          ctrl: ctrlMotherMaiden),
+                                      ClientInputWidget(
+                                        title: 'KTP No',
+                                        content: '',
+                                        ctrl: ctrlKtpNo,
                                       ),
                                     ],
                                   ),
-                                  padding: const EdgeInsets.only(
-                                      left: 16.0, right: 16.0),
-                                  child: CustDropDown(
-                                    items: clientType,
-                                    hintText: "Select Type",
-                                    borderRadius: 5,
-                                    defaultSelectedIndex: 0,
-                                    onChanged: (val) {
-                                      setStates(() {
-                                        selectedClientType = val;
-                                      });
-                                    },
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ClientInputWidget(
+                                        title: 'Full Name',
+                                        content: '',
+                                        ctrl: ctrlFullName,
+                                      ),
+                                      ClientInputWidget(
+                                        title: 'Place of Birth',
+                                        content: '',
+                                        ctrl: ctrlPob,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          selectedClientType == 0
-                              ? const ClientInputWidget(
-                                  title: 'Document Type', content: 'KTP')
-                              : const ClientInputWidget(
-                                  title: 'Document Type', content: 'NPWP'),
-                        ],
-                      ),
-                      selectedClientType == 0
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    ClientInputWidget(
-                                        title: 'Mother Maiden Name',
-                                        content: ''),
-                                    ClientInputWidget(
-                                        title: 'KTP No', content: ''),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    ClientInputWidget(
-                                        title: 'Full Name', content: ''),
-                                    ClientInputWidget(
-                                        title: 'Place of Birth', content: ''),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                const ClientInputWidget(
-                                    title: 'Date of Birth', content: ''),
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: const [
-                                    ClientInputWidget(
-                                        title: 'Established Date', content: ''),
-                                    ClientInputWidget(
-                                        title: 'NPWP No', content: ''),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                const ClientInputWidget(
-                                    title: 'Full Name', content: ''),
-                              ],
-                            )
-                    ],
+                                  const SizedBox(height: 16),
+                                  const ClientDisplayWidget(
+                                      title: 'Date of Birth', content: ''),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const ClientDisplayWidget(
+                                          title: 'Established Date',
+                                          content: ''),
+                                      ClientInputWidget(
+                                        title: 'NPWP No',
+                                        content: '',
+                                        ctrl: ctrlNpwp,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ClientInputWidget(
+                                    title: 'Full Name',
+                                    content: '',
+                                    ctrl: ctrlFullName,
+                                  ),
+                                ],
+                              )
+                      ],
+                    ),
                   ),
                 )),
             actionsPadding: const EdgeInsets.only(bottom: 24.0),
@@ -404,7 +347,22 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, StringRouterUtil.clientListScreenTabRoute);
+                      Navigator.pushNamed(
+                          context, StringRouterUtil.clientListScreenTabRoute,
+                          arguments: ClientMathcingModel(
+                              pDocumentType:
+                                  clientType[selectedClientType].value == 0
+                                      ? 'KTP'
+                                      : 'NPWP',
+                              pDateOfBirth: '',
+                              pDocumentNo:
+                                  clientType[selectedClientType].value == 'NPWP'
+                                      ? ctrlNpwp.text
+                                      : ctrlKtpNo.text,
+                              pEstDate: '',
+                              pFullName: ctrlFullName.text,
+                              pMotherMaidenName: ctrlMotherMaiden.text,
+                              pPlaceOfBirth: ctrlPob.text));
                     },
                     child: Container(
                       width: 200,
@@ -443,7 +401,6 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                   )
                 ],
               )
-
             ],
           );
         });
@@ -451,9 +408,19 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
     );
   }
 
+  Future<void> getMenu() async {
+    setState(() {
+      clientType
+          .add(const CustDropdownMenuItem(value: 0, child: Text("PERSONAL")));
+      clientType
+          .add(const CustDropdownMenuItem(value: 1, child: Text("CORPORATE")));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Padding(
@@ -470,7 +437,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           backgroundColor: Colors.white,
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: 32.0),
+              padding: const EdgeInsets.only(right: 32.0),
               child: InkWell(
                 onTap: () {
                   _showAlertDialogClient();
@@ -518,263 +485,515 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: Center(
-                    child: isLoading
-                        ? Container()
-                        : GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 4,
-                            mainAxisSpacing: 24,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 2 / 1,
-                            padding: const EdgeInsets.all(8.0),
-                            children: List.generate(menu.length, (int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  _showAlertDialogDetail();
-                                },
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(18),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.05)),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          blurRadius: 6,
-                                          offset: const Offset(
-                                              -6, 4), // Shadow position
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Container(
-                                            width: 109,
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                                color: menu[index].status ==
-                                                        'On Process'
-                                                    ? thirdColor
-                                                    : menu[index].status ==
-                                                            'Approve'
-                                                        ? primaryColor
-                                                        : menu[index].status ==
-                                                                'Cancel'
-                                                            ? const Color(
-                                                                0xFFFFEC3F)
-                                                            : menu[index]
-                                                                        .status ==
-                                                                    'Hold'
-                                                                ? secondaryColor
-                                                                : const Color(
-                                                                    0xFFDF0000),
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topRight:
-                                                      Radius.circular(18.0),
-                                                  bottomLeft:
-                                                      Radius.circular(8.0),
-                                                )),
-                                            child: Center(
-                                              child: Text(
-                                                menu[index].status,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: menu[index].status ==
-                                                                'On Process' ||
-                                                            menu[index]
-                                                                    .status ==
-                                                                'Cancel' ||
-                                                            menu[index]
-                                                                    .status ==
-                                                                'Hold'
-                                                        ? Colors.black
-                                                        : Colors.white),
-                                              ),
+                BlocListener(
+                    bloc: appListBloc,
+                    listener: (_, AppListState state) {
+                      if (state is AppListLoading) {}
+                      if (state is AppListLoaded) {
+                        log('${state.appListResponseModel.data!.length}');
+                        log('${state.appListResponseModel.data!.length / 12}');
+                        setState(() {
+                          pagination =
+                              (state.appListResponseModel.data!.length / 12)
+                                  .floor();
+                        });
+                      }
+                      if (state is AppListError) {}
+                      if (state is AppListException) {}
+                    },
+                    child: BlocBuilder(
+                        bloc: appListBloc,
+                        builder: (_, AppListState state) {
+                          if (state is AppListLoading) {
+                            return SizedBox(
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                child: GridView.count(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 4,
+                                  mainAxisSpacing: 24,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: 2 / 1,
+                                  padding: const EdgeInsets.all(8.0),
+                                  children: List.generate(12, (int index) {
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                          border: Border.all(
+                                              color: Colors.grey
+                                                  .withOpacity(0.05)),
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              blurRadius: 6,
+                                              offset: const Offset(
+                                                  -6, 4), // Shadow position
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0, right: 16.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors
+                                                            .grey.shade300),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    '',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        color: Colors
+                                                            .grey.shade300),
+                                                  ),
+                                                  Text(
+                                                    '',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors
+                                                            .grey.shade300),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ));
+                                  }),
+                                ),
+                              ),
+                            );
+                          }
+                          if (state is AppListLoaded) {
+                            return SizedBox(
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: Center(
+                                child: GridView.count(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 4,
+                                  mainAxisSpacing: 24,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: 2 / 1,
+                                  padding: const EdgeInsets.all(8.0),
+                                  children: List.generate(
+                                      state.appListResponseModel.data!.length >
+                                              12
+                                          ? 12
+                                          : state.appListResponseModel.data!
+                                              .length, (int index) {
+                                    String date;
+                                    if (state.appListResponseModel.data![index]
+                                            .applicationDate !=
+                                        null) {
+                                      DateTime tempDate =
+                                          DateFormat('yyyy-MM-dd').parse(state
+                                              .appListResponseModel
+                                              .data![index]
+                                              .applicationDate!);
+                                      var inputDate =
+                                          DateTime.parse(tempDate.toString());
+                                      var outputFormat =
+                                          DateFormat('dd/MM/yyyy');
+                                      date = outputFormat.format(inputDate);
+                                    } else {
+                                      date = '';
+                                    }
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        _showAlertDialogDetail(state
+                                            .appListResponseModel.data![index]);
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                            border: Border.all(
+                                                color: Colors.grey
+                                                    .withOpacity(0.05)),
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.1),
+                                                blurRadius: 6,
+                                                offset: const Offset(
+                                                    -6, 4), // Shadow position
+                                              ),
+                                            ],
+                                          ),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                menu[index].name,
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                menu[index].id,
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w300,
-                                                    color: Colors.black),
-                                              ),
-                                              Text(
-                                                'Rp. ${menu[index].amount}',
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      const Icon(
-                                                        Icons
-                                                            .date_range_rounded,
-                                                        color:
-                                                            Color(0xFF643FDB),
-                                                        size: 16,
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        menu[index].date,
-                                                        style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w300,
-                                                            color: Color(
-                                                                0xFF643FDB)),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Container(
-                                                    width: 75,
-                                                    height: 30,
-                                                    decoration: BoxDecoration(
-                                                        color: secondaryColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6)),
-                                                    child: Center(
-                                                      child: Text(
-                                                        menu[index].type,
-                                                        style: const TextStyle(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w300,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: Container(
+                                                  width: 109,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                      color: state
+                                                                  .appListResponseModel
+                                                                  .data![index]
+                                                                  .applicationStatus!
+                                                                  .toUpperCase() ==
+                                                              'ON PROCESS'
+                                                          ? thirdColor
+                                                          : state
+                                                                      .appListResponseModel
+                                                                      .data![
+                                                                          index]
+                                                                      .applicationStatus ==
+                                                                  'APPROVE'
+                                                              ? primaryColor
+                                                              : state
+                                                                          .appListResponseModel
+                                                                          .data![
+                                                                              index]
+                                                                          .applicationStatus ==
+                                                                      'CANCEL'
+                                                                  ? const Color(
+                                                                      0xFFFFEC3F)
+                                                                  : state.appListResponseModel.data![index].applicationStatus ==
+                                                                          'HOLD'
+                                                                      ? secondaryColor
+                                                                      : const Color(
+                                                                          0xFFDF0000),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                        topRight:
+                                                            Radius.circular(
+                                                                18.0),
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                                8.0),
+                                                      )),
+                                                  child: Center(
+                                                    child: Text(
+                                                      state
+                                                          .appListResponseModel
+                                                          .data![index]
+                                                          .applicationStatus!,
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                          color: state
+                                                                          .appListResponseModel
+                                                                          .data![
+                                                                              index]
+                                                                          .applicationStatus ==
+                                                                      'ON PROCESS' ||
+                                                                  state
+                                                                          .appListResponseModel
+                                                                          .data![
+                                                                              index]
+                                                                          .applicationStatus ==
+                                                                      'CENCEL' ||
+                                                                  state
+                                                                          .appListResponseModel
+                                                                          .data![
+                                                                              index]
+                                                                          .applicationStatus ==
+                                                                      'HOLD'
+                                                              ? Colors.black
+                                                              : Colors.white),
                                                     ),
                                                   ),
-                                                ],
+                                                ),
                                               ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 16.0, right: 16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      state
+                                                          .appListResponseModel
+                                                          .data![index]
+                                                          .clientName!,
+                                                      style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      state
+                                                          .appListResponseModel
+                                                          .data![index]
+                                                          .applicationNo!,
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                          color: Colors.black),
+                                                    ),
+                                                    Text(
+                                                      'Rp. ${state.appListResponseModel.data![index].financingAmount}',
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .date_range_rounded,
+                                                              color: Color(
+                                                                  0xFF643FDB),
+                                                              size: 16,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Text(
+                                                              date,
+                                                              style: const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
+                                                                  color: Color(
+                                                                      0xFF643FDB)),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Container(
+                                                          height: 30,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  secondaryColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6)),
+                                                          child: Center(
+                                                            child: Text(
+                                                              state
+                                                                      .appListResponseModel
+                                                                      .data![
+                                                                          index]
+                                                                      .facilityDesc ??
+                                                                  '-',
+                                                              style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w300,
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
                                             ],
-                                          ),
-                                        )
-                                      ],
-                                    )),
-                              );
-                            }),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                isLoading
-                    ? Container()
-                    : SizedBox(
-                        height: 35,
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            selectedPageNumber == 0
-                                ? const Icon(
-                                    Icons.keyboard_arrow_left_rounded,
-                                    size: 32,
-                                    color: Colors.grey,
-                                  )
-                                : InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedPageNumber--;
-                                      });
-                                    },
-                                    child: const Icon(
-                                        Icons.keyboard_arrow_left_rounded,
-                                        size: 32)),
-                            ListView.separated(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: pagination,
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return const SizedBox(width: 4);
-                                },
-                                itemBuilder: (BuildContext context, int index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedPageNumber = index;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 35,
-                                      height: 35,
+                                          )),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              child: GridView.count(
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisCount: 4,
+                                mainAxisSpacing: 24,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: 2 / 1,
+                                padding: const EdgeInsets.all(8.0),
+                                children: List.generate(12, (int index) {
+                                  return Container(
                                       decoration: BoxDecoration(
-                                          color: selectedPageNumber == index
-                                              ? primaryColor
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      child: Center(
-                                        child: Text(
-                                          '${index + 1}',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: selectedPageNumber == index
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                        ),
+                                        borderRadius: BorderRadius.circular(18),
+                                        border: Border.all(
+                                            color:
+                                                Colors.grey.withOpacity(0.05)),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            blurRadius: 6,
+                                            offset: const Offset(
+                                                -6, 4), // Shadow position
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  );
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 16.0, right: 16.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Colors.grey.shade300),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color:
+                                                          Colors.grey.shade300),
+                                                ),
+                                                Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color:
+                                                          Colors.grey.shade300),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ));
                                 }),
-                            selectedPageNumber == pagination - 1
-                                ? const Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                    size: 32,
-                                    color: Colors.grey,
-                                  )
-                                : InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedPageNumber++;
-                                      });
-                                    },
-                                    child: const Icon(
-                                      Icons.keyboard_arrow_right_rounded,
-                                      size: 32,
-                                    ),
+                              ),
+                            ),
+                          );
+                        })),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 35,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      selectedPageNumber == 0
+                          ? const Icon(
+                              Icons.keyboard_arrow_left_rounded,
+                              size: 32,
+                              color: Colors.grey,
+                            )
+                          : InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedPageNumber--;
+                                });
+                              },
+                              child: const Icon(
+                                  Icons.keyboard_arrow_left_rounded,
+                                  size: 32)),
+                      ListView.separated(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: pagination > 10 ? 10 : pagination,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(width: 4);
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedPageNumber = index;
+                                });
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                    color: selectedPageNumber == index
+                                        ? primaryColor
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Center(
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: selectedPageNumber == index
+                                            ? Colors.white
+                                            : Colors.black),
                                   ),
-                          ],
-                        ),
-                      )
+                                ),
+                              ),
+                            );
+                          }),
+                      selectedPageNumber == pagination - 1
+                          ? const Icon(
+                              Icons.keyboard_arrow_right_rounded,
+                              size: 32,
+                              color: Colors.grey,
+                            )
+                          : InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedPageNumber++;
+                                });
+                              },
+                              child: const Icon(
+                                Icons.keyboard_arrow_right_rounded,
+                                size: 32,
+                              ),
+                            ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

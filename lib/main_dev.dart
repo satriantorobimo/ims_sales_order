@@ -14,12 +14,12 @@ Future main() async {
   await Firebase.initializeApp();
 
   GeneralUtil().getDeviceType().then((value) {
-    if(value == 'tablet'){
+    if (value == 'tablet') {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeRight,
         DeviceOrientation.landscapeLeft,
       ]);
-    }else{
+    } else {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
@@ -34,7 +34,9 @@ Future main() async {
   HttpProxy httpProxy = await HttpProxy.createHttpProxy();
   HttpOverrides.global = httpProxy;
   FlavorConfig(
-      flavor: Flavor.DEV, values: FlavorValues(baseUrl: '/', userId: '-'));
+      flavor: Flavor.DEV,
+      values: FlavorValues(
+          baseUrl: 'http://101.255.160.50:4101/', userId: 'bmltZEE%3D'));
   runZonedGuarded(() {
     runApp(const MyApp());
   }, (Object error, StackTrace stack) {});

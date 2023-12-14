@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sales_order/features/home/data/menu_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/home/domain/repo/home_repo.dart';
+import 'package:sales_order/features/home/presentation/bloc/app_status_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
+import 'package:shimmer/shimmer.dart';
 
 class StatusTabWidget extends StatefulWidget {
   const StatusTabWidget({super.key});
@@ -10,71 +14,12 @@ class StatusTabWidget extends StatefulWidget {
 }
 
 class _StatusTabWidgetState extends State<StatusTabWidget> {
-  bool isLoading = true;
-  List<MenuModel> menu = [];
+  AppStatusBloc appStatusBloc = AppStatusBloc(homeRepo: HomeRepo());
 
   @override
   void initState() {
-    getData();
+    appStatusBloc.add(const AppStatusAttempt());
     super.initState();
-  }
-
-  getData() {
-    getMenu().then((value) {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
-  Future<void> getMenu() async {
-    setState(() {
-      menu.add(MenuModel(
-          color: secondaryColor,
-          title: 'Hold',
-          subTitle: 'Marketing',
-          content: '721.000'));
-      menu.add(MenuModel(
-          color: secondaryColor,
-          title: 'On Process',
-          subTitle: 'CC',
-          content: '1.156'));
-      menu.add(MenuModel(
-          color: thirdColor,
-          title: 'On Process',
-          subTitle: 'CA',
-          content: '367.000'));
-      menu.add(MenuModel(
-          color: thirdColor,
-          title: 'Cancel',
-          subTitle: 'Marketing',
-          content: '239.000'));
-      menu.add(MenuModel(
-          color: secondaryColor,
-          title: 'Reject',
-          subTitle: 'CC',
-          content: '721.000'));
-      menu.add(MenuModel(
-          color: secondaryColor,
-          title: 'Approve',
-          subTitle: 'Final Check',
-          content: '367.000'));
-      menu.add(MenuModel(
-          color: thirdColor,
-          title: 'Cancel',
-          subTitle: 'Marketing',
-          content: '239.000'));
-      menu.add(MenuModel(
-          color: thirdColor,
-          title: 'Approve',
-          subTitle: 'CC',
-          content: '721.000'));
-      menu.add(MenuModel(
-          color: thirdColor,
-          title: 'Approve',
-          subTitle: 'Go Live',
-          content: '1.156'));
-    });
   }
 
   @override
@@ -89,63 +34,210 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
             style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          SizedBox(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.33,
-            child: Center(
-              child: isLoading
-                  ? Container()
-                  : GridView.count(
-                      scrollDirection: Axis.horizontal,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 32,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 2 / 3.20,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(8.0),
-                      children: List.generate(menu.length, (int index) {
-                        return GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                color: menu[index].color!,
-                              ),
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    menu[index].title!,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black),
+          BlocListener(
+              bloc: appStatusBloc,
+              listener: (_, AppStatusState state) {
+                if (state is AppStatusLoading) {}
+                if (state is AppStatusLoaded) {}
+                if (state is AppStatusError) {}
+                if (state is AppStatusException) {}
+              },
+              child: BlocBuilder(
+                  bloc: appStatusBloc,
+                  builder: (_, AppStatusState state) {
+                    if (state is AppStatusLoading) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.33,
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: GridView.count(
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 32,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 2 / 3.20,
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(8.0),
+                            children: List.generate(9, (int index) {
+                              return GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(18),
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade300),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          '',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade300),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '',
+                                          style: TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade300),
+                                        ),
+                                      ],
+                                    )),
+                              );
+                            }),
+                          ),
+                        ),
+                      );
+                    }
+                    if (state is AppStatusLoaded) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: Center(
+                            child: GridView.count(
+                          scrollDirection: Axis.horizontal,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 32,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 2.50 / 3.50,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(8.0),
+                          children: List.generate(
+                              state.appStatusResponseModel.data!.length,
+                              (int index) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: GeneralUtil().isOdd(index) == true
+                                        ? secondaryColor
+                                        : thirdColor,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    menu[index].subTitle!,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            state
+                                                .appStatusResponseModel
+                                                .data![index]
+                                                .applicationStatus!,
+                                            style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            state.appStatusResponseModel
+                                                .data![index].levelStatus!,
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        state.appStatusResponseModel
+                                            .data![index].applicationCount
+                                            .toString(),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  )),
+                            );
+                          }),
+                        )),
+                      );
+                    }
+                    return SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.33,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: GridView.count(
+                          scrollDirection: Axis.horizontal,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 32,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 2 / 3.20,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(8.0),
+                          children: List.generate(9, (int index) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: Colors.grey.shade300,
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    menu[index].content!,
-                                    style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black),
-                                  ),
-                                ],
-                              )),
-                        );
-                      }),
-                    ),
-            ),
-          )
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade300),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade300),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade300),
+                                      ),
+                                    ],
+                                  )),
+                            );
+                          }),
+                        ),
+                      ),
+                    );
+                  }))
         ],
       ),
     );
