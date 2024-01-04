@@ -43,14 +43,14 @@ class TncDataDetailResponseModel {
 }
 
 class Data {
-  int? assetValue;
-  int? dpPct;
-  int? dpAmount;
+  double? assetValue;
+  double? dpPct;
+  double? dpAmount;
   int? tenor;
   String? firstPaymentType;
   String? firstPaymentTypeDesc;
   double? interestFlatRate;
-  int? installmentAmount;
+  double? installmentAmount;
   String? insurancePackageCode;
   String? insurancePackageDesc;
 

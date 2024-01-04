@@ -8,6 +8,7 @@ import 'package:sales_order/features/application_form_3/presentation/bloc/dealer
 import 'package:sales_order/features/application_form_3/presentation/bloc/loan_data_detail_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_3/presentation/bloc/package_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_3/presentation/bloc/update_loan_data_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_4/data/update_asset_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
@@ -28,8 +29,6 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
   int selectIndexDealer = 0;
   String selectDealer = '';
   String selectDealerCode = '';
-  List<String> package = ['Package 1', 'Package 2', 'Package 3', 'Package 4'];
-  List<String> dealer = ['Dealer 1', 'Dealer 2', 'Dealer 3', 'Dealer 4'];
   LoanDataDetailBloc loanDataDetailBloc =
       LoanDataDetailBloc(form3repo: Form3Repo());
   UpdateLoanDataBloc updateLoanDataBloc =
@@ -977,10 +976,12 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                         listener: (_, UpdateLoanDataState state) {
                           if (state is UpdateLoanDataLoading) {}
                           if (state is UpdateLoanDataLoaded) {
-                            Navigator.pushNamed(
-                                context,
-                                StringRouterUtil
-                                    .applicationForm4ScreenTabRoute);
+                            Navigator.pushNamed(context,
+                                StringRouterUtil.applicationForm4ScreenTabRoute,
+                                arguments: UpdateAssetRequestModel(
+                                    pApplicationNo: widget
+                                        .updateLoanDataRequestModel
+                                        .pApplicationNo));
                           }
                           if (state is UpdateLoanDataError) {}
                           if (state is UpdateLoanDataException) {}

@@ -20,3 +20,11 @@ class ClientUpdateAttempt extends ClientEvent {
   @override
   List<Object> get props => [addClientRequestModel];
 }
+
+class ClientUseAttempt extends ClientEvent {
+  const ClientUseAttempt(this.addClientRequestModel);
+  final AddClientRequestModel addClientRequestModel;
+
+  @override
+  List<Object> get props => [addClientRequestModel];
+}

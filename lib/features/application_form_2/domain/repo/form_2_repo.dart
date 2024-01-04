@@ -19,4 +19,8 @@ class Form2Repo {
   Future<AddClientResponseModel> attemptUpdateClient(
           AddClientRequestModel addClientRequestModel) =>
       form2api.attemptUpdateClient(addClientRequestModel);
+
+  Future<AddClientResponseModel> attemptUseClient(
+          AddClientRequestModel addClientRequestModel) =>
+      form2api.attemptUseClient(addClientRequestModel);
 }

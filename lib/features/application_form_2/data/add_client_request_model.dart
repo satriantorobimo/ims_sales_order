@@ -1,4 +1,8 @@
 class AddClientRequestModel {
+  String? pClientCode;
+  String? pClientNo;
+  String? pDocNo;
+  String? pDocType;
   String? pIdNo;
   String? pFullName;
   String? pBranchCode;
@@ -55,7 +59,11 @@ class AddClientRequestModel {
   String? pWorkTypeCode;
 
   AddClientRequestModel(
-      {this.pIdNo,
+      {this.pClientCode,
+      this.pClientNo,
+      this.pDocNo,
+      this.pDocType,
+      this.pIdNo,
       this.pFullName,
       this.pBranchCode,
       this.pBranchName,
@@ -109,6 +117,19 @@ class AddClientRequestModel {
       this.pWorkPosition,
       this.pWorkStartDate,
       this.pWorkTypeCode});
+
+  Map<String, dynamic> toJsonUse() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['p_client_code'] = pClientCode;
+    data['p_client_no'] = pClientNo;
+    data['p_doc_no'] = pDocNo;
+    data['p_doc_type'] = pDocType;
+    data['p_branch_code'] = pBranchCode;
+    data['p_branch_name'] = pBranchName;
+    data['p_marketing_code'] = pMarketingCode;
+    data['p_marketing_name'] = pMarketingName;
+    return data;
+  }
 
   Map<String, dynamic> toJsonNewClient() {
     final Map<String, dynamic> data = <String, dynamic>{};

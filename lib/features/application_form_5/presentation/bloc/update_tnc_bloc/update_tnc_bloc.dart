@@ -18,7 +18,7 @@ class UpdateTncBloc extends Bloc<UpdateTncEvent, UpdateTncState> {
           } else if (addClientResponseModel.result == 0) {
             emit(UpdateTncError(addClientResponseModel.message));
           } else {
-            emit(const UpdateTncException('error'));
+            emit(UpdateTncException(addClientResponseModel.message!));
           }
         } catch (e) {
           emit(UpdateTncException(e.toString()));

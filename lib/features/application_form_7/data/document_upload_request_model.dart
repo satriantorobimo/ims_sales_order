@@ -2,8 +2,8 @@ class DocumentUploadRequestModel {
   String? pModule;
   String? pHeader;
   String? pChild;
-  String? pId;
-  String? pFilePaths;
+  int? pId;
+  int? pFilePaths;
   String? pFileName;
   String? pBase64;
 

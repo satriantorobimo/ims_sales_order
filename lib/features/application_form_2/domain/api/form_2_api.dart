@@ -140,4 +140,35 @@ class Form2Api {
       throw ex.toString();
     }
   }
+
+  Future<AddClientResponseModel> attemptUseClient(
+      AddClientRequestModel addClientRequestModel) async {
+    List a = [];
+    final String? token = await SharedPrefUtil.getSharedString('token');
+
+    final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
+    a.add(addClientRequestModel.toJsonUse());
+
+    final json = jsonEncode(a);
+
+    try {
+      Stopwatch stopwatch = Stopwatch()..start();
+      final res = await http.post(Uri.parse(urlUtil.getUrlUseClient()),
+          body: json, headers: header);
+      if (res.statusCode == 200) {
+        stopwatch.stop();
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        return addClientResponseModel;
+      } else if (res.statusCode == 401) {
+        throw 'expired';
+      } else {
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        throw addClientResponseModel.message!;
+      }
+    } catch (ex) {
+      throw ex.toString();
+    }
+  }
 }

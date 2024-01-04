@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_5/data/look_up_insurance_package_model.dart';
 import 'package:sales_order/features/application_form_5/data/update_tnc_request_model.dart';
+import 'package:sales_order/features/application_form_5/domain/repo/form_5_repo.dart';
+import 'package:sales_order/features/application_form_5/presentation/bloc/fee_data_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_5/presentation/bloc/insurance_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_5/presentation/bloc/tnc_data_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_5/presentation/bloc/update_tnc_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm5TabScreen extends StatefulWidget {
@@ -14,28 +22,30 @@ class ApplicationForm5TabScreen extends StatefulWidget {
 }
 
 class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
-  String condition = 'Arrear';
-  String condition3 = 'Arrear';
-  String condition2 = 'Arrear';
-  bool isPresent = false;
+  String condition = 'ARREAR';
 
-  int selectIndexInsurance = 0;
+  int selectIndexInsurance = 10000;
   String selectInsurance = '';
+  String selectInsuranceCode = '';
+  int tenor = 0;
 
-  List<String> insurance = [
-    'Insurance 1',
-    'Insurance 2',
-    'Insurance 3',
-    'Insurance 4'
-  ];
+  InsuranceBloc insuranceBloc = InsuranceBloc(form5repo: Form5Repo());
+  FeeDataBloc feeDataBloc = FeeDataBloc(form5repo: Form5Repo());
+  TncDataBloc tncDataBloc = TncDataBloc(form5repo: Form5Repo());
+  UpdateTncBloc updateTncBloc = UpdateTncBloc(form5repo: Form5Repo());
 
   @override
   void initState() {
-    selectIndexInsurance = insurance.length;
+    insuranceBloc.add(const InsuranceAttempt(''));
+    feeDataBloc
+        .add(FeeDataAttempt(widget.updateTncRequestModel.pApplicationNo!));
+    tncDataBloc
+        .add(TncDataAttempt(widget.updateTncRequestModel.pApplicationNo!));
     super.initState();
   }
 
-  Future<void> _showBottomInsurance() {
+  Future<void> _showBottomInsurance(
+      LookUpInsurancePackageModel lookUpInsurancePackageModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -91,7 +101,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                       shrinkWrap: true,
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 24),
-                      itemCount: insurance.length,
+                      itemCount: lookUpInsurancePackageModel.data!.length,
                       separatorBuilder: (BuildContext context, int index) {
                         return const Padding(
                           padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -104,9 +114,14 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                             setState(() {
                               if (selectIndexInsurance == index) {
                                 selectInsurance = '';
-                                selectIndexInsurance = insurance.length + 1;
+                                selectInsuranceCode = '';
+                                selectIndexInsurance = 1000;
                               } else {
-                                selectInsurance = insurance[index];
+                                selectInsurance = lookUpInsurancePackageModel
+                                    .data![index].packageName!;
+                                selectInsuranceCode =
+                                    lookUpInsurancePackageModel
+                                        .data![index].code!;
                                 selectIndexInsurance = index;
                               }
                             });
@@ -116,7 +131,8 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                insurance[index],
+                                lookUpInsurancePackageModel
+                                    .data![index].packageName!,
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -441,721 +457,1092 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                   padding:
                       const EdgeInsets.only(left: 22.0, right: 20.0, top: 8.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
+                      BlocListener(
+                          bloc: tncDataBloc,
+                          listener: (_, TncDataState state) {
+                            if (state is TncDataLoading) {}
+                            if (state is TncDataLoaded) {
+                              condition = state.tncDataDetailResponseModel
+                                  .data![0].firstPaymentTypeDesc!;
+                              tenor = state
+                                  .tncDataDetailResponseModel.data![0].tenor!;
+                            }
+                            if (state is TncDataError) {}
+                            if (state is TncDataException) {}
+                          },
+                          child: BlocBuilder(
+                              bloc: tncDataBloc,
+                              builder: (_, TncDataState state) {
+                                if (state is TncDataLoading) {
+                                  return Container();
+                                }
+                                if (state is TncDataLoaded) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'Payment Type',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
                                       SizedBox(
-                                        height: 52,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition = 'Arrear';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition == 'Arrear'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('ARREAR',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition = 'Advance';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition == 'Advance'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('ADVANCE',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Flat Rate (p.a)',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 280,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Color(0xFFFAF9F9),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            '190.0000000',
-                                            style: const TextStyle(
-                                                color: Color(0xFF6E6E6E),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'DP (%)',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 280,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Color(0xFFFAF9F9),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            '0.000000',
-                                            style: const TextStyle(
-                                                color: Color(0xFF6E6E6E),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'DP Amount',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 280,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Color(0xFFFAF9F9),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            '0.00',
-                                            style: const TextStyle(
-                                                color: Color(0xFF6E6E6E),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Installment Amount',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 280,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Color(0xFFFAF9F9),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            '1.000.00',
-                                            style: const TextStyle(
-                                                color: Color(0xFF6E6E6E),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Tenor',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 280,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Color(0xFFFAF9F9),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            '24',
-                                            style: const TextStyle(
-                                                color: Color(0xFF6E6E6E),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: const [
-                                          Text(
-                                            'Insurance Package',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            ' *',
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Stack(
-                                        alignment: const Alignment(0, 0),
-                                        children: [
-                                          InkWell(
-                                            onTap: _showBottomInsurance,
-                                            child: Container(
-                                              width: 280,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1)),
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1),
-                                                    blurRadius: 6,
-                                                    offset: const Offset(-6,
-                                                        4), // Shadow position
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Payment Type',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  SizedBox(
+                                                    height: 52,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              condition =
+                                                                  'ARREAR';
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: condition ==
+                                                                      'ARREAR'
+                                                                  ? primaryColor
+                                                                  : const Color(
+                                                                      0xFFE1E1E1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: const Center(
+                                                                child: Text(
+                                                                    'ARREAR',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.w600))),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              condition =
+                                                                  'ADVANCE';
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: condition ==
+                                                                      'ADVANCE'
+                                                                  ? primaryColor
+                                                                  : const Color(
+                                                                      0xFFE1E1E1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: const Center(
+                                                                child: Text(
+                                                                    'ADVANCE',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.w600))),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                              padding: const EdgeInsets.only(
-                                                  left: 16.0, right: 16.0),
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  selectInsurance == ''
-                                                      ? 'Insurance'
-                                                      : selectInsurance,
-                                                  style: TextStyle(
-                                                      color: selectInsurance ==
-                                                              ''
-                                                          ? Colors.grey
-                                                              .withOpacity(0.5)
-                                                          : Colors.black,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
+                                              const SizedBox(height: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Flat Rate (p.a)',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Container(
+                                                    width: 280,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.1)),
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 6,
+                                                          offset: const Offset(
+                                                              -6,
+                                                              4), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        '${state.tncDataDetailResponseModel.data![0].interestFlatRate}',
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
                                               ),
-                                            ),
-                                          ),
-                                          const Positioned(
-                                            right: 16,
-                                            child: Icon(
-                                              Icons.search_rounded,
-                                              color: Color(0xFF3D3D3D),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'DP (%)',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Container(
+                                                    width: 280,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.1)),
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 6,
+                                                          offset: const Offset(
+                                                              -6,
+                                                              4), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        '${state.tncDataDetailResponseModel.data![0].dpPct}',
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'DP Amount',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Container(
+                                                    width: 280,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.1)),
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 6,
+                                                          offset: const Offset(
+                                                              -6,
+                                                              4), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        '${state.tncDataDetailResponseModel.data![0].dpAmount}',
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Installment Amount',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Container(
+                                                    width: 280,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.1)),
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 6,
+                                                          offset: const Offset(
+                                                              -6,
+                                                              4), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        '${state.tncDataDetailResponseModel.data![0].installmentAmount}',
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Tenor',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Container(
+                                                    width: 280,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.1)),
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 6,
+                                                          offset: const Offset(
+                                                              -6,
+                                                              4), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            right: 16.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        '${state.tncDataDetailResponseModel.data![0].tenor}',
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: const [
+                                                      Text(
+                                                        'Insurance Package',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Text(
+                                                        ' *',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Stack(
+                                                    alignment:
+                                                        const Alignment(0, 0),
+                                                    children: [
+                                                      BlocListener(
+                                                          bloc: insuranceBloc,
+                                                          listener: (_,
+                                                              InsuranceState
+                                                                  state) {
+                                                            if (state
+                                                                is InsuranceLoading) {}
+                                                            if (state
+                                                                is InsuranceLoaded) {}
+                                                            if (state
+                                                                is InsuranceError) {}
+                                                            if (state
+                                                                is InsuranceException) {}
+                                                          },
+                                                          child: BlocBuilder(
+                                                              bloc:
+                                                                  insuranceBloc,
+                                                              builder: (_,
+                                                                  InsuranceState
+                                                                      state) {
+                                                                if (state
+                                                                    is InsuranceLoading) {}
+                                                                if (state
+                                                                    is InsuranceLoaded) {
+                                                                  return InkWell(
+                                                                    onTap: () {
+                                                                      _showBottomInsurance(
+                                                                          state
+                                                                              .lookUpInsurancePackageModel);
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      width:
+                                                                          280,
+                                                                      height:
+                                                                          50,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.grey.withOpacity(0.1)),
+                                                                        color: Colors
+                                                                            .white,
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                            color:
+                                                                                Colors.grey.withOpacity(0.1),
+                                                                            blurRadius:
+                                                                                6,
+                                                                            offset:
+                                                                                const Offset(-6, 4), // Shadow position
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          left:
+                                                                              16.0,
+                                                                          right:
+                                                                              16.0),
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Text(
+                                                                          selectInsurance == ''
+                                                                              ? 'Select Insurance'
+                                                                              : selectInsurance,
+                                                                          style: TextStyle(
+                                                                              color: selectInsurance == '' ? Colors.grey.withOpacity(0.5) : Colors.black,
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.w400),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                }
+                                                                return Container(
+                                                                  width: 280,
+                                                                  height: 50,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(0.1)),
+                                                                    color: Colors
+                                                                        .white,
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(0.1),
+                                                                        blurRadius:
+                                                                            6,
+                                                                        offset: const Offset(
+                                                                            -6,
+                                                                            4), // Shadow position
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      left:
+                                                                          16.0,
+                                                                      right:
+                                                                          16.0),
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                    child: Text(
+                                                                      '',
+                                                                      style: TextStyle(
+                                                                          color: Colors.grey.withOpacity(
+                                                                              0.5),
+                                                                          fontSize:
+                                                                              15,
+                                                                          fontWeight:
+                                                                              FontWeight.w400),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              })),
+                                                      const Positioned(
+                                                        right: 16,
+                                                        child: Icon(
+                                                          Icons.search_rounded,
+                                                          color:
+                                                              Color(0xFF3D3D3D),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          )),
                                     ],
-                                  ),
-                                ],
-                              )),
-                        ],
-                      ),
-                      Padding(
+                                  );
+                                }
+                                return Container();
+                              })),
+                      const Padding(
                           padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
                           child: Divider()),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Biaya Admin',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Material(
-                                        elevation: 6,
-                                        shadowColor:
-                                            Colors.grey.withOpacity(0.4),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            side: const BorderSide(
-                                                width: 1.0,
-                                                color: Color(0xFFEAEAEA))),
-                                        child: SizedBox(
-                                          width: 280,
-                                          height: 50,
-                                          child: TextFormField(
-                                            keyboardType: TextInputType.text,
-                                            decoration: InputDecoration(
-                                                hintText: 'Biaya Admin',
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        16.0, 20.0, 20.0, 16.0),
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5)),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide.none,
-                                                )),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Payment Type',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      SizedBox(
-                                        height: 52,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition = 'Arrear';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition == 'Arrear'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('FULL PAID',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
+                      BlocListener(
+                          bloc: feeDataBloc,
+                          listener: (_, FeeDataState state) {
+                            if (state is FeeDataLoading) {}
+                            if (state is FeeDataLoaded) {}
+                            if (state is FeeDataError) {}
+                            if (state is FeeDataException) {}
+                          },
+                          child: BlocBuilder(
+                              bloc: feeDataBloc,
+                              builder: (_, FeeDataState state) {
+                                if (state is FeeDataLoading) {}
+                                if (state is FeeDataLoaded) {
+                                  return Expanded(
+                                    child: ListView.separated(
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.zero,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: state
+                                            .applicationFeeDetailModel
+                                            .data!
+                                            .length,
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return const SizedBox(width: 16);
+                                        },
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.23,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        state
+                                                            .applicationFeeDetailModel
+                                                            .data![index]
+                                                            .feeDesc!,
+                                                        style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition = 'Advance';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition == 'Advance'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('CAPITAL PAID',
+                                                                    .bold),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Container(
+                                                        width: 280,
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.1)),
+                                                          color: const Color(
+                                                              0xFFFAF9F9),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              blurRadius: 6,
+                                                              offset: const Offset(
+                                                                  -6,
+                                                                  4), // Shadow position
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 16.0,
+                                                                right: 16.0),
+                                                        child: Align(
+                                                          alignment: Alignment
+                                                              .centerRight,
+                                                          child: Text(
+                                                            '${state.applicationFeeDetailModel.data![0].feeAmount}',
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E),
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                        'Payment Type',
                                                         style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
+                                                            color: Colors.black,
+                                                            fontSize: 18,
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.23,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Biaya Provisi',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Material(
-                                        elevation: 6,
-                                        shadowColor:
-                                            Colors.grey.withOpacity(0.4),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            side: const BorderSide(
-                                                width: 1.0,
-                                                color: Color(0xFFEAEAEA))),
-                                        child: SizedBox(
-                                          width: 280,
-                                          height: 50,
-                                          child: TextFormField(
-                                            keyboardType: TextInputType.text,
-                                            decoration: InputDecoration(
-                                                hintText: 'Biaya Provisi',
-                                                isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        16.0, 20.0, 20.0, 16.0),
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5)),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide.none,
-                                                )),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Payment Type',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      SizedBox(
-                                        height: 52,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition2 = 'Arrear';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition2 == 'Arrear'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('FULL PAID',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  condition2 = 'Advance';
-                                                });
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: condition2 == 'Advance'
-                                                      ? primaryColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: const Center(
-                                                    child: Text('CAPITAL PAID',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.23,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.23,
-                          ),
-                        ],
-                      ),
+                                                                    .bold),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      SizedBox(
+                                                        height: 52,
+                                                        child: Container(
+                                                          height: 40,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: primaryColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: Center(
+                                                              child: Text(
+                                                                  state
+                                                                      .applicationFeeDetailModel
+                                                                      .data![0]
+                                                                      .feePaymentType!,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600))),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ));
+                                        }),
+                                  );
+                                }
+                                return Container();
+                              })),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     SizedBox(
+                      //         width: MediaQuery.of(context).size.width * 0.23,
+                      //         child: Column(
+                      //           crossAxisAlignment: CrossAxisAlignment.start,
+                      //           children: [
+                      //             Column(
+                      //               crossAxisAlignment:
+                      //                   CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Text(
+                      //                   'Biaya Admin',
+                      //                   style: TextStyle(
+                      //                       color: Colors.black,
+                      //                       fontSize: 18,
+                      //                       fontWeight: FontWeight.bold),
+                      //                 ),
+                      //                 const SizedBox(height: 8),
+                      //                 Material(
+                      //                   elevation: 6,
+                      //                   shadowColor:
+                      //                       Colors.grey.withOpacity(0.4),
+                      //                   shape: RoundedRectangleBorder(
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(10),
+                      //                       side: const BorderSide(
+                      //                           width: 1.0,
+                      //                           color: Color(0xFFEAEAEA))),
+                      //                   child: SizedBox(
+                      //                     width: 280,
+                      //                     height: 50,
+                      //                     child: TextFormField(
+                      //                       keyboardType: TextInputType.text,
+                      //                       decoration: InputDecoration(
+                      //                           hintText: 'Biaya Admin',
+                      //                           isDense: true,
+                      //                           contentPadding:
+                      //                               const EdgeInsets.fromLTRB(
+                      //                                   16.0, 20.0, 20.0, 16.0),
+                      //                           hintStyle: TextStyle(
+                      //                               color: Colors.grey
+                      //                                   .withOpacity(0.5)),
+                      //                           filled: true,
+                      //                           fillColor: Colors.white,
+                      //                           border: OutlineInputBorder(
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                             borderSide: BorderSide.none,
+                      //                           )),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             const SizedBox(height: 20),
+                      //             Column(
+                      //               crossAxisAlignment:
+                      //                   CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Text(
+                      //                   'Payment Type',
+                      //                   style: TextStyle(
+                      //                       color: Colors.black,
+                      //                       fontSize: 18,
+                      //                       fontWeight: FontWeight.bold),
+                      //                 ),
+                      //                 const SizedBox(height: 8),
+                      //                 SizedBox(
+                      //                   height: 52,
+                      //                   child: Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.start,
+                      //                     children: [
+                      //                       InkWell(
+                      //                         onTap: () {
+                      //                           setState(() {
+                      //                             condition = 'Arrear';
+                      //                           });
+                      //                         },
+                      //                         child: Container(
+                      //                           height: 40,
+                      //                           padding:
+                      //                               const EdgeInsets.all(8.0),
+                      //                           decoration: BoxDecoration(
+                      //                             color: condition == 'Arrear'
+                      //                                 ? primaryColor
+                      //                                 : const Color(0xFFE1E1E1),
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                           ),
+                      //                           child: const Center(
+                      //                               child: Text('FULL PAID',
+                      //                                   style: TextStyle(
+                      //                                       fontSize: 15,
+                      //                                       color: Colors.white,
+                      //                                       fontWeight:
+                      //                                           FontWeight
+                      //                                               .w600))),
+                      //                         ),
+                      //                       ),
+                      //                       const SizedBox(width: 8),
+                      //                       InkWell(
+                      //                         onTap: () {
+                      //                           setState(() {
+                      //                             condition = 'Advance';
+                      //                           });
+                      //                         },
+                      //                         child: Container(
+                      //                           height: 40,
+                      //                           padding:
+                      //                               const EdgeInsets.all(8.0),
+                      //                           decoration: BoxDecoration(
+                      //                             color: condition == 'Advance'
+                      //                                 ? primaryColor
+                      //                                 : const Color(0xFFE1E1E1),
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                           ),
+                      //                           child: const Center(
+                      //                               child: Text('CAPITAL PAID',
+                      //                                   style: TextStyle(
+                      //                                       fontSize: 15,
+                      //                                       color: Colors.white,
+                      //                                       fontWeight:
+                      //                                           FontWeight
+                      //                                               .w600))),
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ],
+                      //         )),
+                      //     SizedBox(
+                      //         width: MediaQuery.of(context).size.width * 0.23,
+                      //         child: Column(
+                      //           crossAxisAlignment: CrossAxisAlignment.start,
+                      //           children: [
+                      //             Column(
+                      //               crossAxisAlignment:
+                      //                   CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Text(
+                      //                   'Biaya Provisi',
+                      //                   style: TextStyle(
+                      //                       color: Colors.black,
+                      //                       fontSize: 18,
+                      //                       fontWeight: FontWeight.bold),
+                      //                 ),
+                      //                 const SizedBox(height: 8),
+                      //                 Material(
+                      //                   elevation: 6,
+                      //                   shadowColor:
+                      //                       Colors.grey.withOpacity(0.4),
+                      //                   shape: RoundedRectangleBorder(
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(10),
+                      //                       side: const BorderSide(
+                      //                           width: 1.0,
+                      //                           color: Color(0xFFEAEAEA))),
+                      //                   child: SizedBox(
+                      //                     width: 280,
+                      //                     height: 50,
+                      //                     child: TextFormField(
+                      //                       keyboardType: TextInputType.text,
+                      //                       decoration: InputDecoration(
+                      //                           hintText: 'Biaya Provisi',
+                      //                           isDense: true,
+                      //                           contentPadding:
+                      //                               const EdgeInsets.fromLTRB(
+                      //                                   16.0, 20.0, 20.0, 16.0),
+                      //                           hintStyle: TextStyle(
+                      //                               color: Colors.grey
+                      //                                   .withOpacity(0.5)),
+                      //                           filled: true,
+                      //                           fillColor: Colors.white,
+                      //                           border: OutlineInputBorder(
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                             borderSide: BorderSide.none,
+                      //                           )),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             const SizedBox(height: 20),
+                      //             Column(
+                      //               crossAxisAlignment:
+                      //                   CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Text(
+                      //                   'Payment Type',
+                      //                   style: TextStyle(
+                      //                       color: Colors.black,
+                      //                       fontSize: 18,
+                      //                       fontWeight: FontWeight.bold),
+                      //                 ),
+                      //                 const SizedBox(height: 8),
+                      //                 SizedBox(
+                      //                   height: 52,
+                      //                   child: Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.start,
+                      //                     children: [
+                      //                       InkWell(
+                      //                         onTap: () {
+                      //                           setState(() {
+                      //                             condition2 = 'Arrear';
+                      //                           });
+                      //                         },
+                      //                         child: Container(
+                      //                           height: 40,
+                      //                           padding:
+                      //                               const EdgeInsets.all(8.0),
+                      //                           decoration: BoxDecoration(
+                      //                             color: condition2 == 'Arrear'
+                      //                                 ? primaryColor
+                      //                                 : const Color(0xFFE1E1E1),
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                           ),
+                      //                           child: const Center(
+                      //                               child: Text('FULL PAID',
+                      //                                   style: TextStyle(
+                      //                                       fontSize: 15,
+                      //                                       color: Colors.white,
+                      //                                       fontWeight:
+                      //                                           FontWeight
+                      //                                               .w600))),
+                      //                         ),
+                      //                       ),
+                      //                       const SizedBox(width: 8),
+                      //                       InkWell(
+                      //                         onTap: () {
+                      //                           setState(() {
+                      //                             condition2 = 'Advance';
+                      //                           });
+                      //                         },
+                      //                         child: Container(
+                      //                           height: 40,
+                      //                           padding:
+                      //                               const EdgeInsets.all(8.0),
+                      //                           decoration: BoxDecoration(
+                      //                             color: condition2 == 'Advance'
+                      //                                 ? primaryColor
+                      //                                 : const Color(0xFFE1E1E1),
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(10),
+                      //                           ),
+                      //                           child: const Center(
+                      //                               child: Text('CAPITAL PAID',
+                      //                                   style: TextStyle(
+                      //                                       fontSize: 15,
+                      //                                       color: Colors.white,
+                      //                                       fontWeight:
+                      //                                           FontWeight
+                      //                                               .w600))),
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ],
+                      //         )),
+                      //     SizedBox(
+                      //       width: MediaQuery.of(context).size.width * 0.23,
+                      //     ),
+                      //     SizedBox(
+                      //       width: MediaQuery.of(context).size.width * 0.23,
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
@@ -1186,26 +1573,96 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context,
-                            StringRouterUtil.applicationForm7ScreenTabRoute);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: thirdColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                            child: Text('NEXT',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600))),
-                      ),
-                    ),
+                    BlocListener(
+                        bloc: updateTncBloc,
+                        listener: (_, UpdateTncState state) {
+                          if (state is UpdateTncLoading) {}
+                          if (state is UpdateTncLoaded) {
+                            Navigator.pushNamed(context,
+                                StringRouterUtil.applicationForm7ScreenTabRoute,
+                                arguments: widget
+                                    .updateTncRequestModel.pApplicationNo);
+                          }
+                          if (state is UpdateTncError) {
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
+                          if (state is UpdateTncException) {}
+                        },
+                        child: BlocBuilder(
+                            bloc: updateTncBloc,
+                            builder: (_, UpdateTncState state) {
+                              if (state is UpdateTncLoading) {
+                                return const SizedBox(
+                                  width: 200,
+                                  height: 45,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (state is UpdateTncLoaded) {
+                                return InkWell(
+                                  onTap: () {
+                                    updateTncBloc.add(UpdateTncAttempt(
+                                        UpdateTncRequestModel(
+                                            pApplicationNo: widget
+                                                .updateTncRequestModel
+                                                .pApplicationNo,
+                                            pInsurancePackageCode:
+                                                selectInsuranceCode,
+                                            pPaymentType: condition,
+                                            pTenor: tenor)));
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                        child: Text('NEXT',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600))),
+                                  ),
+                                );
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  // Navigator.pushNamed(
+                                  //     context,
+                                  //     StringRouterUtil
+                                  //         .applicationForm7ScreenTabRoute,
+                                  //     arguments: widget.updateTncRequestModel
+                                  //         .pApplicationNo);
+                                  updateTncBloc.add(UpdateTncAttempt(
+                                      UpdateTncRequestModel(
+                                          pApplicationNo: widget
+                                              .updateTncRequestModel
+                                              .pApplicationNo,
+                                          pInsurancePackageCode:
+                                              selectInsuranceCode,
+                                          pPaymentType: condition,
+                                          pTenor: tenor)));
+                                },
+                                child: Container(
+                                  width: 200,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: thirdColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                      child: Text('NEXT',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600))),
+                                ),
+                              );
+                            })),
                   ],
                 ),
               ),

@@ -86,7 +86,7 @@ class Form4Api {
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
     final Map mapData = {};
-    mapData['p_merk_code'] = code;
+    mapData['p_model_code'] = code;
     a.add(mapData);
 
     final json = jsonEncode(a);
@@ -116,7 +116,7 @@ class Form4Api {
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
     final Map mapData = {};
-    mapData['p_model_code'] = code;
+    mapData['p_merk_code'] = code;
     a.add(mapData);
 
     final json = jsonEncode(a);

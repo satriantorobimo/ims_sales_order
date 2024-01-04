@@ -12,14 +12,14 @@ class CustDropDown<T> extends StatefulWidget {
 
   const CustDropDown(
       {required this.items,
-        required this.onChanged,
-        this.hintText = "",
-        this.borderRadius = 0,
-        this.borderWidth = 1,
-        this.maxListHeight = 100,
-        this.defaultSelectedIndex = -1,
-        Key? key,
-        this.enabled = true})
+      required this.onChanged,
+      this.hintText = "",
+      this.borderRadius = 0,
+      this.borderWidth = 1,
+      this.maxListHeight = 100,
+      this.defaultSelectedIndex = -1,
+      Key? key,
+      this.enabled = true})
       : super(key: key);
 
   @override
@@ -95,68 +95,68 @@ class _CustDropDownState extends State<CustDropDown>
     return OverlayEntry(
         maintainState: false,
         builder: (context) => Align(
-          alignment: Alignment.center,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset: dropDownOffset,
-            child: SizedBox(
-              height: widget.maxListHeight,
-              width: size.width,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: _isReverse
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      constraints: BoxConstraints(
-                          maxHeight: widget.maxListHeight,
-                          maxWidth: size.width),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(widget.borderRadius),
-                        ),
-                        child: Material(
-                          elevation: 0,
-                          shadowColor: Colors.grey,
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            children: widget.items
-                                .map((item) => GestureDetector(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: item.child,
+              alignment: Alignment.center,
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: dropDownOffset,
+                child: SizedBox(
+                  height: widget.maxListHeight,
+                  width: size.width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: _isReverse
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Container(
+                          constraints: BoxConstraints(
+                              maxHeight: widget.maxListHeight,
+                              maxWidth: size.width),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(widget.borderRadius),
+                            ),
+                            child: Material(
+                              elevation: 0,
+                              shadowColor: Colors.grey,
+                              child: ListView(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                children: widget.items
+                                    .map((item) => GestureDetector(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: item.child,
+                                          ),
+                                          onTap: () {
+                                            if (mounted) {
+                                              setState(() {
+                                                _isAnyItemSelected = true;
+                                                _itemSelected = item.child;
+                                                _removeOverlay();
+                                                if (widget.onChanged != null)
+                                                  widget.onChanged(item.value);
+                                              });
+                                            }
+                                          },
+                                        ))
+                                    .toList(),
                               ),
-                              onTap: () {
-                                if (mounted) {
-                                  setState(() {
-                                    _isAnyItemSelected = true;
-                                    _itemSelected = item.child;
-                                    _removeOverlay();
-                                    if (widget.onChanged != null)
-                                      widget.onChanged(item.value);
-                                  });
-                                }
-                              },
-                            ))
-                                .toList(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ));
+            ));
   }
 
   Offset getOffset() {
@@ -192,8 +192,8 @@ class _CustDropDownState extends State<CustDropDown>
       child: GestureDetector(
         onTap: widget.enabled
             ? () {
-          _isOpen ? _removeOverlay() : _addOverlay();
-        }
+                _isOpen ? _removeOverlay() : _addOverlay();
+              }
             : null,
         child: Container(
           decoration: _getDecoration(),
@@ -204,18 +204,18 @@ class _CustDropDownState extends State<CustDropDown>
                 flex: 3,
                 child: _isAnyItemSelected
                     ? Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: _itemSelected!,
-                )
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: _itemSelected!,
+                      )
                     : Padding(
-                  padding:
-                  const EdgeInsets.only(left: 4.0), // change it here
-                  child: Text(
-                    widget.hintText,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                  ),
-                ),
+                        padding:
+                            const EdgeInsets.only(left: 4.0), // change it here
+                        child: Text(
+                          widget.hintText,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                        ),
+                      ),
               ),
               const Flexible(
                 flex: 1,

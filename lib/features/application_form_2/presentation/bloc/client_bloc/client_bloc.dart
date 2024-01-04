@@ -42,6 +42,24 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
           emit(ClientException(e.toString()));
         }
       }
+
+      if (event is ClientUseAttempt) {
+        try {
+          emit(ClientLoading());
+          final addClientResponseModel =
+              await form2repo.attemptUseClient(event.addClientRequestModel);
+          if (addClientResponseModel.result == 1) {
+            emit(ClientUseLoaded(
+                addClientResponseModel: addClientResponseModel));
+          } else if (addClientResponseModel.result == 0) {
+            emit(ClientError(addClientResponseModel.message));
+          } else {
+            emit(const ClientException('error'));
+          }
+        } catch (e) {
+          emit(ClientException(e.toString()));
+        }
+      }
     });
   }
 }

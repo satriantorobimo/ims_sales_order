@@ -126,6 +126,13 @@ class UrlUtil {
     return baseUrl + getUrlLookUpBank2;
   }
 
+  static String urlGetClient() => 'api/mobso_api/api/Client/ClientDetailGetRow';
+
+  String getUrlGetClient() {
+    final String getUrlGetClient2 = urlGetClient();
+    return baseUrl + getUrlGetClient2;
+  }
+
   static String urlAddClient() => 'api/mobso_api/api/Application/AddNewClient';
 
   String getUrlAddClient() {
@@ -138,6 +145,14 @@ class UrlUtil {
   String getUrlUpdateClient() {
     final String getUrlUpdateClient2 = urlUpdateClient();
     return baseUrl + getUrlUpdateClient2;
+  }
+
+  static String urlUseClient() =>
+      'api/mobso_api/api/Application/AddExistingClient';
+
+  String getUrlUseClient() {
+    final String getUrlUseClient2 = urlUseClient();
+    return baseUrl + getUrlUseClient2;
   }
 
   static String urlLookUpPackage() =>
@@ -240,5 +255,41 @@ class UrlUtil {
   String getUrlFeeDetail() {
     final String getUrlFeeDetail2 = urlFeeDetail();
     return baseUrl + getUrlFeeDetail2;
+  }
+
+  static String urlDocList() => 'api/mobso_api/api/Document/Getrow';
+
+  String getUrlDocList() {
+    final String getUrlDocList2 = urlDocList();
+    return baseUrl + getUrlDocList2;
+  }
+
+  static String urlDocPreview() => 'api/mobso_api/api/Document/Preview';
+
+  String getUrlDocPreview() {
+    final String getUrlDocPreview2 = urlDocPreview();
+    return baseUrl + getUrlDocPreview2;
+  }
+
+  static String urlDocUpload() => 'api/mobso_api/api/Document/UploadFile';
+
+  String getUrlDocUpload() {
+    final String getUrlDocUpload2 = urlDocUpload();
+    return baseUrl + getUrlDocUpload2;
+  }
+
+  static String urlDetailSummary() =>
+      'api/mobso_api/api/Application/GetSummary';
+
+  String getUrlDetailSummary() {
+    final String getUrlDetailSummary2 = urlDetailSummary();
+    return baseUrl + getUrlDetailSummary2;
+  }
+
+  static String urlSubmitSummary() => 'api/mobso_api/api/Application/Submit';
+
+  String getUrlSubmitSummary() {
+    final String getUrlSubmitSummary2 = urlSubmitSummary();
+    return baseUrl + getUrlSubmitSummary2;
   }
 }

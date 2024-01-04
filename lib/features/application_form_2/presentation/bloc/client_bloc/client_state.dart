@@ -20,6 +20,14 @@ class ClientAddLoaded extends ClientState {
   List<Object> get props => [addClientResponseModel];
 }
 
+class ClientUseLoaded extends ClientState {
+  const ClientUseLoaded({required this.addClientResponseModel});
+  final AddClientResponseModel addClientResponseModel;
+
+  @override
+  List<Object> get props => [addClientResponseModel];
+}
+
 class ClientUpdateLoaded extends ClientState {
   const ClientUpdateLoaded({required this.addClientResponseModel});
   final AddClientResponseModel addClientResponseModel;

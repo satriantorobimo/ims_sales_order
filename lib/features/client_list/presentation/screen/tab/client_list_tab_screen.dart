@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sales_order/features/application_list/presentation/widget/detail_info_widget.dart';
+import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/features/client_list/data/client_list_model.dart';
+import 'package:sales_order/features/client_list/data/client_matching_personal_response_model.dart';
 import 'package:sales_order/features/client_list/domain/repo/client_matching_repo.dart';
 import 'package:sales_order/features/client_list/presentation/bloc/client_match_bloc/bloc.dart';
+import 'package:sales_order/features/client_list/presentation/widget/detail_info_widget.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/database_helper.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:sales_order/features/client_list/data/client_matching_personal_response_model.dart'
+    as resp;
 
 class ClientListTabScreen extends StatefulWidget {
   const ClientListTabScreen({super.key, required this.clientMathcingModel});
@@ -21,9 +27,12 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
   bool isEmpty = false;
   List<ClientListModel> menu = [];
   var selectedPageNumber = 0;
-  var pagination = 5;
+  var pagination = 0;
+  final int _perPage = 12;
   ClientMatchBloc clientMatchBloc =
       ClientMatchBloc(clientMatchingRepo: ClientMatchingRepo());
+  late List<resp.Data> data = [];
+  late List<resp.Data> dataFilter = [];
 
   @override
   void initState() {
@@ -42,155 +51,172 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
     super.initState();
   }
 
-  Future<void> _showAlertDialogDetail() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          // <-- SEE HERE
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Detail',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.black,
-                  size: 24,
-                ),
-              )
-            ],
+  Future<void> _showBottomDialog(Data clientMathcingPersonalResponseModel) {
+    String date;
+    if (clientMathcingPersonalResponseModel.dateOfBirth != null) {
+      DateTime tempDate = DateFormat('dd/MM/yyyy')
+          .parse(clientMathcingPersonalResponseModel.dateOfBirth!);
+      var inputDate = DateTime.parse(tempDate.toString());
+      var outputFormat = DateFormat('dd/MM/yyyy');
+      date = outputFormat.format(inputDate);
+    } else {
+      date = '';
+    }
+    return showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(24),
           ),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(24.0))),
-          content: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.height * 0.55,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        DetailInfoWidget(
-                            title: 'Client No',
-                            content: 'PSN.2103.00005',
-                            type: false),
-                        DetailInfoWidget(
-                            title: 'Branch',
-                            content: 'HEAD OFFICE',
-                            type: false),
-                      ],
+                    const Text(
+                      'Detail',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        DetailInfoWidget(
-                            title: 'Full Name',
-                            content: 'WAWAN SETIAWAN',
-                            type: false),
-                        DetailInfoWidget(
-                            title: 'ID No',
-                            content: '763284639753659334',
-                            type: false),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        DetailInfoWidget(
-                            title: 'Mother Maiden Name',
-                            content: 'SENIPAH',
-                            type: false),
-                        DetailInfoWidget(
-                            title: 'Place of Birth',
-                            content: 'BANDUNG',
-                            type: false),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        DetailInfoWidget(
-                            title: 'Date of Birth',
-                            content: '11/11/2022',
-                            type: false),
-                        DetailInfoWidget(
-                            title: 'Watchlist Status',
-                            content: 'CLEAR',
-                            type: true),
-                      ],
-                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                    )
                   ],
                 ),
-              )),
-          actionsPadding: const EdgeInsets.only(bottom: 24.0),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    width: 200,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: secondaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(
-                        child: Text('CLOSE',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600))),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 24.0, left: 24, right: 24, bottom: 16),
+                child: Row(
+                  children: [
+                    DetailInfoWidget(
+                        title: 'Client No',
+                        content: clientMathcingPersonalResponseModel.clientNo!,
+                        type: false),
+                    const SizedBox(width: 16),
+                    const DetailInfoWidget(
+                        title: 'Branch', content: 'HEAD OFFICE', type: false),
+                    const SizedBox(width: 16),
+                    DetailInfoWidget(
+                        title: 'Full Name',
+                        content: clientMathcingPersonalResponseModel.fullName!,
+                        type: false),
+                    const SizedBox(width: 16),
+                    DetailInfoWidget(
+                        title: 'ID No',
+                        content: clientMathcingPersonalResponseModel.idNo!,
+                        type: false),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context,
-                        StringRouterUtil.applicationForm1ScreenTabRoute);
-                  },
-                  child: Container(
-                    width: 200,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Center(
-                        child: Text('USE',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600))),
-                  ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                child: Row(
+                  children: [
+                    DetailInfoWidget(
+                        title: 'Mother Maiden Name',
+                        content: clientMathcingPersonalResponseModel
+                            .motherMaidenName!,
+                        type: false),
+                    const SizedBox(width: 16),
+                    DetailInfoWidget(
+                        title: 'Place of Birth',
+                        content:
+                            clientMathcingPersonalResponseModel.placeOfBirth!,
+                        type: false),
+                    const SizedBox(width: 16),
+                    DetailInfoWidget(
+                        title: 'Date of Birth', content: date, type: false),
+                    const SizedBox(width: 16),
+                    DetailInfoWidget(
+                        title: 'Watchlist Status',
+                        content: clientMathcingPersonalResponseModel
+                            .checkStatus!
+                            .toUpperCase(),
+                        type: true),
+                  ],
                 ),
-              ],
-            )
-          ],
-        );
-      },
-    );
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                          child: Text('CLOSE',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600))),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () async {
+                      final data = await DatabaseHelper.getUserData(1);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushNamed(context,
+                          StringRouterUtil.applicationForm1UseScreenTabRoute,
+                          arguments: AddClientRequestModel(
+                              pMarketingCode: data[0]['uid'],
+                              pMarketingName: data[0]['name'],
+                              pBranchCode: data[0]['branch_code'],
+                              pBranchName: data[0]['branch_name'],
+                              pClientCode: clientMathcingPersonalResponseModel
+                                  .clientCode,
+                              pClientNo:
+                                  clientMathcingPersonalResponseModel.clientNo,
+                              pDocNo: clientMathcingPersonalResponseModel.idNo,
+                              pDocType: 'KTP'));
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                          child: Text('USE',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600))),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+            ],
+          );
+        });
   }
 
   @override
@@ -266,7 +292,31 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                           listener: (_, ClientMatchState state) {
                             if (state is ClientMatchLoading) {}
                             if (state is ClientMatchCorpLoaded) {}
-                            if (state is ClientMatchPersonalLoaded) {}
+                            if (state is ClientMatchPersonalLoaded) {
+                              setState(() {
+                                pagination = (state
+                                            .clientMathcingPersonalResponseModel
+                                            .data!
+                                            .length /
+                                        12)
+                                    .ceil();
+                                if (pagination == 1) {
+                                  dataFilter = state
+                                      .clientMathcingPersonalResponseModel
+                                      .data!;
+                                } else {
+                                  dataFilter = state
+                                      .clientMathcingPersonalResponseModel.data!
+                                      .sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                }
+
+                                data.addAll(state
+                                    .clientMathcingPersonalResponseModel.data!);
+                              });
+                            }
                             if (state is ClientMatchError) {}
                             if (state is ClientMatchException) {}
                           },
@@ -408,7 +458,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                     .length, (int index) {
                                           return GestureDetector(
                                             onTap: () {
-                                              _showAlertDialogDetail();
+                                              // _showAlertDialogDetail();
                                             },
                                             child: Container(
                                                 decoration: BoxDecoration(
@@ -539,34 +589,60 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     color: Colors
                                                                         .black),
                                                               ),
-                                                              Container(
-                                                                width: 80,
-                                                                height: 30,
-                                                                decoration: BoxDecoration(
-                                                                    color: state.clientMathcingCorpResponseModel.data![index].checkStatus ==
-                                                                            'CLEAR'
-                                                                        ? primaryColor
-                                                                        : const Color(
-                                                                            0xFFC6C6C6),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            6)),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
+                                                              InkWell(
+                                                                onTap: state
+                                                                            .clientMathcingCorpResponseModel
+                                                                            .data![index]
+                                                                            .checkStatus ==
+                                                                        'CLEAR'
+                                                                    ? () async {
+                                                                        final data =
+                                                                            await DatabaseHelper.getUserData(1);
+                                                                        // ignore: use_build_context_synchronously
+                                                                        Navigator.pushNamed(
+                                                                            context,
+                                                                            StringRouterUtil
+                                                                                .applicationForm1UseScreenTabRoute,
+                                                                            arguments: AddClientRequestModel(
+                                                                                pMarketingCode: data[0]['uid'],
+                                                                                pMarketingName: data[0]['name'],
+                                                                                pBranchCode: data[0]['branch_code'],
+                                                                                pBranchName: data[0]['branch_name'],
+                                                                                pClientCode: state.clientMathcingCorpResponseModel.data![index].clientCode,
+                                                                                pClientNo: state.clientMathcingCorpResponseModel.data![index].clientNo,
+                                                                                pDocNo: state.clientMathcingCorpResponseModel.data![index].idNo,
+                                                                                pDocType: 'KTP'));
+                                                                      }
+                                                                    : null,
                                                                 child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    'Use',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            11,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w300,
-                                                                        color: Colors
-                                                                            .white),
+                                                                    Container(
+                                                                  width: 80,
+                                                                  height: 30,
+                                                                  decoration: BoxDecoration(
+                                                                      color: state.clientMathcingCorpResponseModel.data![index].checkStatus ==
+                                                                              'CLEAR'
+                                                                          ? primaryColor
+                                                                          : const Color(
+                                                                              0xFFC6C6C6),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              6)),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          8.0),
+                                                                  child:
+                                                                      const Center(
+                                                                    child: Text(
+                                                                      'Use',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              11,
+                                                                          fontWeight: FontWeight
+                                                                              .w300,
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
@@ -598,17 +674,11 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                         childAspectRatio: 2 / 1,
                                         padding: const EdgeInsets.all(8.0),
                                         children: List.generate(
-                                            state.clientMathcingPersonalResponseModel
-                                                        .data!.length >
-                                                    12
-                                                ? 12
-                                                : state
-                                                    .clientMathcingPersonalResponseModel
-                                                    .data!
-                                                    .length, (int index) {
+                                            dataFilter.length, (int index) {
                                           return GestureDetector(
                                             onTap: () {
-                                              _showAlertDialogDetail();
+                                              _showBottomDialog(
+                                                  dataFilter[index]);
                                             },
                                             child: Container(
                                                 decoration: BoxDecoration(
@@ -640,15 +710,12 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                         height: 30,
                                                         decoration:
                                                             BoxDecoration(
-                                                                color: state
-                                                                            .clientMathcingPersonalResponseModel
-                                                                            .data![
-                                                                                index]
+                                                                color: dataFilter[index]
                                                                             .checkStatus ==
                                                                         'CLEAR'
                                                                     ? const Color(
                                                                         0xFFDA9BDA)
-                                                                    : state.clientMathcingPersonalResponseModel.data![index].checkStatus ==
+                                                                    : dataFilter[index].checkStatus ==
                                                                             'RELEASE'
                                                                         ? const Color(
                                                                             0xFF70B96E)
@@ -666,10 +733,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                 )),
                                                         child: Center(
                                                           child: Text(
-                                                            state
-                                                                    .clientMathcingPersonalResponseModel
-                                                                    .data![
-                                                                        index]
+                                                            dataFilter[index]
                                                                     .checkStatus ??
                                                                 '-',
                                                             style: const TextStyle(
@@ -694,10 +758,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            state
-                                                                    .clientMathcingPersonalResponseModel
-                                                                    .data![
-                                                                        index]
+                                                            dataFilter[index]
                                                                     .fullName ??
                                                                 '-',
                                                             style: const TextStyle(
@@ -711,10 +772,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                           const SizedBox(
                                                               height: 16),
                                                           Text(
-                                                            state
-                                                                    .clientMathcingPersonalResponseModel
-                                                                    .data![
-                                                                        index]
+                                                            dataFilter[index]
                                                                     .clientCode ??
                                                                 '-',
                                                             style: const TextStyle(
@@ -731,10 +789,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     .spaceBetween,
                                                             children: [
                                                               Text(
-                                                                state
-                                                                        .clientMathcingPersonalResponseModel
-                                                                        .data![
-                                                                            index]
+                                                                dataFilter[index]
                                                                         .clientNo ??
                                                                     '-',
                                                                 style: const TextStyle(
@@ -750,7 +805,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                 width: 80,
                                                                 height: 30,
                                                                 decoration: BoxDecoration(
-                                                                    color: state.clientMathcingPersonalResponseModel.data![index].checkStatus ==
+                                                                    color: dataFilter[index].checkStatus ==
                                                                             'CLEAR'
                                                                         ? primaryColor
                                                                         : const Color(
@@ -810,6 +865,10 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber--;
+                                        dataFilter = data.sublist(
+                                            (selectedPageNumber * _perPage),
+                                            ((selectedPageNumber * _perPage) +
+                                                _perPage));
                                       });
                                     },
                                     child: const Icon(
@@ -829,6 +888,10 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber = index;
+                                        dataFilter = data.sublist(
+                                            (selectedPageNumber * _perPage),
+                                            ((selectedPageNumber * _perPage) +
+                                                _perPage));
                                       });
                                     },
                                     child: Container(
@@ -864,6 +927,10 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber++;
+                                        dataFilter = data.sublist(
+                                            (selectedPageNumber * _perPage),
+                                            ((selectedPageNumber * _perPage) +
+                                                _perPage));
                                       });
                                     },
                                     child: const Icon(

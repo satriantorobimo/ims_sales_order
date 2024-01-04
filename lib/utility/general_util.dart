@@ -14,4 +14,27 @@ class GeneralUtil {
   bool isOdd(int val) {
     return (val & 0x01) != 0;
   }
+
+  void showSnackBar(BuildContext context, String msg) {
+    final snackBar = SnackBar(
+      content: Text(msg),
+      backgroundColor: Colors.redAccent,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Iterable<int> range(int low, int high) sync* {
+    for (int i = low; i < high; ++i) {
+      yield i;
+    }
+  }
+}
+
+extension StringExtension on String {
+  String capitalizeOnlyFirstLater() {
+    if (trim().isEmpty) return "";
+
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
 }

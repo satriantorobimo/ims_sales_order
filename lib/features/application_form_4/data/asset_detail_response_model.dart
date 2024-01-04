@@ -50,6 +50,7 @@ class Data {
   String? vehicleTypeCode;
   String? vehicleTypeDesc;
   String? assetCondition;
+  double? assetAmount;
   String? colour;
   String? assetYear;
   String? chassisNo;
@@ -66,6 +67,7 @@ class Data {
       this.vehicleTypeCode,
       this.vehicleTypeDesc,
       this.assetCondition,
+      this.assetAmount,
       this.colour,
       this.assetYear,
       this.chassisNo,
@@ -82,6 +84,7 @@ class Data {
     vehicleTypeCode = json['vehicle_type_code'];
     vehicleTypeDesc = json['vehicle_type_desc'];
     assetCondition = json['asset_condition'];
+    assetAmount = json['asset_amount'];
     colour = json['colour'];
     assetYear = json['asset_year'];
     chassisNo = json['chassis_no'];
@@ -100,6 +103,7 @@ class Data {
     data['vehicle_type_code'] = vehicleTypeCode;
     data['vehicle_type_desc'] = vehicleTypeDesc;
     data['asset_condition'] = assetCondition;
+    data['asset_amount'] = assetAmount;
     data['colour'] = colour;
     data['asset_year'] = assetYear;
     data['chassis_no'] = chassisNo;

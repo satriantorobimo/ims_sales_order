@@ -45,7 +45,7 @@ class ApplicationFeeDetailModel {
 class Data {
   int? id;
   String? feeDesc;
-  int? feeAmount;
+  double? feeAmount;
   String? feePaymentType;
 
   Data({this.id, this.feeDesc, this.feeAmount, this.feePaymentType});
