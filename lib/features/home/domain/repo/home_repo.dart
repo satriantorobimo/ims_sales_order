@@ -1,5 +1,6 @@
 import 'package:sales_order/features/home/data/app_list_response_model.dart';
 import 'package:sales_order/features/home/data/app_status_response_model.dart';
+import 'package:sales_order/features/home/data/data_periode_response_model.dart';
 import 'package:sales_order/features/home/domain/api/home_api.dart';
 
 class HomeRepo {
@@ -10,4 +11,7 @@ class HomeRepo {
 
   Future<AppListResponseModel?> attemptGetAppList() =>
       homeApi.attemptGetAppList();
+
+  Future<DataPeriodeResponseModel?> attemptPeriodeList() =>
+      homeApi.attemptPeriodeList();
 }

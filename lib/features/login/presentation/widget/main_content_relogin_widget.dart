@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sales_order/features/login/presentation/widget/form_relogin_widget.dart';
 
-import 'form_widget.dart';
-
-class MainContent extends StatelessWidget {
-  const MainContent({super.key});
+class MainContentRelogin extends StatelessWidget {
+  const MainContentRelogin({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,7 @@ class MainContent extends StatelessWidget {
                         )
                       ]),
                 ),
-                const FormWidget(),
+                const FormReloginWidget(),
                 const Center(
                   child: Text(
                     'copyright',

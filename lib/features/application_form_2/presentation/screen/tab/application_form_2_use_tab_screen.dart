@@ -13,6 +13,7 @@ import 'package:sales_order/features/application_form_2/presentation/bloc/work_b
 import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -2156,7 +2157,7 @@ class _ApplicationForm2UseTabScreenState
                           if (state is ClientLoading) {}
 
                           if (state is ClientUpdateLoaded) {
-                            final data = await DatabaseHelper.getUserData(1);
+                            final data = await DatabaseHelper.getUserData();
                             // ignore: use_build_context_synchronously
                             Navigator.pushNamed(context,
                                 StringRouterUtil.applicationForm3ScreenTabRoute,
@@ -2165,7 +2166,10 @@ class _ApplicationForm2UseTabScreenState
                                     pMarketingCode: data[0]['uid'],
                                     pMarketingName: data[0]['name']));
                           }
-                          if (state is ClientError) {}
+                          if (state is ClientError) {
+                            // ignore: use_build_context_synchronously
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
                           if (state is ClientException) {}
                         },
                         child: BlocBuilder(

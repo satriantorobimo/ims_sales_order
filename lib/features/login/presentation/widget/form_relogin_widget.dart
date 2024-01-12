@@ -5,18 +5,17 @@ import 'package:sales_order/features/login/domain/repo/auth_repo.dart';
 import 'package:sales_order/features/login/presentation/bloc/auth_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
-import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
-class FormWidget extends StatefulWidget {
-  const FormWidget({super.key});
+class FormReloginWidget extends StatefulWidget {
+  const FormReloginWidget({super.key});
 
   @override
-  State<FormWidget> createState() => _FormWidgetState();
+  State<FormReloginWidget> createState() => _FormReloginWidgetState();
 }
 
-class _FormWidgetState extends State<FormWidget> {
+class _FormReloginWidgetState extends State<FormReloginWidget> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   bool _isShow = true, isLoading = false;
@@ -263,6 +262,7 @@ class _FormWidgetState extends State<FormWidget> {
   }
 
   Future<void> _processDb(Datalist datalist) async {
+    await DatabaseHelper.deleteUser(1);
     await DatabaseHelper.insertUser(datalist);
   }
 
@@ -355,15 +355,8 @@ class _FormWidgetState extends State<FormWidget> {
                     });
                     SharedPrefUtil.saveSharedString(
                         'token', state.authResponseModel.token!);
-                    if (GeneralUtil().deviceType() == 'tablet') {
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          StringRouterUtil.tabScreenTabRoute, (route) => false);
-                    } else {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          StringRouterUtil.tabScreenMobileRoute,
-                          (route) => false);
-                    }
+                    Navigator.pushNamedAndRemoveUntil(context,
+                        StringRouterUtil.tabScreenTabRoute, (route) => false);
                   });
                 } else {
                   _invalidUsernamePassword();

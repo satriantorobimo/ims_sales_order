@@ -468,6 +468,18 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                   .data![0].firstPaymentTypeDesc!;
                               tenor = state
                                   .tncDataDetailResponseModel.data![0].tenor!;
+                              if (state.tncDataDetailResponseModel.data![0]
+                                      .insurancePackageCode !=
+                                  null) {
+                                selectInsuranceCode = state
+                                    .tncDataDetailResponseModel
+                                    .data![0]
+                                    .insurancePackageCode!;
+                                selectInsurance = state
+                                    .tncDataDetailResponseModel
+                                    .data![0]
+                                    .insurancePackageDesc!;
+                              }
                             }
                             if (state is TncDataError) {}
                             if (state is TncDataException) {}
@@ -767,7 +779,12 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        '${state.tncDataDetailResponseModel.data![0].dpAmount}',
+                                                        GeneralUtil.convertToIdr(
+                                                            state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .dpAmount,
+                                                            2),
                                                         style: const TextStyle(
                                                             color: Color(
                                                                 0xFF6E6E6E),
@@ -780,7 +797,17 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   )
                                                 ],
                                               ),
-                                              const SizedBox(height: 20),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -826,7 +853,12 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        '${state.tncDataDetailResponseModel.data![0].installmentAmount}',
+                                                        GeneralUtil.convertToIdr(
+                                                            state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .installmentAmount,
+                                                            2),
                                                         style: const TextStyle(
                                                             color: Color(
                                                                 0xFF6E6E6E),
@@ -839,17 +871,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   )
                                                 ],
                                               ),
-                                            ],
-                                          )),
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.23,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
+                                              const SizedBox(height: 20),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -1195,7 +1217,12 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                           alignment: Alignment
                                                               .centerRight,
                                                           child: Text(
-                                                            '${state.applicationFeeDetailModel.data![0].feeAmount}',
+                                                            GeneralUtil.convertToIdr(
+                                                                state
+                                                                    .applicationFeeDetailModel
+                                                                    .data![0]
+                                                                    .feeAmount,
+                                                                2),
                                                             style: const TextStyle(
                                                                 color: Color(
                                                                     0xFF6E6E6E),
@@ -1264,285 +1291,6 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                 }
                                 return Container();
                               })),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     SizedBox(
-                      //         width: MediaQuery.of(context).size.width * 0.23,
-                      //         child: Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.start,
-                      //           children: [
-                      //             Column(
-                      //               crossAxisAlignment:
-                      //                   CrossAxisAlignment.start,
-                      //               children: [
-                      //                 const Text(
-                      //                   'Biaya Admin',
-                      //                   style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 18,
-                      //                       fontWeight: FontWeight.bold),
-                      //                 ),
-                      //                 const SizedBox(height: 8),
-                      //                 Material(
-                      //                   elevation: 6,
-                      //                   shadowColor:
-                      //                       Colors.grey.withOpacity(0.4),
-                      //                   shape: RoundedRectangleBorder(
-                      //                       borderRadius:
-                      //                           BorderRadius.circular(10),
-                      //                       side: const BorderSide(
-                      //                           width: 1.0,
-                      //                           color: Color(0xFFEAEAEA))),
-                      //                   child: SizedBox(
-                      //                     width: 280,
-                      //                     height: 50,
-                      //                     child: TextFormField(
-                      //                       keyboardType: TextInputType.text,
-                      //                       decoration: InputDecoration(
-                      //                           hintText: 'Biaya Admin',
-                      //                           isDense: true,
-                      //                           contentPadding:
-                      //                               const EdgeInsets.fromLTRB(
-                      //                                   16.0, 20.0, 20.0, 16.0),
-                      //                           hintStyle: TextStyle(
-                      //                               color: Colors.grey
-                      //                                   .withOpacity(0.5)),
-                      //                           filled: true,
-                      //                           fillColor: Colors.white,
-                      //                           border: OutlineInputBorder(
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                             borderSide: BorderSide.none,
-                      //                           )),
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //             const SizedBox(height: 20),
-                      //             Column(
-                      //               crossAxisAlignment:
-                      //                   CrossAxisAlignment.start,
-                      //               children: [
-                      //                 const Text(
-                      //                   'Payment Type',
-                      //                   style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 18,
-                      //                       fontWeight: FontWeight.bold),
-                      //                 ),
-                      //                 const SizedBox(height: 8),
-                      //                 SizedBox(
-                      //                   height: 52,
-                      //                   child: Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.start,
-                      //                     children: [
-                      //                       InkWell(
-                      //                         onTap: () {
-                      //                           setState(() {
-                      //                             condition = 'Arrear';
-                      //                           });
-                      //                         },
-                      //                         child: Container(
-                      //                           height: 40,
-                      //                           padding:
-                      //                               const EdgeInsets.all(8.0),
-                      //                           decoration: BoxDecoration(
-                      //                             color: condition == 'Arrear'
-                      //                                 ? primaryColor
-                      //                                 : const Color(0xFFE1E1E1),
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                           ),
-                      //                           child: const Center(
-                      //                               child: Text('FULL PAID',
-                      //                                   style: TextStyle(
-                      //                                       fontSize: 15,
-                      //                                       color: Colors.white,
-                      //                                       fontWeight:
-                      //                                           FontWeight
-                      //                                               .w600))),
-                      //                         ),
-                      //                       ),
-                      //                       const SizedBox(width: 8),
-                      //                       InkWell(
-                      //                         onTap: () {
-                      //                           setState(() {
-                      //                             condition = 'Advance';
-                      //                           });
-                      //                         },
-                      //                         child: Container(
-                      //                           height: 40,
-                      //                           padding:
-                      //                               const EdgeInsets.all(8.0),
-                      //                           decoration: BoxDecoration(
-                      //                             color: condition == 'Advance'
-                      //                                 ? primaryColor
-                      //                                 : const Color(0xFFE1E1E1),
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                           ),
-                      //                           child: const Center(
-                      //                               child: Text('CAPITAL PAID',
-                      //                                   style: TextStyle(
-                      //                                       fontSize: 15,
-                      //                                       color: Colors.white,
-                      //                                       fontWeight:
-                      //                                           FontWeight
-                      //                                               .w600))),
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ],
-                      //         )),
-                      //     SizedBox(
-                      //         width: MediaQuery.of(context).size.width * 0.23,
-                      //         child: Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.start,
-                      //           children: [
-                      //             Column(
-                      //               crossAxisAlignment:
-                      //                   CrossAxisAlignment.start,
-                      //               children: [
-                      //                 const Text(
-                      //                   'Biaya Provisi',
-                      //                   style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 18,
-                      //                       fontWeight: FontWeight.bold),
-                      //                 ),
-                      //                 const SizedBox(height: 8),
-                      //                 Material(
-                      //                   elevation: 6,
-                      //                   shadowColor:
-                      //                       Colors.grey.withOpacity(0.4),
-                      //                   shape: RoundedRectangleBorder(
-                      //                       borderRadius:
-                      //                           BorderRadius.circular(10),
-                      //                       side: const BorderSide(
-                      //                           width: 1.0,
-                      //                           color: Color(0xFFEAEAEA))),
-                      //                   child: SizedBox(
-                      //                     width: 280,
-                      //                     height: 50,
-                      //                     child: TextFormField(
-                      //                       keyboardType: TextInputType.text,
-                      //                       decoration: InputDecoration(
-                      //                           hintText: 'Biaya Provisi',
-                      //                           isDense: true,
-                      //                           contentPadding:
-                      //                               const EdgeInsets.fromLTRB(
-                      //                                   16.0, 20.0, 20.0, 16.0),
-                      //                           hintStyle: TextStyle(
-                      //                               color: Colors.grey
-                      //                                   .withOpacity(0.5)),
-                      //                           filled: true,
-                      //                           fillColor: Colors.white,
-                      //                           border: OutlineInputBorder(
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                             borderSide: BorderSide.none,
-                      //                           )),
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //             const SizedBox(height: 20),
-                      //             Column(
-                      //               crossAxisAlignment:
-                      //                   CrossAxisAlignment.start,
-                      //               children: [
-                      //                 const Text(
-                      //                   'Payment Type',
-                      //                   style: TextStyle(
-                      //                       color: Colors.black,
-                      //                       fontSize: 18,
-                      //                       fontWeight: FontWeight.bold),
-                      //                 ),
-                      //                 const SizedBox(height: 8),
-                      //                 SizedBox(
-                      //                   height: 52,
-                      //                   child: Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.start,
-                      //                     children: [
-                      //                       InkWell(
-                      //                         onTap: () {
-                      //                           setState(() {
-                      //                             condition2 = 'Arrear';
-                      //                           });
-                      //                         },
-                      //                         child: Container(
-                      //                           height: 40,
-                      //                           padding:
-                      //                               const EdgeInsets.all(8.0),
-                      //                           decoration: BoxDecoration(
-                      //                             color: condition2 == 'Arrear'
-                      //                                 ? primaryColor
-                      //                                 : const Color(0xFFE1E1E1),
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                           ),
-                      //                           child: const Center(
-                      //                               child: Text('FULL PAID',
-                      //                                   style: TextStyle(
-                      //                                       fontSize: 15,
-                      //                                       color: Colors.white,
-                      //                                       fontWeight:
-                      //                                           FontWeight
-                      //                                               .w600))),
-                      //                         ),
-                      //                       ),
-                      //                       const SizedBox(width: 8),
-                      //                       InkWell(
-                      //                         onTap: () {
-                      //                           setState(() {
-                      //                             condition2 = 'Advance';
-                      //                           });
-                      //                         },
-                      //                         child: Container(
-                      //                           height: 40,
-                      //                           padding:
-                      //                               const EdgeInsets.all(8.0),
-                      //                           decoration: BoxDecoration(
-                      //                             color: condition2 == 'Advance'
-                      //                                 ? primaryColor
-                      //                                 : const Color(0xFFE1E1E1),
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(10),
-                      //                           ),
-                      //                           child: const Center(
-                      //                               child: Text('CAPITAL PAID',
-                      //                                   style: TextStyle(
-                      //                                       fontSize: 15,
-                      //                                       color: Colors.white,
-                      //                                       fontWeight:
-                      //                                           FontWeight
-                      //                                               .w600))),
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ],
-                      //         )),
-                      //     SizedBox(
-                      //       width: MediaQuery.of(context).size.width * 0.23,
-                      //     ),
-                      //     SizedBox(
-                      //       width: MediaQuery.of(context).size.width * 0.23,
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -1631,12 +1379,6 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                               }
                               return InkWell(
                                 onTap: () {
-                                  // Navigator.pushNamed(
-                                  //     context,
-                                  //     StringRouterUtil
-                                  //         .applicationForm7ScreenTabRoute,
-                                  //     arguments: widget.updateTncRequestModel
-                                  //         .pApplicationNo);
                                   updateTncBloc.add(UpdateTncAttempt(
                                       UpdateTncRequestModel(
                                           pApplicationNo: widget

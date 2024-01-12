@@ -1270,64 +1270,6 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: const [
-                                      Text(
-                                        '6. Mother Maiden Name',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Material(
-                                    elevation: 6,
-                                    shadowColor: Colors.grey.withOpacity(0.4),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        side: const BorderSide(
-                                            width: 1.0,
-                                            color: Color(0xFFEAEAEA))),
-                                    child: SizedBox(
-                                      width: 280,
-                                      height: 50,
-                                      child: TextFormField(
-                                        controller: ctrlMotherName,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                            hintText: 'Mother Maiden Name',
-                                            isDense: true,
-                                            contentPadding:
-                                                const EdgeInsets.fromLTRB(
-                                                    16.0, 20.0, 20.0, 16.0),
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey
-                                                    .withOpacity(0.5)),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide.none,
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ],
                           )),
                       SizedBox(
@@ -1343,7 +1285,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '7. Gender',
+                                        '6. Gender',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1417,6 +1359,64 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        '. Mother Maiden Name',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        ' *',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Material(
+                                    elevation: 6,
+                                    shadowColor: Colors.grey.withOpacity(0.4),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: const BorderSide(
+                                            width: 1.0,
+                                            color: Color(0xFFEAEAEA))),
+                                    child: SizedBox(
+                                      width: 280,
+                                      height: 50,
+                                      child: TextFormField(
+                                        controller: ctrlMotherName,
+                                        keyboardType: TextInputType.text,
+                                        decoration: InputDecoration(
+                                            hintText: 'Mother Maiden Name',
+                                            isDense: true,
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    16.0, 20.0, 20.0, 16.0),
+                                            hintStyle: TextStyle(
+                                                color: Colors.grey
+                                                    .withOpacity(0.5)),
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: BorderSide.none,
+                                            )),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1659,7 +1659,13 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+                            ],
+                          )),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.23,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -1723,13 +1729,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   ),
                                 ],
                               ),
-                            ],
-                          )),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.23,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                              const SizedBox(height: 20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -2255,7 +2255,13 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+                            ],
+                          )),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.23,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -2315,13 +2321,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   ),
                                 ],
                               ),
-                            ],
-                          )),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.23,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                              const SizedBox(height: 20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -2527,118 +2527,246 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                           builder:
                                               (_, CheckScoringState state) {
                                             if (state is CheckScoringLoading) {
-                                              return const SizedBox(
-                                                width: 188,
-                                                height: 53,
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                ),
+                                              return Row(
+                                                children: [
+                                                  const SizedBox(
+                                                    width: 130,
+                                                    height: 50,
+                                                    child: Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Material(
+                                                    elevation: 6,
+                                                    shadowColor: Colors.grey
+                                                        .withOpacity(0.4),
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        side: const BorderSide(
+                                                            width: 1.0,
+                                                            color: Color(
+                                                                0xFFEAEAEA))),
+                                                    child: SizedBox(
+                                                      width: 140,
+                                                      height: 50,
+                                                      child: TextFormField(
+                                                        readOnly: true,
+                                                        controller: ctrlStatus,
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        decoration:
+                                                            InputDecoration(
+                                                                hintText: '-',
+                                                                isDense: true,
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        16.0,
+                                                                        20.0,
+                                                                        20.0,
+                                                                        16.0),
+                                                                hintStyle: TextStyle(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.5)),
+                                                                filled: true,
+                                                                fillColor:
+                                                                    Colors
+                                                                        .white,
+                                                                border:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                )),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               );
                                             }
                                             if (state is CheckScoringLoaded) {
-                                              return InkWell(
-                                                onTap: () {
-                                                  checkScoringBloc.add(
-                                                      const CheckScoringAttempt(
-                                                          'PASS'));
-                                                },
-                                                child: Container(
-                                                  width: 188,
-                                                  height: 53,
-                                                  decoration: BoxDecoration(
-                                                    color: primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                              return Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      checkScoringBloc.add(
+                                                          const CheckScoringAttempt(
+                                                              'PASS'));
+                                                    },
+                                                    child: Container(
+                                                      width: 130,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        color: primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: const Center(
+                                                          child: Text(
+                                                              'Check Scoring',
+                                                              style: TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600))),
+                                                    ),
                                                   ),
-                                                  child: const Center(
-                                                      child: Text(
-                                                          'Check Scoring',
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600))),
-                                                ),
+                                                  const SizedBox(width: 8),
+                                                  Material(
+                                                    elevation: 6,
+                                                    shadowColor: Colors.grey
+                                                        .withOpacity(0.4),
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        side: const BorderSide(
+                                                            width: 1.0,
+                                                            color: Color(
+                                                                0xFFEAEAEA))),
+                                                    child: SizedBox(
+                                                      width: 140,
+                                                      height: 50,
+                                                      child: TextFormField(
+                                                        readOnly: true,
+                                                        controller: ctrlStatus,
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        decoration:
+                                                            InputDecoration(
+                                                                hintText: '-',
+                                                                isDense: true,
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        16.0,
+                                                                        20.0,
+                                                                        20.0,
+                                                                        16.0),
+                                                                hintStyle: TextStyle(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.5)),
+                                                                filled: true,
+                                                                fillColor:
+                                                                    Colors
+                                                                        .white,
+                                                                border:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                )),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               );
                                             }
 
-                                            return InkWell(
-                                              onTap: () {
-                                                checkScoringBloc.add(
-                                                    const CheckScoringAttempt(
-                                                        'PASS'));
-                                              },
-                                              child: Container(
-                                                width: 188,
-                                                height: 53,
-                                                decoration: BoxDecoration(
-                                                  color: primaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                            return Row(
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    checkScoringBloc.add(
+                                                        const CheckScoringAttempt(
+                                                            'PASS'));
+                                                  },
+                                                  child: Container(
+                                                    width: 130,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      color: primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: const Center(
+                                                        child: Text(
+                                                            'Check Scoring',
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600))),
+                                                  ),
                                                 ),
-                                                child: const Center(
-                                                    child: Text('Check Scoring',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
+                                                const SizedBox(width: 8),
+                                                Material(
+                                                  elevation: 6,
+                                                  shadowColor: Colors.grey
+                                                      .withOpacity(0.4),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      side: const BorderSide(
+                                                          width: 1.0,
+                                                          color: Color(
+                                                              0xFFEAEAEA))),
+                                                  child: SizedBox(
+                                                    width: 140,
+                                                    height: 50,
+                                                    child: TextFormField(
+                                                      readOnly: true,
+                                                      controller: ctrlStatus,
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              hintText: '-',
+                                                              isDense: true,
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                          .fromLTRB(
+                                                                      16.0,
+                                                                      20.0,
+                                                                      20.0,
+                                                                      16.0),
+                                                              hintStyle: TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5)),
+                                                              filled: true,
+                                                              fillColor:
+                                                                  Colors.white,
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                borderSide:
+                                                                    BorderSide
+                                                                        .none,
+                                                              )),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             );
                                           })),
-                                ],
-                              ),
-                              const SizedBox(height: 18),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Status',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Material(
-                                    elevation: 6,
-                                    shadowColor: Colors.grey.withOpacity(0.4),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        side: const BorderSide(
-                                            width: 1.0,
-                                            color: Color(0xFFEAEAEA))),
-                                    child: SizedBox(
-                                      width: 280,
-                                      height: 50,
-                                      child: TextFormField(
-                                        readOnly: true,
-                                        controller: ctrlStatus,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                            hintText: '-',
-                                            isDense: true,
-                                            contentPadding:
-                                                const EdgeInsets.fromLTRB(
-                                                    16.0, 20.0, 20.0, 16.0),
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey
-                                                    .withOpacity(0.5)),
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide.none,
-                                            )),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ],
@@ -2674,10 +2802,11 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: ctrlStatus.text.isEmpty
+                      onTap: ctrlStatus.text.isEmpty ||
+                              ctrlStatus.text == 'NOT PASS'
                           ? null
                           : () async {
-                              final data = await DatabaseHelper.getUserData(1);
+                              final data = await DatabaseHelper.getUserData();
                               // ignore: use_build_context_synchronously
                               Navigator.pushNamed(
                                   context,
@@ -2721,7 +2850,8 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                         width: 200,
                         height: 45,
                         decoration: BoxDecoration(
-                          color: ctrlStatus.text.isEmpty
+                          color: ctrlStatus.text.isEmpty ||
+                                  ctrlStatus.text == 'NOT PASS'
                               ? const Color(0xFFE1E1E1)
                               : thirdColor,
                           borderRadius: BorderRadius.circular(10),

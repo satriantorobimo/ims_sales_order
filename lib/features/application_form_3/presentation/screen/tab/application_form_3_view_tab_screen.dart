@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sales_order/features/application_form_3/domain/repo/form_3_repo.dart';
 import 'package:sales_order/features/application_form_3/presentation/bloc/loan_data_detail_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -376,7 +377,9 @@ class _ApplicationForm3ViewTabScreenState
                             }
                           });
                         }
-                        if (state is LoanDataDetailError) {}
+                        if (state is LoanDataDetailError) {
+                          GeneralUtil().showSnackBar(context, state.error!);
+                        }
                         if (state is LoanDataDetailException) {}
                       },
                       child: BlocBuilder(

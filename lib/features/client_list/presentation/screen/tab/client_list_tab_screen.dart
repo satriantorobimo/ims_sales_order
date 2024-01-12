@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +30,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
   List<ClientListModel> menu = [];
   var selectedPageNumber = 0;
   var pagination = 0;
+  var length = 0;
   final int _perPage = 12;
   ClientMatchBloc clientMatchBloc =
       ClientMatchBloc(clientMatchingRepo: ClientMatchingRepo());
@@ -180,7 +183,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                   const SizedBox(width: 8),
                   InkWell(
                     onTap: () async {
-                      final data = await DatabaseHelper.getUserData(1);
+                      final data = await DatabaseHelper.getUserData();
                       // ignore: use_build_context_synchronously
                       Navigator.pushNamed(context,
                           StringRouterUtil.applicationForm1UseScreenTabRoute,
@@ -252,7 +255,34 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
           ],
         ),
         body: isEmpty
-            ? Container()
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/img/empty.png',
+                      width: MediaQuery.of(context).size.width * 0.28,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'No data found',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Try adjusting you search to find what you`re looking for.',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300),
+                    ),
+                  ],
+                ),
+              )
             : Padding(
                 padding: const EdgeInsets.all(28.0),
                 child: SingleChildScrollView(
@@ -293,6 +323,18 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                             if (state is ClientMatchLoading) {}
                             if (state is ClientMatchCorpLoaded) {}
                             if (state is ClientMatchPersonalLoaded) {
+                              if (state.clientMathcingPersonalResponseModel
+                                  .data!.isEmpty) {
+                                log('empty');
+                                setState(() {
+                                  isEmpty = true;
+                                });
+                              } else {
+                                log('not empty');
+                                setState(() {
+                                  isEmpty = false;
+                                });
+                              }
                               setState(() {
                                 pagination = (state
                                             .clientMathcingPersonalResponseModel
@@ -300,6 +342,10 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                             .length /
                                         12)
                                     .ceil();
+                                length = state
+                                    .clientMathcingPersonalResponseModel
+                                    .data!
+                                    .length;
                                 if (pagination == 1) {
                                   dataFilter = state
                                       .clientMathcingPersonalResponseModel
@@ -327,7 +373,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                   return SizedBox(
                                     width: double.infinity,
                                     height: MediaQuery.of(context).size.height *
-                                        0.66,
+                                        0.55,
                                     child: Shimmer.fromColors(
                                       baseColor: Colors.grey.shade300,
                                       highlightColor: Colors.grey.shade100,
@@ -335,9 +381,9 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         crossAxisCount: 4,
-                                        mainAxisSpacing: 24,
+                                        mainAxisSpacing: 16,
                                         crossAxisSpacing: 16,
-                                        childAspectRatio: 2 / 1,
+                                        childAspectRatio: 1.0 / 0.42,
                                         padding: const EdgeInsets.all(8.0),
                                         children:
                                             List.generate(12, (int index) {
@@ -437,15 +483,15 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                   return SizedBox(
                                     width: double.infinity,
                                     height: MediaQuery.of(context).size.height *
-                                        0.66,
+                                        0.55,
                                     child: Center(
                                       child: GridView.count(
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         crossAxisCount: 4,
-                                        mainAxisSpacing: 24,
+                                        mainAxisSpacing: 16,
                                         crossAxisSpacing: 16,
-                                        childAspectRatio: 2 / 1,
+                                        childAspectRatio: 1.0 / 0.42,
                                         padding: const EdgeInsets.all(8.0),
                                         children: List.generate(
                                             state.clientMathcingCorpResponseModel
@@ -547,7 +593,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                 .data![index]
                                                                 .fullName!,
                                                             style: const TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -562,7 +608,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                 .data![index]
                                                                 .clientCode!,
                                                             style: const TextStyle(
-                                                                fontSize: 15,
+                                                                fontSize: 12,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w300,
@@ -582,7 +628,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     .clientNo!,
                                                                 style: const TextStyle(
                                                                     fontSize:
-                                                                        15,
+                                                                        12,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
@@ -597,7 +643,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                         'CLEAR'
                                                                     ? () async {
                                                                         final data =
-                                                                            await DatabaseHelper.getUserData(1);
+                                                                            await DatabaseHelper.getUserData();
                                                                         // ignore: use_build_context_synchronously
                                                                         Navigator.pushNamed(
                                                                             context,
@@ -663,15 +709,15 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                   return SizedBox(
                                     width: double.infinity,
                                     height: MediaQuery.of(context).size.height *
-                                        0.66,
+                                        0.55,
                                     child: Center(
                                       child: GridView.count(
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         crossAxisCount: 4,
-                                        mainAxisSpacing: 24,
+                                        mainAxisSpacing: 16,
                                         crossAxisSpacing: 16,
-                                        childAspectRatio: 2 / 1,
+                                        childAspectRatio: 1.0 / 0.42,
                                         padding: const EdgeInsets.all(8.0),
                                         children: List.generate(
                                             dataFilter.length, (int index) {
@@ -762,7 +808,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     .fullName ??
                                                                 '-',
                                                             style: const TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -776,7 +822,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     .clientCode ??
                                                                 '-',
                                                             style: const TextStyle(
-                                                                fontSize: 15,
+                                                                fontSize: 12,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w300,
@@ -794,7 +840,7 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                                                     '-',
                                                                 style: const TextStyle(
                                                                     fontSize:
-                                                                        15,
+                                                                        12,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
@@ -845,7 +891,110 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     ),
                                   );
                                 }
-                                return Container();
+                                return SizedBox(
+                                  width: double.infinity,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.55,
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade300,
+                                    highlightColor: Colors.grey.shade100,
+                                    child: GridView.count(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      crossAxisCount: 4,
+                                      mainAxisSpacing: 16,
+                                      crossAxisSpacing: 16,
+                                      childAspectRatio: 1.0 / 0.42,
+                                      padding: const EdgeInsets.all(8.0),
+                                      children: List.generate(12, (int index) {
+                                        return Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(18),
+                                              border: Border.all(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.05)),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(
+                                                      -6, 4), // Shadow position
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0,
+                                                          right: 16.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        '',
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors
+                                                                .grey.shade300),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 16),
+                                                      Text(
+                                                        '',
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            color: Colors
+                                                                .grey.shade300),
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            '',
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade300),
+                                                          ),
+                                                          Container(
+                                                            width: 80,
+                                                            height: 30,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.grey
+                                                                  .shade300,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ));
+                                      }),
+                                    ),
+                                  ),
+                                );
                               })),
                       const SizedBox(height: 16),
                       SizedBox(
@@ -865,10 +1014,17 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber--;
-                                        dataFilter = data.sublist(
-                                            (selectedPageNumber * _perPage),
-                                            ((selectedPageNumber * _perPage) +
-                                                _perPage));
+                                        if (selectedPageNumber ==
+                                            pagination - 1) {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              length);
+                                        } else {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              ((selectedPageNumber * _perPage) +
+                                                  _perPage));
+                                        }
                                       });
                                     },
                                     child: const Icon(
@@ -888,10 +1044,17 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber = index;
-                                        dataFilter = data.sublist(
-                                            (selectedPageNumber * _perPage),
-                                            ((selectedPageNumber * _perPage) +
-                                                _perPage));
+                                        if (selectedPageNumber ==
+                                            pagination - 1) {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              length);
+                                        } else {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              ((selectedPageNumber * _perPage) +
+                                                  _perPage));
+                                        }
                                       });
                                     },
                                     child: Container(
@@ -927,10 +1090,17 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedPageNumber++;
-                                        dataFilter = data.sublist(
-                                            (selectedPageNumber * _perPage),
-                                            ((selectedPageNumber * _perPage) +
-                                                _perPage));
+                                        if (selectedPageNumber ==
+                                            pagination - 1) {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              length);
+                                        } else {
+                                          dataFilter = data.sublist(
+                                              (selectedPageNumber * _perPage),
+                                              ((selectedPageNumber * _perPage) +
+                                                  _perPage));
+                                        }
                                       });
                                     },
                                     child: const Icon(

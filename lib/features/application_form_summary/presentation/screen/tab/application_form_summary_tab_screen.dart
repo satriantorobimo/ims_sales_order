@@ -449,7 +449,7 @@ class _ApplicationFormSummaryTabScreenState
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 70,
+                                        height: 55,
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -480,7 +480,7 @@ class _ApplicationFormSummaryTabScreenState
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 16,
+                                        height: 8,
                                       ),
                                       Row(
                                         crossAxisAlignment:

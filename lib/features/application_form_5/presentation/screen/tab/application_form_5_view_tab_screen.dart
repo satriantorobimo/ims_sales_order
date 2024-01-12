@@ -4,6 +4,7 @@ import 'package:sales_order/features/application_form_5/domain/repo/form_5_repo.
 import 'package:sales_order/features/application_form_5/presentation/bloc/fee_data_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_5/presentation/bloc/tnc_data_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm5ViewTabScreen extends StatefulWidget {
@@ -363,7 +364,9 @@ class _ApplicationForm5ViewTabScreenState
                                 }
                               });
                             }
-                            if (state is TncDataError) {}
+                            if (state is TncDataError) {
+                              GeneralUtil().showSnackBar(context, state.error!);
+                            }
                             if (state is TncDataException) {}
                           },
                           child: BlocBuilder(
@@ -918,7 +921,9 @@ class _ApplicationForm5ViewTabScreenState
                           listener: (_, FeeDataState state) {
                             if (state is FeeDataLoading) {}
                             if (state is FeeDataLoaded) {}
-                            if (state is FeeDataError) {}
+                            if (state is FeeDataError) {
+                              GeneralUtil().showSnackBar(context, state.error!);
+                            }
                             if (state is FeeDataException) {}
                           },
                           child: BlocBuilder(

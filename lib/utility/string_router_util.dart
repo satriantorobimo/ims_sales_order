@@ -5,6 +5,7 @@ class StringRouterUtil {
 
   static const String splashScreenRoute = '/';
   static const String loginScreenTabRoute = '/login-tab-route';
+  static const String reloginScreenTabRoute = '/relogin-tab-route';
   static const String loginScreenMobileRoute = '/login-mobile-route';
   static const String tabScreenTabRoute = '/tab-tab-route';
   static const String tabScreenMobileRoute = '/tab-mobile-route';
@@ -16,6 +17,8 @@ class StringRouterUtil {
       '/application-form1-use-tab-route';
   static const String applicationForm1ViewScreenTabRoute =
       '/application-form1-view-tab-route';
+  static const String applicationForm1ResumeScreenTabRoute =
+      '/application-form1-resume-tab-route';
   static const String applicationForm1ScreenMobileRoute =
       '/application-form1-mobile-route';
   static const String applicationForm2ScreenTabRoute =

@@ -557,6 +557,110 @@ class _ApplicationForm1UseTabScreenState
     });
   }
 
+  Future<void> _showBottomBack() {
+    return showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                    padding:
+                        const EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/img/back.png',
+                        width: 150,
+                      ),
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 24.0, left: 24, right: 24, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'Are you sure?',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Jika anda keluar dari halaman ini, maka proses akan ter-cancel',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 200,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Center(
+                            child: Text('TIDAK',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600))),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            StringRouterUtil.reloginScreenTabRoute,
+                            (route) => false);
+                      },
+                      child: Container(
+                        width: 200,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: thirdColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Center(
+                            child: Text('YA',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600))),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+              ],
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -877,7 +981,9 @@ class _ApplicationForm1UseTabScreenState
                             getClientBloc.add(GetClientAttempt(
                                 state.addClientResponseModel.code!));
                           }
-                          if (state is ClientError) {}
+                          if (state is ClientError) {
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
                           if (state is ClientException) {}
                         },
                       ),
@@ -3186,7 +3292,7 @@ class _ApplicationForm1UseTabScreenState
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        _showBottomBack();
                       },
                       child: Container(
                         width: 200,
@@ -3205,7 +3311,8 @@ class _ApplicationForm1UseTabScreenState
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: ctrlStatus.text.isEmpty
+                      onTap: ctrlStatus.text.isEmpty ||
+                              ctrlStatus.text == 'NOT PASS'
                           ? null
                           : () async {
                               clientDetailResponseModel.clientIdNo =
@@ -3271,7 +3378,8 @@ class _ApplicationForm1UseTabScreenState
                         width: 200,
                         height: 45,
                         decoration: BoxDecoration(
-                          color: ctrlStatus.text.isEmpty
+                          color: ctrlStatus.text.isEmpty ||
+                                  ctrlStatus.text == 'NOT PASS'
                               ? const Color(0xFFE1E1E1)
                               : thirdColor,
                           borderRadius: BorderRadius.circular(10),

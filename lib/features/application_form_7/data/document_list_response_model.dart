@@ -52,6 +52,7 @@ class Data {
   String? filename;
   String? paths;
   String? isRequired;
+  bool? isNew;
 
   Data(
       {this.id,
@@ -62,7 +63,8 @@ class Data {
       this.promiseDate,
       this.filename,
       this.paths,
-      this.isRequired});
+      this.isRequired,
+      this.isNew});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -74,6 +76,7 @@ class Data {
     filename = json['filename'];
     paths = json['paths'];
     isRequired = json['is_required'];
+    isNew = false;
   }
 
   Map<String, dynamic> toJson() {

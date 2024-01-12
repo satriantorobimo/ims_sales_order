@@ -8,6 +8,7 @@ import 'package:sales_order/features/application_form_7/domain/repo/form_7_repo.
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_list_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_preview_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:path/path.dart' as path;
 
@@ -24,6 +25,7 @@ class _ApplicationForm7ViewTabScreenState
     extends State<ApplicationForm7ViewTabScreen> {
   var selectedPageNumber = 0;
   var pagination = 0;
+  var length = 0;
   final int _perPage = 5;
   DocListBloc docListBloc = DocListBloc(form7repo: Form7Repo());
   DocPreviewBloc docPreviewBloc = DocPreviewBloc(form7repo: Form7Repo());
@@ -348,6 +350,8 @@ class _ApplicationForm7ViewTabScreenState
                                           .data!.length /
                                       5)
                                   .ceil();
+                              length =
+                                  state.documentListResponseModel.data!.length;
                               if (pagination == 1) {
                                 dataFilter =
                                     state.documentListResponseModel.data!;
@@ -363,7 +367,9 @@ class _ApplicationForm7ViewTabScreenState
                                   state.documentListResponseModel.data!);
                             });
                           }
-                          if (state is DocListError) {}
+                          if (state is DocListError) {
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
                           if (state is DocListException) {}
                         },
                         child: BlocBuilder(
@@ -699,10 +705,15 @@ class _ApplicationForm7ViewTabScreenState
                             onTap: () {
                               setState(() {
                                 selectedPageNumber--;
-                                dataFilter = data.sublist(
-                                    (selectedPageNumber * _perPage),
-                                    ((selectedPageNumber * _perPage) +
-                                        _perPage));
+                                if (selectedPageNumber == pagination - 1) {
+                                  dataFilter = data.sublist(
+                                      (selectedPageNumber * _perPage), length);
+                                } else {
+                                  dataFilter = data.sublist(
+                                      (selectedPageNumber * _perPage),
+                                      ((selectedPageNumber * _perPage) +
+                                          _perPage));
+                                }
                               });
                             },
                             child: const Icon(Icons.keyboard_arrow_left_rounded,
@@ -721,10 +732,16 @@ class _ApplicationForm7ViewTabScreenState
                               setState(() {
                                 selectedPageNumber = index;
                                 try {
-                                  dataFilter = data.sublist(
-                                      (selectedPageNumber * _perPage),
-                                      ((selectedPageNumber * _perPage) +
-                                          _perPage));
+                                  if (selectedPageNumber == pagination - 1) {
+                                    dataFilter = data.sublist(
+                                        (selectedPageNumber * _perPage),
+                                        length);
+                                  } else {
+                                    dataFilter = data.sublist(
+                                        (selectedPageNumber * _perPage),
+                                        ((selectedPageNumber * _perPage) +
+                                            _perPage));
+                                  }
                                 } catch (e) {
                                   log(e.toString());
                                 }
@@ -762,10 +779,15 @@ class _ApplicationForm7ViewTabScreenState
                             onTap: () {
                               setState(() {
                                 selectedPageNumber++;
-                                dataFilter = data.sublist(
-                                    (selectedPageNumber * _perPage),
-                                    ((selectedPageNumber * _perPage) +
-                                        _perPage));
+                                if (selectedPageNumber == pagination - 1) {
+                                  dataFilter = data.sublist(
+                                      (selectedPageNumber * _perPage), length);
+                                } else {
+                                  dataFilter = data.sublist(
+                                      (selectedPageNumber * _perPage),
+                                      ((selectedPageNumber * _perPage) +
+                                          _perPage));
+                                }
                               });
                             },
                             child: const Icon(

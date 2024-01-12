@@ -34,12 +34,15 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
             style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 16),
           BlocListener(
               bloc: appStatusBloc,
               listener: (_, AppStatusState state) {
                 if (state is AppStatusLoading) {}
                 if (state is AppStatusLoaded) {}
-                if (state is AppStatusError) {}
+                if (state is AppStatusError) {
+                  GeneralUtil().showSnackBar(context, state.error!);
+                }
                 if (state is AppStatusException) {}
               },
               child: BlocBuilder(
@@ -48,58 +51,49 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
                     if (state is AppStatusLoading) {
                       return SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.33,
+                        height: MediaQuery.of(context).size.height * 0.22,
                         child: Shimmer.fromColors(
                           baseColor: Colors.grey.shade300,
                           highlightColor: Colors.grey.shade100,
                           child: GridView.count(
                             scrollDirection: Axis.horizontal,
                             physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
+                            crossAxisCount: 1,
                             mainAxisSpacing: 32,
                             crossAxisSpacing: 16,
-                            childAspectRatio: 2 / 3.20,
+                            childAspectRatio: 1.0 / 1.7,
                             shrinkWrap: true,
                             padding: const EdgeInsets.all(8.0),
-                            children: List.generate(9, (int index) {
-                              return GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(18),
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade300),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          '',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade300),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '',
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade300),
-                                        ),
-                                      ],
-                                    )),
-                              );
+                            children: List.generate(3, (int index) {
+                              return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade300),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade300),
+                                      ),
+                                    ],
+                                  ));
                             }),
                           ),
                         ),
@@ -108,15 +102,15 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
                     if (state is AppStatusLoaded) {
                       return SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.3,
+                        height: MediaQuery.of(context).size.height * 0.22,
                         child: Center(
                             child: GridView.count(
                           scrollDirection: Axis.horizontal,
                           physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
+                          crossAxisCount: 1,
                           mainAxisSpacing: 32,
                           crossAxisSpacing: 16,
-                          childAspectRatio: 2.50 / 3.50,
+                          childAspectRatio: 1.0 / 1.7,
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8.0),
                           children: List.generate(
@@ -138,37 +132,21 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            state
-                                                .appStatusResponseModel
-                                                .data![index]
-                                                .applicationStatus!,
-                                            style: const TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.black),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            state.appStatusResponseModel
-                                                .data![index].levelStatus!,
-                                            style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black),
-                                          ),
-                                        ],
+                                      Text(
+                                        state.appStatusResponseModel
+                                            .data![index].applicationStatus!,
+                                        style: const TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black),
                                       ),
+                                      const SizedBox(height: 8),
                                       Text(
                                         state.appStatusResponseModel
                                             .data![index].applicationCount
                                             .toString(),
                                         style: const TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 40,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black),
                                       ),
@@ -181,58 +159,48 @@ class _StatusTabWidgetState extends State<StatusTabWidget> {
                     }
                     return SizedBox(
                       width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.33,
+                      height: MediaQuery.of(context).size.height * 0.22,
                       child: Shimmer.fromColors(
                         baseColor: Colors.grey.shade300,
                         highlightColor: Colors.grey.shade100,
                         child: GridView.count(
                           scrollDirection: Axis.horizontal,
                           physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
+                          crossAxisCount: 1,
                           mainAxisSpacing: 32,
                           crossAxisSpacing: 16,
-                          childAspectRatio: 2 / 3.20,
+                          childAspectRatio: 1.0 / 1.7,
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8.0),
-                          children: List.generate(9, (int index) {
-                            return GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade300),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade300),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '',
-                                        style: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade300),
-                                      ),
-                                    ],
-                                  )),
-                            );
+                          children: List.generate(3, (int index) {
+                            return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(18),
+                                  color: Colors.grey.shade300,
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade300),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade300),
+                                    ),
+                                  ],
+                                ));
                           }),
                         ),
                       ),

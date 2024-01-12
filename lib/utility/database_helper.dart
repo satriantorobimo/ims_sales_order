@@ -45,16 +45,16 @@ class DatabaseHelper {
   }
 
   // User Data by ID
-  static Future<List<Map<String, dynamic>>> getUserData(int id) async {
+  static Future<List<Map<String, dynamic>>> getUserData() async {
     final db = await DatabaseHelper.db();
-    return db.query('user', where: "id = ?", whereArgs: [id], limit: 1);
+    return db.query('user', limit: 1);
   }
 
   // Delete
   static Future<void> deleteUser(int id) async {
     final db = await DatabaseHelper.db();
     try {
-      await db.delete("user", where: "id = ?", whereArgs: [id]);
+      await db.delete('user', where: "id = ?", whereArgs: [id]);
     } catch (err) {
       debugPrint("Something went wrong when deleting an item: $err");
     }

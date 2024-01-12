@@ -1,4 +1,5 @@
 import 'package:sales_order/features/application_form_2/data/add_client_response_model.dart';
+import 'package:sales_order/features/application_form_7/data/document_delete_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
@@ -14,6 +15,10 @@ class Form7Repo {
   Future<DocumentPreviewModel> attemptDocPreview(
           DocumentPreviewRequestModel documentPreviewRequestModel) =>
       form7api.attemptDocPreview(documentPreviewRequestModel);
+
+  Future<AddClientResponseModel> attemptDocDelete(
+          DocumentDeleteRequestModel documentDeleteRequestModel) =>
+      form7api.attemptDocDelete(documentDeleteRequestModel);
 
   Future<AddClientResponseModel> attemptDocUpload(
           DocumentUploadRequestModel documentUploadRequestModel) =>

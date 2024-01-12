@@ -3,23 +3,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/data/client_detail_response_model.dart'
     as cd;
+import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_1/data/zip_code_response_model.dart';
 import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
+import 'package:sales_order/features/application_form_1/presentation/bloc/check_scoring_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/bloc/city_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/get_client_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/bloc/prov_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/bloc/zip_code_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ApplicationForm1ViewTabScreen extends StatefulWidget {
-  const ApplicationForm1ViewTabScreen({super.key, required this.applicationNo});
+import '../../bloc/marital_status_bloc/bloc.dart';
+
+class ApplicationForm1ResumeTabScreen extends StatefulWidget {
+  const ApplicationForm1ResumeTabScreen(
+      {super.key, required this.applicationNo});
   final String applicationNo;
   @override
-  State<ApplicationForm1ViewTabScreen> createState() =>
-      _ApplicationForm1ViewTabScreenState();
+  State<ApplicationForm1ResumeTabScreen> createState() =>
+      _ApplicationForm1ResumeTabScreenState();
 }
 
-class _ApplicationForm1ViewTabScreenState
-    extends State<ApplicationForm1ViewTabScreen> {
+class _ApplicationForm1ResumeTabScreenState
+    extends State<ApplicationForm1ResumeTabScreen> {
   String gender = 'Male';
   String selectMaritalStatus = '';
   int selectIndexMaritalStatus = 0;
@@ -38,6 +47,7 @@ class _ApplicationForm1ViewTabScreenState
   bool isLoading = true;
   String applicationNo = '';
   late String date;
+  DateTime? _selectedDate = DateTime.now();
   TextEditingController ctrlDate = TextEditingController();
   TextEditingController ctrlIdNo = TextEditingController();
   TextEditingController ctrlFullName = TextEditingController();
@@ -54,14 +64,493 @@ class _ApplicationForm1ViewTabScreenState
   TextEditingController ctrlRt = TextEditingController();
   TextEditingController ctrlRw = TextEditingController();
   TextEditingController ctrlStatus = TextEditingController();
+  MaritalStatusBloc maritalStatusBloc =
+      MaritalStatusBloc(form1repo: Form1Repo());
+  ProvBloc provBloc = ProvBloc(form1repo: Form1Repo());
+  CityBloc cityBloc = CityBloc(form1repo: Form1Repo());
+  ZipCodeBloc zipCodeBloc = ZipCodeBloc(form1repo: Form1Repo());
+  CheckScoringBloc checkScoringBloc = CheckScoringBloc(form1repo: Form1Repo());
   GetClientBloc getClientBloc = GetClientBloc(form1repo: Form1Repo());
-
   cd.Data clientDetailResponseModel = cd.Data();
 
   @override
   void initState() {
     getClientBloc.add(GetClientAttempt(widget.applicationNo));
     super.initState();
+  }
+
+  Future<void> _showBottom(LookUpMsoResponseModel lookUpMsoResponseModel) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'Province',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Material(
+                    elevation: 6,
+                    shadowColor: Colors.grey.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                            width: 1.0, color: Color(0xFFEAEAEA))),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                            hintText: 'Search',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.all(24),
+                            hintStyle:
+                                TextStyle(color: Colors.grey.withOpacity(0.5)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(
+                          left: 24, right: 24, bottom: 24),
+                      itemCount: lookUpMsoResponseModel.data!.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4),
+                          child: Divider(),
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (selectIndexProv == index) {
+                                selectProv = '';
+                                selectProvCode = '';
+                                selectIndexProv = 10000;
+                                selectCity = '';
+                                selectCityCode = '';
+                                selectIndexCity = 10000;
+                                selectPostal = '';
+                                selectPostalCode = '';
+                                selectIndexPostal = 10000;
+                                selectPostalName = '';
+                              } else {
+                                cityBloc.add(CityAttempt(
+                                    lookUpMsoResponseModel.data![index].code!));
+                                selectProv = lookUpMsoResponseModel
+                                    .data![index].description!;
+                                selectProvCode =
+                                    lookUpMsoResponseModel.data![index].code!;
+                                selectIndexProv = index;
+                                selectCity = '';
+                                selectCityCode = '';
+                                selectIndexCity = 10000;
+                                selectPostal = '';
+                                selectPostalCode = '';
+                                selectIndexPostal = 10000;
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              selectIndexCity == index
+                                  ? const Icon(Icons.check_rounded,
+                                      color: primaryColor)
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> _showBottomCity(LookUpMsoResponseModel lookUpMsoResponseModel) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'City',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Material(
+                    elevation: 6,
+                    shadowColor: Colors.grey.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                            width: 1.0, color: Color(0xFFEAEAEA))),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                            hintText: 'Search',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.all(24),
+                            hintStyle:
+                                TextStyle(color: Colors.grey.withOpacity(0.5)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(
+                          left: 24, right: 24, bottom: 24),
+                      itemCount: lookUpMsoResponseModel.data!.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4),
+                          child: Divider(),
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (selectIndexCity == index) {
+                                selectCity = '';
+                                selectCityCode = '';
+                                selectIndexCity = 10000;
+                                selectPostal = '';
+                                selectPostalCode = '';
+                                selectIndexPostal = 10000;
+                                selectPostalName = '';
+                              } else {
+                                zipCodeBloc.add(ZipCodeAttempt(
+                                    lookUpMsoResponseModel.data![index].code!));
+                                selectCity = lookUpMsoResponseModel
+                                    .data![index].description!;
+                                selectCityCode =
+                                    lookUpMsoResponseModel.data![index].code!;
+                                selectIndexCity = index;
+                                selectPostal = '';
+                                selectPostalCode = '';
+                                selectIndexPostal = 10000;
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              selectIndexCity == index
+                                  ? const Icon(Icons.check_rounded,
+                                      color: primaryColor)
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> _showBottomPostal(ZipCodeResponseModel zipCodeResponseModel) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'Postal',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Material(
+                    elevation: 6,
+                    shadowColor: Colors.grey.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                            width: 1.0, color: Color(0xFFEAEAEA))),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                            hintText: 'Search',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.all(24),
+                            hintStyle:
+                                TextStyle(color: Colors.grey.withOpacity(0.5)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(
+                          left: 24, right: 24, bottom: 24),
+                      itemCount: zipCodeResponseModel.data!.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4),
+                          child: Divider(),
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (selectIndexPostal == index) {
+                                selectPostal = '';
+                                selectPostalCode = '';
+                                selectIndexPostal = 1000;
+                              } else {
+                                selectPostal = zipCodeResponseModel
+                                    .data![index].postalCode!;
+                                selectPostalCode =
+                                    zipCodeResponseModel.data![index].code!;
+                                selectPostalName = zipCodeResponseModel
+                                    .data![index].zipCodeName!;
+                                selectIndexPostal = index;
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${zipCodeResponseModel.data![index].postalCode!} - ${zipCodeResponseModel.data![index].village!}',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              selectIndexPostal == index
+                                  ? const Icon(Icons.check_rounded,
+                                      color: primaryColor)
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> _showBottomMaritalStatus(
+      LookUpMsoResponseModel lookUpMsoResponseModel) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'Marital Status',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Material(
+                    elevation: 6,
+                    shadowColor: Colors.grey.withOpacity(0.4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                            width: 1.0, color: Color(0xFFEAEAEA))),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                            hintText: 'Search',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.all(24),
+                            hintStyle:
+                                TextStyle(color: Colors.grey.withOpacity(0.5)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(
+                          left: 24, right: 24, bottom: 24),
+                      itemCount: lookUpMsoResponseModel.data!.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4),
+                          child: Divider(),
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectMaritalStatus = lookUpMsoResponseModel
+                                  .data![index].description!;
+                              selectIndexMaritalStatus = index;
+                              if (selectMaritalStatus == 'MARRIED') {
+                                dateOb = -6935;
+                              } else if (selectMaritalStatus == 'SINGLE') {
+                                dateOb = -7665;
+                              } else {
+                                dateOb = -6570;
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                lookUpMsoResponseModel
+                                    .data![index].description!,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              selectIndexMaritalStatus == index
+                                  ? const Icon(Icons.check_rounded,
+                                      color: primaryColor)
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            context: context,
+            initialDate: DateTime.now().add(Duration(days: dateOb)),
+            lastDate: DateTime.now().add(Duration(days: dateOb)),
+            firstDate: DateTime.now().add(const Duration(days: -15000)))
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = pickedDate;
+        setState(() {
+          ctrlDate.text = DateFormat('dd MMMM yyyy').format(_selectedDate!);
+          dateSend = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+        });
+      });
+    });
   }
 
   @override
@@ -384,7 +873,7 @@ class _ApplicationForm1ViewTabScreenState
                               clientDetailResponseModel =
                                   state.clientDetailResponseModel.data![0];
                               clientDetailResponseModel.applicationNo =
-                                  widget.applicationNo;
+                                  applicationNo;
                               if (state.clientDetailResponseModel.data![0]
                                       .clientDateOfBirth !=
                                   null) {
@@ -489,6 +978,7 @@ class _ApplicationForm1ViewTabScreenState
                                     .data![0].addressProvinceName!;
                                 selectProvCode = state.clientDetailResponseModel
                                     .data![0].addressProvinceCode!;
+                                cityBloc.add(CityAttempt(selectProvCode));
                               }
                               if (state.clientDetailResponseModel.data![0]
                                       .addressCityName !=
@@ -497,6 +987,7 @@ class _ApplicationForm1ViewTabScreenState
                                     .data![0].addressCityName!;
                                 selectCityCode = state.clientDetailResponseModel
                                     .data![0].addressCityCode!;
+                                zipCodeBloc.add(ZipCodeAttempt(selectCityCode));
                               }
                               if (state.clientDetailResponseModel.data![0]
                                       .addressZipName !=
@@ -550,6 +1041,9 @@ class _ApplicationForm1ViewTabScreenState
                               }
                               isLoading = false;
                             });
+                            maritalStatusBloc
+                                .add(const MaritalStatusAttempt('MRTYP'));
+                            provBloc.add(const ProvAttempt(''));
                           }
                           if (state is GetClientError) {
                             GeneralUtil().showSnackBar(context, state.error!);
@@ -612,7 +1106,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlIdNo,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -680,7 +1173,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlFullName,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -738,49 +1230,154 @@ class _ApplicationForm1ViewTabScreenState
                                           Stack(
                                             alignment: const Alignment(0, 0),
                                             children: [
-                                              Container(
-                                                width: 280,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color: Colors.white,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    selectMaritalStatus == ''
-                                                        ? 'Select Marital Status'
-                                                        : selectMaritalStatus,
-                                                    style: TextStyle(
-                                                        color:
-                                                            selectMaritalStatus ==
-                                                                    ''
-                                                                ? Colors.grey
+                                              BlocListener(
+                                                  bloc: maritalStatusBloc,
+                                                  listener: (_,
+                                                      MaritalStatusState
+                                                          state) {
+                                                    if (state
+                                                        is MaritalStatusLoading) {}
+                                                    if (state
+                                                        is MaritalStatusLoaded) {
+                                                      setState(() {
+                                                        selectIndexMaritalStatus =
+                                                            1000;
+                                                      });
+                                                    }
+
+                                                    if (state
+                                                        is MaritalStatusError) {}
+                                                    if (state
+                                                        is MaritalStatusException) {}
+                                                  },
+                                                  child: BlocBuilder(
+                                                      bloc: maritalStatusBloc,
+                                                      builder: (_,
+                                                          MaritalStatusState
+                                                              state) {
+                                                        if (state
+                                                            is MaritalStatusLoading) {}
+                                                        if (state
+                                                            is MaritalStatusLoaded) {
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              _showBottomMaritalStatus(
+                                                                  state
+                                                                      .lookUpMsoResponseModel);
+                                                            },
+                                                            child: Container(
+                                                              width: 280,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1)),
+                                                                color: Colors
+                                                                    .white,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                    blurRadius:
+                                                                        6,
+                                                                    offset: const Offset(
+                                                                        -6,
+                                                                        4), // Shadow position
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left:
+                                                                          16.0,
+                                                                      right:
+                                                                          16.0),
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                child: Text(
+                                                                  selectMaritalStatus ==
+                                                                          ''
+                                                                      ? 'Select Marital Status'
+                                                                      : selectMaritalStatus,
+                                                                  style: TextStyle(
+                                                                      color: selectMaritalStatus == ''
+                                                                          ? Colors.grey.withOpacity(
+                                                                              0.5)
+                                                                          : Colors
+                                                                              .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        return Container(
+                                                          width: 280,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey
                                                                     .withOpacity(
-                                                                        0.5)
-                                                                : Colors.black,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              ),
+                                                                        0.1)),
+                                                            color: Colors.white,
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                blurRadius: 6,
+                                                                offset: const Offset(
+                                                                    -6,
+                                                                    4), // Shadow position
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 16.0,
+                                                                  right: 16.0),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      })),
                                               Positioned(
                                                 right: 16,
                                                 child: GestureDetector(
@@ -837,7 +1434,6 @@ class _ApplicationForm1ViewTabScreenState
                                               width: 280,
                                               height: 50,
                                               child: TextFormField(
-                                                readOnly: true,
                                                 controller: ctrlPob,
                                                 keyboardType:
                                                     TextInputType.text,
@@ -908,80 +1504,14 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlDate,
+                                                onTap: dateOb == 0
+                                                    ? null
+                                                    : _presentDatePicker,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 readOnly: true,
                                                 decoration: InputDecoration(
                                                     hintText: 'Date of Birth',
-                                                    isDense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                                .fromLTRB(16.0,
-                                                            20.0, 20.0, 16.0),
-                                                    hintStyle: TextStyle(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5)),
-                                                    filled: true,
-                                                    fillColor: Colors.white,
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          BorderSide.none,
-                                                    )),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: const [
-                                              Text(
-                                                '6. Mother Maiden Name',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                ' *',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Material(
-                                            elevation: 6,
-                                            shadowColor:
-                                                Colors.grey.withOpacity(0.4),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                side: const BorderSide(
-                                                    width: 1.0,
-                                                    color: Color(0xFFEAEAEA))),
-                                            child: SizedBox(
-                                              width: 280,
-                                              height: 50,
-                                              child: TextFormField(
-                                                controller: ctrlMotherName,
-                                                readOnly: true,
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                decoration: InputDecoration(
-                                                    hintText:
-                                                        'Mother Maiden Name',
                                                     isDense: true,
                                                     contentPadding:
                                                         const EdgeInsets
@@ -1022,7 +1552,7 @@ class _ApplicationForm1ViewTabScreenState
                                                 CrossAxisAlignment.start,
                                             children: const [
                                               Text(
-                                                '7. Gender',
+                                                '6. Gender',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18,
@@ -1047,7 +1577,11 @@ class _ApplicationForm1ViewTabScreenState
                                                   MainAxisAlignment.start,
                                               children: [
                                                 InkWell(
-                                                  onTap: () {},
+                                                  onTap: () {
+                                                    setState(() {
+                                                      gender = 'Male';
+                                                    });
+                                                  },
                                                   child: Container(
                                                     height: 40,
                                                     padding:
@@ -1075,7 +1609,11 @@ class _ApplicationForm1ViewTabScreenState
                                                 ),
                                                 const SizedBox(width: 8),
                                                 InkWell(
-                                                  onTap: () {},
+                                                  onTap: () {
+                                                    setState(() {
+                                                      gender = 'Female';
+                                                    });
+                                                  },
                                                   child: Container(
                                                     height: 40,
                                                     padding:
@@ -1102,6 +1640,74 @@ class _ApplicationForm1ViewTabScreenState
                                                   ),
                                                 ),
                                               ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: const [
+                                              Text(
+                                                '7. Mother Maiden Name',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                ' *',
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Material(
+                                            elevation: 6,
+                                            shadowColor:
+                                                Colors.grey.withOpacity(0.4),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: const BorderSide(
+                                                    width: 1.0,
+                                                    color: Color(0xFFEAEAEA))),
+                                            child: SizedBox(
+                                              width: 280,
+                                              height: 50,
+                                              child: TextFormField(
+                                                controller: ctrlMotherName,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                decoration: InputDecoration(
+                                                    hintText:
+                                                        'Mother Maiden Name',
+                                                    isDense: true,
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                                .fromLTRB(16.0,
+                                                            20.0, 20.0, 16.0),
+                                                    hintStyle: TextStyle(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.5)),
+                                                    filled: true,
+                                                    fillColor: Colors.white,
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                    )),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -1149,7 +1755,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlEmail,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1228,7 +1833,6 @@ class _ApplicationForm1ViewTabScreenState
                                                     height: 50,
                                                     child: TextFormField(
                                                       controller: ctrlPhoneCode,
-                                                      readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
                                                       decoration:
@@ -1279,7 +1883,6 @@ class _ApplicationForm1ViewTabScreenState
                                                     width: 180,
                                                     height: 50,
                                                     child: TextFormField(
-                                                      readOnly: true,
                                                       controller:
                                                           ctrlPhoneNumber,
                                                       keyboardType:
@@ -1365,7 +1968,10 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSpouseName,
-                                                readOnly: true,
+                                                readOnly: selectMaritalStatus ==
+                                                        'SINGLE'
+                                                    ? true
+                                                    : false,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1392,7 +1998,15 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 20),
+                                    ],
+                                  )),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.23,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1435,7 +2049,10 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSpouseId,
-                                                readOnly: true,
+                                                readOnly: selectMaritalStatus ==
+                                                        'SINGLE'
+                                                    ? true
+                                                    : false,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1462,15 +2079,7 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  )),
-                              SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.23,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1501,47 +2110,147 @@ class _ApplicationForm1ViewTabScreenState
                                           Stack(
                                             alignment: const Alignment(0, 0),
                                             children: [
-                                              Container(
-                                                width: 280,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color: Colors.white,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    selectProv == ''
-                                                        ? 'Select Province'
-                                                        : selectProv,
-                                                    style: TextStyle(
-                                                        color: selectProv == ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              ),
+                                              BlocListener(
+                                                  bloc: provBloc,
+                                                  listener:
+                                                      (_, ProvState state) {
+                                                    if (state is ProvLoading) {}
+                                                    if (state is ProvLoaded) {
+                                                      setState(() {
+                                                        selectIndexProv = 1000;
+                                                      });
+                                                    }
+
+                                                    if (state is ProvError) {}
+                                                    if (state
+                                                        is ProvException) {}
+                                                  },
+                                                  child: BlocBuilder(
+                                                      bloc: provBloc,
+                                                      builder:
+                                                          (_, ProvState state) {
+                                                        if (state
+                                                            is ProvLoading) {}
+                                                        if (state
+                                                            is ProvLoaded) {
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              _showBottom(state
+                                                                  .lookUpMsoResponseModel);
+                                                            },
+                                                            child: Container(
+                                                              width: 280,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1)),
+                                                                color: Colors
+                                                                    .white,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                    blurRadius:
+                                                                        6,
+                                                                    offset: const Offset(
+                                                                        -6,
+                                                                        4), // Shadow position
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left:
+                                                                          16.0,
+                                                                      right:
+                                                                          16.0),
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                child: Text(
+                                                                  selectProv ==
+                                                                          ''
+                                                                      ? 'Select Province'
+                                                                      : selectProv,
+                                                                  style: TextStyle(
+                                                                      color: selectProv == ''
+                                                                          ? Colors.grey.withOpacity(
+                                                                              0.5)
+                                                                          : Colors
+                                                                              .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        return Container(
+                                                          width: 280,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1)),
+                                                            color: Colors.white,
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                blurRadius: 6,
+                                                                offset: const Offset(
+                                                                    -6,
+                                                                    4), // Shadow position
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 16.0,
+                                                                  right: 16.0),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      })),
                                               const Positioned(
                                                 right: 16,
                                                 child: Icon(
@@ -1584,47 +2293,146 @@ class _ApplicationForm1ViewTabScreenState
                                           Stack(
                                             alignment: const Alignment(0, 0),
                                             children: [
-                                              Container(
-                                                width: 280,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color: Colors.white,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    selectCity == ''
-                                                        ? 'Select City'
-                                                        : selectCity,
-                                                    style: TextStyle(
-                                                        color: selectCity == ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              ),
+                                              BlocListener(
+                                                  bloc: cityBloc,
+                                                  listener:
+                                                      (_, CityState state) {
+                                                    if (state is CityLoading) {}
+                                                    if (state is CityLoaded) {
+                                                      setState(() {
+                                                        selectIndexCity = 1000;
+                                                      });
+                                                    }
+                                                    if (state is CityError) {}
+                                                    if (state
+                                                        is CityException) {}
+                                                  },
+                                                  child: BlocBuilder(
+                                                      bloc: cityBloc,
+                                                      builder:
+                                                          (_, CityState state) {
+                                                        if (state
+                                                            is CityLoading) {}
+                                                        if (state
+                                                            is CityLoaded) {
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              _showBottomCity(state
+                                                                  .lookUpMsoResponseModel);
+                                                            },
+                                                            child: Container(
+                                                              width: 280,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1)),
+                                                                color: Colors
+                                                                    .white,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                    blurRadius:
+                                                                        6,
+                                                                    offset: const Offset(
+                                                                        -6,
+                                                                        4), // Shadow position
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left:
+                                                                          16.0,
+                                                                      right:
+                                                                          16.0),
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                child: Text(
+                                                                  selectCity ==
+                                                                          ''
+                                                                      ? 'Select City'
+                                                                      : selectCity,
+                                                                  style: TextStyle(
+                                                                      color: selectCity == ''
+                                                                          ? Colors.grey.withOpacity(
+                                                                              0.5)
+                                                                          : Colors
+                                                                              .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        return Container(
+                                                          width: 280,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1)),
+                                                            color: Colors.white,
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                blurRadius: 6,
+                                                                offset: const Offset(
+                                                                    -6,
+                                                                    4), // Shadow position
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 16.0,
+                                                                  right: 16.0),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      })),
                                               const Positioned(
                                                 right: 16,
                                                 child: Icon(
@@ -1667,48 +2475,150 @@ class _ApplicationForm1ViewTabScreenState
                                           Stack(
                                             alignment: const Alignment(0, 0),
                                             children: [
-                                              Container(
-                                                width: 280,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color: Colors.white,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    selectPostal == ''
-                                                        ? 'Select Zipcode'
-                                                        : selectPostal,
-                                                    style: TextStyle(
-                                                        color: selectPostal ==
-                                                                ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              ),
+                                              BlocListener(
+                                                  bloc: zipCodeBloc,
+                                                  listener:
+                                                      (_, ZipCodeState state) {
+                                                    if (state
+                                                        is ZipCodeLoading) {}
+                                                    if (state
+                                                        is ZipCodeLoaded) {
+                                                      setState(() {
+                                                        selectIndexPostal =
+                                                            1000;
+                                                      });
+                                                    }
+
+                                                    if (state
+                                                        is ZipCodeError) {}
+                                                    if (state
+                                                        is ZipCodeException) {}
+                                                  },
+                                                  child: BlocBuilder(
+                                                      bloc: zipCodeBloc,
+                                                      builder: (_,
+                                                          ZipCodeState state) {
+                                                        if (state
+                                                            is ZipCodeLoading) {}
+                                                        if (state
+                                                            is ZipCodeLoaded) {
+                                                          return InkWell(
+                                                              onTap: () {
+                                                                _showBottomPostal(
+                                                                    state
+                                                                        .zipCodeResponseModel);
+                                                              },
+                                                              child: Container(
+                                                                width: 280,
+                                                                height: 50,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.1)),
+                                                                  color: Colors
+                                                                      .white,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.1),
+                                                                      blurRadius:
+                                                                          6,
+                                                                      offset: const Offset(
+                                                                          -6,
+                                                                          4), // Shadow position
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                padding: const EdgeInsets
+                                                                        .only(
+                                                                    left: 16.0,
+                                                                    right:
+                                                                        16.0),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  child: Text(
+                                                                    selectPostal ==
+                                                                            ''
+                                                                        ? 'Select Zipcode'
+                                                                        : selectPostal,
+                                                                    style: TextStyle(
+                                                                        color: selectPostal ==
+                                                                                ''
+                                                                            ? Colors.grey.withOpacity(
+                                                                                0.5)
+                                                                            : Colors
+                                                                                .black,
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ),
+                                                              ));
+                                                        }
+
+                                                        return Container(
+                                                          width: 280,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1)),
+                                                            color: Colors.white,
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                blurRadius: 6,
+                                                                offset: const Offset(
+                                                                    -6,
+                                                                    4), // Shadow position
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 16.0,
+                                                                  right: 16.0),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      })),
                                               const Positioned(
                                                 right: 16,
                                                 child: Icon(
@@ -1763,7 +2673,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSubDistrict,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1790,7 +2699,15 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 20),
+                                    ],
+                                  )),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.23,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1833,7 +2750,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSubVillage,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1860,15 +2776,7 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  )),
-                              SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.23,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1911,7 +2819,6 @@ class _ApplicationForm1ViewTabScreenState
                                               height: 151,
                                               child: TextFormField(
                                                 controller: ctrlAddress,
-                                                readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 maxLines: 6,
@@ -1991,7 +2898,6 @@ class _ApplicationForm1ViewTabScreenState
                                                     height: 50,
                                                     child: TextFormField(
                                                       controller: ctrlRt,
-                                                      readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
                                                       decoration:
@@ -2043,7 +2949,6 @@ class _ApplicationForm1ViewTabScreenState
                                                     height: 50,
                                                     child: TextFormField(
                                                       controller: ctrlRw,
-                                                      readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
                                                       decoration:
@@ -2083,6 +2988,321 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 20),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: const [
+                                              SizedBox(
+                                                width: 140,
+                                                child: Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Text(
+                                                'Status',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          BlocListener(
+                                              bloc: checkScoringBloc,
+                                              listener:
+                                                  (_, CheckScoringState state) {
+                                                if (state
+                                                    is CheckScoringLoading) {}
+                                                if (state
+                                                    is CheckScoringLoaded) {
+                                                  setState(() {
+                                                    ctrlStatus.text = state
+                                                        .checkScoringResponseModel
+                                                        .message!;
+                                                  });
+                                                }
+                                                if (state
+                                                    is CheckScoringError) {}
+                                                if (state
+                                                    is CheckScoringException) {}
+                                              },
+                                              child: BlocBuilder(
+                                                  bloc: checkScoringBloc,
+                                                  builder: (_,
+                                                      CheckScoringState state) {
+                                                    if (state
+                                                        is CheckScoringLoading) {
+                                                      return Row(
+                                                        children: [
+                                                          const SizedBox(
+                                                            width: 130,
+                                                            height: 50,
+                                                            child: Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Material(
+                                                            elevation: 6,
+                                                            shadowColor: Colors
+                                                                .grey
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                side: const BorderSide(
+                                                                    width: 1.0,
+                                                                    color: Color(
+                                                                        0xFFEAEAEA))),
+                                                            child: SizedBox(
+                                                              width: 140,
+                                                              height: 50,
+                                                              child:
+                                                                  TextFormField(
+                                                                readOnly: true,
+                                                                controller:
+                                                                    ctrlStatus,
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .text,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                        hintText:
+                                                                            '-',
+                                                                        isDense:
+                                                                            true,
+                                                                        contentPadding: const EdgeInsets.fromLTRB(
+                                                                            16.0,
+                                                                            20.0,
+                                                                            20.0,
+                                                                            16.0),
+                                                                        hintStyle: TextStyle(
+                                                                            color: Colors.grey.withOpacity(
+                                                                                0.5)),
+                                                                        filled:
+                                                                            true,
+                                                                        fillColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        border:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          borderSide:
+                                                                              BorderSide.none,
+                                                                        )),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (state
+                                                        is CheckScoringLoaded) {
+                                                      return Row(
+                                                        children: [
+                                                          InkWell(
+                                                            onTap: () {
+                                                              checkScoringBloc.add(
+                                                                  const CheckScoringAttempt(
+                                                                      'PASS'));
+                                                            },
+                                                            child: Container(
+                                                              width: 130,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    primaryColor,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
+                                                              child: const Center(
+                                                                  child: Text(
+                                                                      'Check Scoring',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              15,
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontWeight:
+                                                                              FontWeight.w600))),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Material(
+                                                            elevation: 6,
+                                                            shadowColor: Colors
+                                                                .grey
+                                                                .withOpacity(
+                                                                    0.4),
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                side: const BorderSide(
+                                                                    width: 1.0,
+                                                                    color: Color(
+                                                                        0xFFEAEAEA))),
+                                                            child: SizedBox(
+                                                              width: 140,
+                                                              height: 50,
+                                                              child:
+                                                                  TextFormField(
+                                                                readOnly: true,
+                                                                controller:
+                                                                    ctrlStatus,
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .text,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                        hintText:
+                                                                            '-',
+                                                                        isDense:
+                                                                            true,
+                                                                        contentPadding: const EdgeInsets.fromLTRB(
+                                                                            16.0,
+                                                                            20.0,
+                                                                            20.0,
+                                                                            16.0),
+                                                                        hintStyle: TextStyle(
+                                                                            color: Colors.grey.withOpacity(
+                                                                                0.5)),
+                                                                        filled:
+                                                                            true,
+                                                                        fillColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        border:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          borderSide:
+                                                                              BorderSide.none,
+                                                                        )),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+
+                                                    return Row(
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            checkScoringBloc.add(
+                                                                const CheckScoringAttempt(
+                                                                    'PASS'));
+                                                          },
+                                                          child: Container(
+                                                            width: 130,
+                                                            height: 50,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  primaryColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: const Center(
+                                                                child: Text(
+                                                                    'Check Scoring',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.w600))),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        Material(
+                                                          elevation: 6,
+                                                          shadowColor: Colors
+                                                              .grey
+                                                              .withOpacity(0.4),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              side: const BorderSide(
+                                                                  width: 1.0,
+                                                                  color: Color(
+                                                                      0xFFEAEAEA))),
+                                                          child: SizedBox(
+                                                            width: 140,
+                                                            height: 50,
+                                                            child:
+                                                                TextFormField(
+                                                              readOnly: true,
+                                                              controller:
+                                                                  ctrlStatus,
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .text,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                      hintText:
+                                                                          '-',
+                                                                      isDense:
+                                                                          true,
+                                                                      contentPadding: const EdgeInsets
+                                                                              .fromLTRB(
+                                                                          16.0,
+                                                                          20.0,
+                                                                          20.0,
+                                                                          16.0),
+                                                                      hintStyle: TextStyle(
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .withOpacity(
+                                                                                  0.5)),
+                                                                      filled:
+                                                                          true,
+                                                                      fillColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      border:
+                                                                          OutlineInputBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        borderSide:
+                                                                            BorderSide.none,
+                                                                      )),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  })),
+                                        ],
+                                      ),
                                     ],
                                   )),
                             ],
@@ -2117,23 +3337,87 @@ class _ApplicationForm1ViewTabScreenState
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context,
-                            StringRouterUtil.applicationForm2ViewScreenTabRoute,
-                            arguments: clientDetailResponseModel);
-                      },
+                      onTap: ctrlStatus.text.isEmpty || ctrlStatus.text == 'NOT PASS'
+                          ? null
+                          : () async {
+                              clientDetailResponseModel.applicationNo =
+                                  widget.applicationNo;
+                              clientDetailResponseModel.clientIdNo =
+                                  ctrlIdNo.text;
+                              clientDetailResponseModel.clientFullName =
+                                  ctrlFullName.text;
+                              clientDetailResponseModel.clientMotherMaidenName =
+                                  ctrlMotherName.text;
+                              clientDetailResponseModel.clientPlaceOfBirth =
+                                  ctrlPob.text;
+                              clientDetailResponseModel.clientDateOfBirth =
+                                  dateSend;
+                              clientDetailResponseModel.clientGenderCode =
+                                  gender == 'Male' ? 'M' : 'F';
+                              clientDetailResponseModel.clientGenderType =
+                                  gender;
+                              clientDetailResponseModel
+                                      .clientMaritalStatusCode =
+                                  selectMaritalStatus;
+                              clientDetailResponseModel
+                                      .clientMaritalStatusType =
+                                  selectMaritalStatus;
+                              clientDetailResponseModel.clientEmail =
+                                  ctrlEmail.text;
+                              clientDetailResponseModel.clientAreaMobileNo =
+                                  ctrlPhoneCode.text;
+                              clientDetailResponseModel.clientMobileNo =
+                                  ctrlPhoneNumber.text;
+                              clientDetailResponseModel.clientSpouseName =
+                                  ctrlSpouseName.text;
+                              clientDetailResponseModel.clientSpouseIdNo =
+                                  ctrlSpouseId.text;
+                              clientDetailResponseModel.addressProvinceCode =
+                                  selectProvCode;
+                              clientDetailResponseModel.addressProvinceName =
+                                  selectProv;
+                              clientDetailResponseModel.addressCityCode =
+                                  selectCityCode;
+                              clientDetailResponseModel.addressCityName =
+                                  selectCity;
+                              clientDetailResponseModel.addressZipCode =
+                                  selectPostalCode;
+                              clientDetailResponseModel.addressZipCodeCode =
+                                  selectPostalCode;
+                              clientDetailResponseModel.addressZipName =
+                                  selectPostal;
+                              clientDetailResponseModel.addressSubDistrict =
+                                  ctrlSubDistrict.text;
+                              clientDetailResponseModel.addressVillage =
+                                  ctrlSubVillage.text;
+                              clientDetailResponseModel.addressAddress =
+                                  ctrlAddress.text;
+                              clientDetailResponseModel.addressRt = ctrlRt.text;
+                              clientDetailResponseModel.addressRw = ctrlRw.text;
+
+                              Navigator.pushNamed(
+                                  context,
+                                  StringRouterUtil
+                                      .applicationForm2UseScreenTabRoute,
+                                  arguments: clientDetailResponseModel);
+                            },
                       child: Container(
                         width: 200,
                         height: 45,
                         decoration: BoxDecoration(
-                          color: thirdColor,
+                          color: ctrlStatus.text.isEmpty ||
+                                  ctrlStatus.text == 'NOT PASS'
+                              ? const Color(0xFFE1E1E1)
+                              : thirdColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Center(
+                        child: Center(
                             child: Text('NEXT',
                                 style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: ctrlStatus.text.isEmpty
+                                        ? Colors.white
+                                        : Colors.black,
                                     fontWeight: FontWeight.w600))),
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/mobile/application_form_1_mobile_screen.dart';
+import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_resume_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_use_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_view_tab_screen.dart';
@@ -32,6 +33,7 @@ import 'package:sales_order/features/application_form_summary/presentation/scree
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:sales_order/features/client_list/presentation/screen/mobile/client_list_mobile_screen.dart';
 import 'package:sales_order/features/client_list/presentation/screen/tab/client_list_tab_screen.dart';
+import 'package:sales_order/features/login/presentation/screen/tab/relogin_tab_screen.dart';
 import 'package:sales_order/features/splash/splash_screen.dart';
 import 'package:sales_order/features/tab/screen/mobile/tab_mobile_screen.dart';
 import 'package:sales_order/features/tab/screen/tab/tab_tab_screen.dart';
@@ -53,6 +55,13 @@ class Routers {
       case StringRouterUtil.loginScreenTabRoute:
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) => const LoginTabScreen(),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.reloginScreenTabRoute:
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => const ReloginTabScreen(),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -117,6 +126,15 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 ApplicationForm1ViewTabScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm1ResumeScreenTabRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm1ResumeTabScreen(applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));

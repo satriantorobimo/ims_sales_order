@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sales_order/features/application_form_4/domain/repo/form_4_repo.dart';
 import 'package:sales_order/features/application_form_4/presentation/bloc/asset_data_detail_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -446,7 +447,9 @@ class _ApplicationForm4ViewTabScreenState
                               }
                             });
                           }
-                          if (state is AssetDataDetailError) {}
+                          if (state is AssetDataDetailError) {
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
                           if (state is AssetDataDetailException) {}
                         },
                         child: BlocBuilder(

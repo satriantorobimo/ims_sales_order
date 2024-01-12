@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sales_order/features/home/presentation/widget/header_tab_widget.dart';
-import 'package:sales_order/features/home/presentation/widget/new_applications_tab_widget.dart';
+import 'package:sales_order/features/home/presentation/widget/dashboard_data_approved_tab_widget.dart';
 import 'package:sales_order/features/home/presentation/widget/notification_tab_widget.dart';
 import 'package:sales_order/features/home/presentation/widget/status_tab_widget.dart';
 
@@ -23,12 +23,13 @@ class HomeTabScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
                       //Header
                       HeaderTabWidget(),
+                      SizedBox(height: 32),
                       //Status
                       StatusTabWidget(),
+                      SizedBox(height: 32),
                       //New Application
                       NewApplicationTabWidget()
                     ],

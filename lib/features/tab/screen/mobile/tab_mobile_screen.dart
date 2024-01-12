@@ -5,7 +5,7 @@ import 'package:sales_order/features/application_list/presentation/screen/mobile
 import 'package:sales_order/features/history/presentation/screen/mobile/history_mobile_screen.dart';
 import 'package:sales_order/features/home/presentation/screen/mobile/home_mobile_screen.dart';
 import 'package:sales_order/features/profile/presentation/screen/mobile/profile_mobile_screen.dart';
-import 'package:sales_order/features/search/presentation/screen/mobile/search_mobile_screen.dart';
+import 'package:sales_order/features/announcement/presentation/screen/mobile/search_mobile_screen.dart';
 import 'package:sales_order/features/tab/provider/tab_provider.dart';
 import 'package:sales_order/utility/color_util.dart';
 

@@ -9,6 +9,7 @@ import 'package:sales_order/features/client_list/data/client_matching_mode.dart'
 import 'package:sales_order/features/home/domain/repo/home_repo.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/drop_down_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -27,6 +28,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
   AppListBloc appListBloc = AppListBloc(homeRepo: HomeRepo());
   var selectedPageNumber = 0;
   var pagination = 0;
+  var length = 0;
   var selectedClientType = 0;
   final int _perPage = 12;
   late List<Data> data = [];
@@ -173,17 +175,27 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                           content: data.agreementNo ?? '-',
                           type: false),
                       const SizedBox(width: 16),
-                      const DetailInfoWidget(
-                          title: 'Status', content: 'HOLD ENTRY', type: false),
+                      DetailInfoWidget(
+                          title: 'Status',
+                          content: data.applicationStatus!,
+                          type: false),
                     ],
                   ),
                 ),
                 Center(
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context,
-                          StringRouterUtil.applicationForm1ViewScreenTabRoute,
-                          arguments: data.applicationNo);
+                      if (data.applicationStatus == 'HOLD') {
+                        Navigator.pushNamed(
+                            context,
+                            StringRouterUtil
+                                .applicationForm1ResumeScreenTabRoute,
+                            arguments: data.applicationNo);
+                      } else {
+                        Navigator.pushNamed(context,
+                            StringRouterUtil.applicationForm1ViewScreenTabRoute,
+                            arguments: data.applicationNo);
+                      }
                     },
                     child: Container(
                       width: 200,
@@ -543,6 +555,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 Material(
                   elevation: 6,
@@ -584,6 +597,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                           pagination =
                               (state.appListResponseModel.data!.length / 12)
                                   .ceil();
+                          length = state.appListResponseModel.data!.length;
                           if (pagination == 1) {
                             dataFilter = state.appListResponseModel.data!;
                           } else {
@@ -605,16 +619,16 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                           if (state is AppListLoading) {
                             return SizedBox(
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.6,
+                              height: MediaQuery.of(context).size.height * 0.55,
                               child: Shimmer.fromColors(
                                 baseColor: Colors.grey.shade300,
                                 highlightColor: Colors.grey.shade100,
                                 child: GridView.count(
                                   physics: const NeverScrollableScrollPhysics(),
                                   crossAxisCount: 4,
-                                  mainAxisSpacing: 24,
+                                  mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio: 2 / 1,
+                                  childAspectRatio: 1.0 / 0.42,
                                   padding: const EdgeInsets.all(8.0),
                                   children: List.generate(12, (int index) {
                                     return Container(
@@ -687,14 +701,14 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                           if (state is AppListLoaded) {
                             return SizedBox(
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.6,
+                              height: MediaQuery.of(context).size.height * 0.55,
                               child: Center(
                                 child: GridView.count(
                                   physics: const NeverScrollableScrollPhysics(),
                                   crossAxisCount: 4,
-                                  mainAxisSpacing: 24,
+                                  mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio: 2 / 1,
+                                  childAspectRatio: 1.0 / 0.42,
                                   padding: const EdgeInsets.all(8.0),
                                   children: List.generate(dataFilter.length,
                                       (int index) {
@@ -811,7 +825,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                       dataFilter[index]
                                                           .clientName!,
                                                       style: const TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.black),
@@ -821,15 +835,18 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                       dataFilter[index]
                                                           .applicationNo!,
                                                       style: const TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.w300,
                                                           color: Colors.black),
                                                     ),
                                                     Text(
-                                                      'Rp. ${dataFilter[index].financingAmount}',
+                                                      GeneralUtil.convertToIdr(
+                                                          dataFilter[index]
+                                                              .financingAmount,
+                                                          2),
                                                       style: const TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           color: Colors.black),
@@ -853,7 +870,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                             Text(
                                                               date,
                                                               style: const TextStyle(
-                                                                  fontSize: 14,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w300,
@@ -863,10 +880,10 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                           ],
                                                         ),
                                                         Container(
-                                                          height: 30,
+                                                          height: 25,
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(8.0),
+                                                                  .all(6.0),
                                                           decoration: BoxDecoration(
                                                               color:
                                                                   secondaryColor,
@@ -880,7 +897,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                                       .facilityDesc ??
                                                                   '-',
                                                               style: const TextStyle(
-                                                                  fontSize: 12,
+                                                                  fontSize: 10,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w300,
@@ -904,16 +921,16 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                           }
                           return SizedBox(
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.6,
+                            height: MediaQuery.of(context).size.height * 0.55,
                             child: Shimmer.fromColors(
                               baseColor: Colors.grey.shade300,
                               highlightColor: Colors.grey.shade100,
                               child: GridView.count(
                                 physics: const NeverScrollableScrollPhysics(),
                                 crossAxisCount: 4,
-                                mainAxisSpacing: 24,
+                                mainAxisSpacing: 16,
                                 crossAxisSpacing: 16,
-                                childAspectRatio: 2 / 1,
+                                childAspectRatio: 1.0 / 0.42,
                                 padding: const EdgeInsets.all(8.0),
                                 children: List.generate(12, (int index) {
                                   return Container(
@@ -1000,15 +1017,27 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                 setState(() {
                                   selectedPageNumber--;
                                   if (dataFilterSearch.isEmpty) {
-                                    dataFilter = data.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   } else {
-                                    dataFilter = dataFilterSearch.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   }
                                 });
                               },
@@ -1030,15 +1059,27 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                   selectedPageNumber = index;
 
                                   if (dataFilterSearch.isEmpty) {
-                                    dataFilter = data.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   } else {
-                                    dataFilter = dataFilterSearch.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   }
                                 });
                               },
@@ -1075,15 +1116,27 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                 setState(() {
                                   selectedPageNumber++;
                                   if (dataFilterSearch.isEmpty) {
-                                    dataFilter = data.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = data.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   } else {
-                                    dataFilter = dataFilterSearch.sublist(
-                                        (selectedPageNumber * _perPage),
-                                        ((selectedPageNumber * _perPage) +
-                                            _perPage));
+                                    if (selectedPageNumber == pagination - 1) {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          length);
+                                    } else {
+                                      dataFilter = dataFilterSearch.sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                    }
                                   }
                                 });
                               },
@@ -1094,7 +1147,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                             ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

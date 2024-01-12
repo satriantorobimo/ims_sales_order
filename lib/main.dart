@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_order/features/tab/provider/tab_provider.dart';
 import 'package:sales_order/utility/color_util.dart';
@@ -28,10 +27,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Sales Order',
-        theme: ThemeData(
-            primaryColor: primaryColor,
-            textTheme: GoogleFonts.plusJakartaSansTextTheme(
-                Theme.of(context).textTheme)),
+        theme: ThemeData(primaryColor: primaryColor, fontFamily: 'Jakarta'),
         onGenerateRoute: Routers.generateRoute,
         initialRoute: StringRouterUtil.splashScreenRoute,
       ),

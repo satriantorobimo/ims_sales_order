@@ -12,6 +12,7 @@ import 'package:sales_order/features/application_form_2/presentation/bloc/family
 import 'package:sales_order/features/application_form_2/presentation/bloc/work_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class ApplicationForm2TabScreen extends StatefulWidget {
@@ -1990,7 +1991,9 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                     pMarketingName: widget
                                         .addClientRequestModel.pMarketingName));
                           }
-                          if (state is ClientError) {}
+                          if (state is ClientError) {
+                            GeneralUtil().showSnackBar(context, state.error!);
+                          }
                           if (state is ClientException) {}
                         },
                         child: BlocBuilder(

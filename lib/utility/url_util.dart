@@ -63,6 +63,14 @@ class UrlUtil {
     return baseUrl + getUrlLoginAppList2;
   }
 
+  static String urlDataPeriode() =>
+      'api/mobso_api/api/Home/GetCountApprovedByPeriod';
+
+  String getUrlDataPeriode() {
+    final String getUrlDataPeriode2 = urlDataPeriode();
+    return baseUrl + getUrlDataPeriode2;
+  }
+
   static String urlClientMatchingCorp() =>
       'api/mobso_api/api/Client/MatchingCorporate';
 
@@ -269,6 +277,13 @@ class UrlUtil {
   String getUrlDocPreview() {
     final String getUrlDocPreview2 = urlDocPreview();
     return baseUrl + getUrlDocPreview2;
+  }
+
+  static String urlDocDelete() => 'api/mobso_api/api/Document/DeleteFile';
+
+  String getUrlDocDelete() {
+    final String getUrlDocDelete2 = urlDocDelete();
+    return baseUrl + getUrlDocDelete2;
   }
 
   static String urlDocUpload() => 'api/mobso_api/api/Document/UploadFile';
