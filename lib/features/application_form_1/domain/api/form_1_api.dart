@@ -4,6 +4,7 @@ import 'package:sales_order/features/application_form_1/data/check_scoring_respo
 import 'package:sales_order/features/application_form_1/data/client_detail_response_model.dart';
 import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
 import 'package:sales_order/features/application_form_1/data/zip_code_response_model.dart';
+import 'package:sales_order/features/application_form_2/data/add_client_response_model.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/url_util.dart';
 
@@ -14,6 +15,7 @@ class Form1Api {
   ZipCodeResponseModel zipCodeResponseModel = ZipCodeResponseModel();
   ClientDetailResponseModel clientDetailResponseModel =
       ClientDetailResponseModel();
+  AddClientResponseModel addClientResponseModel = AddClientResponseModel();
   final UrlUtil urlUtil = UrlUtil();
 
   Future<ClientDetailResponseModel> attemptGetClient(String code) async {
@@ -202,6 +204,38 @@ class Form1Api {
         zipCodeResponseModel =
             ZipCodeResponseModel.fromJson(jsonDecode(res.body));
         throw zipCodeResponseModel.message!;
+      }
+    } catch (ex) {
+      throw ex.toString();
+    }
+  }
+
+  Future<AddClientResponseModel> attemptCancel(String code) async {
+    List a = [];
+    final String? token = await SharedPrefUtil.getSharedString('token');
+
+    final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
+    final Map mapData = {};
+    mapData['p_application_no'] = code;
+    a.add(mapData);
+
+    final json = jsonEncode(a);
+
+    try {
+      Stopwatch stopwatch = Stopwatch()..start();
+      final res = await http.post(Uri.parse(urlUtil.getUrlCancelClient()),
+          body: json, headers: header);
+      if (res.statusCode == 200) {
+        stopwatch.stop();
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        return addClientResponseModel;
+      } else if (res.statusCode == 401) {
+        throw 'expired';
+      } else {
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        throw addClientResponseModel.message!;
       }
     } catch (ex) {
       throw ex.toString();

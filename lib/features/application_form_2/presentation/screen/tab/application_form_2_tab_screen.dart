@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
 import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/features/application_form_2/domain/repo/form_2_repo.dart';
 import 'package:sales_order/features/application_form_2/presentation/bloc/bank_bloc/bloc.dart';
@@ -931,7 +933,10 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlBankNo,
-                                        keyboardType: TextInputType.text,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                         decoration: InputDecoration(
                                             hintText: 'Bank Account No',
                                             isDense: true,
@@ -1057,7 +1062,12 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlIdNo,
-                                        keyboardType: TextInputType.text,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                          LengthLimitingTextInputFormatter(16),
+                                        ],
                                         decoration: InputDecoration(
                                             hintText: 'ID No',
                                             isDense: true,
@@ -2020,8 +2030,33 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                               if (state is ClientUpdateLoaded) {
                                 return InkWell(
                                   onTap: () {
-                                    clientBloc.add(ClientAddAttempt(
-                                        widget.addClientRequestModel));
+                                    if (ctrlBankNo.text.isEmpty ||
+                                        ctrlBankNo.text == '' ||
+                                        ctrlBankName.text.isEmpty ||
+                                        ctrlBankName.text == '' ||
+                                        ctrlIdNo.text.isEmpty ||
+                                        ctrlIdNo.text == '' ||
+                                        ctrlFullName.text.isEmpty ||
+                                        ctrlFullName.text == '' ||
+                                        ctrlCompanyName.text.isEmpty ||
+                                        ctrlCompanyName.text == '' ||
+                                        ctrlDepartment.text.isEmpty ||
+                                        ctrlDepartment.text == '' ||
+                                        ctrlWorkPosition.text.isEmpty ||
+                                        ctrlWorkPosition.text == '' ||
+                                        ctrlStart.text.isEmpty ||
+                                        ctrlStart.text == '' ||
+                                        ctrlEnd.text.isEmpty ||
+                                        ctrlEnd.text == '' ||
+                                        selectFamily == '' ||
+                                        selectWorkType == '' ||
+                                        selectBank == '' ||
+                                        selectBank == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      clientBloc.add(ClientAddAttempt(
+                                          widget.addClientRequestModel));
+                                    }
                                   },
                                   child: Container(
                                     width: 200,
@@ -2041,8 +2076,33 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                               }
                               return InkWell(
                                 onTap: () {
-                                  clientBloc.add(ClientAddAttempt(
-                                      widget.addClientRequestModel));
+                                  if (ctrlBankNo.text.isEmpty ||
+                                      ctrlBankNo.text == '' ||
+                                      ctrlBankName.text.isEmpty ||
+                                      ctrlBankName.text == '' ||
+                                      ctrlIdNo.text.isEmpty ||
+                                      ctrlIdNo.text == '' ||
+                                      ctrlFullName.text.isEmpty ||
+                                      ctrlFullName.text == '' ||
+                                      ctrlCompanyName.text.isEmpty ||
+                                      ctrlCompanyName.text == '' ||
+                                      ctrlDepartment.text.isEmpty ||
+                                      ctrlDepartment.text == '' ||
+                                      ctrlWorkPosition.text.isEmpty ||
+                                      ctrlWorkPosition.text == '' ||
+                                      ctrlStart.text.isEmpty ||
+                                      ctrlStart.text == '' ||
+                                      ctrlEnd.text.isEmpty ||
+                                      ctrlEnd.text == '' ||
+                                      selectFamily == '' ||
+                                      selectWorkType == '' ||
+                                      selectBank == '' ||
+                                      selectBank == '') {
+                                    EmptyWidget().showBottomEmpty(context);
+                                  } else {
+                                    clientBloc.add(ClientAddAttempt(
+                                        widget.addClientRequestModel));
+                                  }
                                 },
                                 child: Container(
                                   width: 200,

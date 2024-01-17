@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
 import 'package:sales_order/features/application_form_3/data/look_up_dealer_model.dart';
 import 'package:sales_order/features/application_form_3/data/look_up_package_model.dart';
 import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
@@ -275,6 +277,32 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
           ),
           elevation: 0,
           backgroundColor: Colors.white,
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    CancelWidget().showBottomCancel(context,
+                        widget.updateLoanDataRequestModel.pApplicationNo!);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Colors.redAccent,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Center(
+                      child: Text(
+                        'CANCEL',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -1163,21 +1191,27 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                               if (state is UpdateLoanDataLoaded) {
                                 return InkWell(
                                   onTap: () {
-                                    updateLoanDataBloc.add(
-                                        UpdateLoanDataAttempt(
-                                            UpdateLoanDataRequestModel(
-                                                pApplicationNo: widget
-                                                    .updateLoanDataRequestModel
-                                                    .pApplicationNo,
-                                                pDealerCode: selectDealerCode,
-                                                pMarketingCode: widget
-                                                    .updateLoanDataRequestModel
-                                                    .pMarketingCode,
-                                                pMarketingName: widget
-                                                    .updateLoanDataRequestModel
-                                                    .pMarketingName,
-                                                pPackageCode: selectPackageCode,
-                                                pRemark: ctrlRemark.text)));
+                                    if (ctrlRemark.text.isEmpty ||
+                                        ctrlRemark.text == '' ||
+                                        selectPackage == '' ||
+                                        selectDealer == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      updateLoanDataBloc.add(UpdateLoanDataAttempt(
+                                          UpdateLoanDataRequestModel(
+                                              pApplicationNo: widget
+                                                  .updateLoanDataRequestModel
+                                                  .pApplicationNo,
+                                              pDealerCode: selectDealerCode,
+                                              pMarketingCode: widget
+                                                  .updateLoanDataRequestModel
+                                                  .pMarketingCode,
+                                              pMarketingName: widget
+                                                  .updateLoanDataRequestModel
+                                                  .pMarketingName,
+                                              pPackageCode: selectPackageCode,
+                                              pRemark: ctrlRemark.text)));
+                                    }
                                   },
                                   child: Container(
                                     width: 200,
@@ -1197,20 +1231,28 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                               }
                               return InkWell(
                                 onTap: () {
-                                  updateLoanDataBloc.add(UpdateLoanDataAttempt(
-                                      UpdateLoanDataRequestModel(
-                                          pApplicationNo: widget
-                                              .updateLoanDataRequestModel
-                                              .pApplicationNo,
-                                          pDealerCode: selectDealerCode,
-                                          pMarketingCode: widget
-                                              .updateLoanDataRequestModel
-                                              .pMarketingCode,
-                                          pMarketingName: widget
-                                              .updateLoanDataRequestModel
-                                              .pMarketingName,
-                                          pPackageCode: selectPackageCode,
-                                          pRemark: ctrlRemark.text)));
+                                  if (ctrlRemark.text.isEmpty ||
+                                      ctrlRemark.text == '' ||
+                                      selectPackage == '' ||
+                                      selectDealer == '') {
+                                    EmptyWidget().showBottomEmpty(context);
+                                  } else {
+                                    updateLoanDataBloc.add(
+                                        UpdateLoanDataAttempt(
+                                            UpdateLoanDataRequestModel(
+                                                pApplicationNo: widget
+                                                    .updateLoanDataRequestModel
+                                                    .pApplicationNo,
+                                                pDealerCode: selectDealerCode,
+                                                pMarketingCode: widget
+                                                    .updateLoanDataRequestModel
+                                                    .pMarketingCode,
+                                                pMarketingName: widget
+                                                    .updateLoanDataRequestModel
+                                                    .pMarketingName,
+                                                pPackageCode: selectPackageCode,
+                                                pRemark: ctrlRemark.text)));
+                                  }
                                 },
                                 child: Container(
                                   width: 200,

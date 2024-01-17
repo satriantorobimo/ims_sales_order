@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
+import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 class HeaderTabWidget extends StatefulWidget {
@@ -104,10 +105,14 @@ class _HeaderTabWidgetState extends State<HeaderTabWidget> {
                     ),
                     const SizedBox(width: 16),
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        SharedPrefUtil.deleteSharedPref('token');
+                        await DatabaseHelper.deleteUser(1);
+
+                        // ignore: use_build_context_synchronously
                         Navigator.pushNamedAndRemoveUntil(
                             context,
-                            StringRouterUtil.reloginScreenTabRoute,
+                            StringRouterUtil.loginScreenTabRoute,
                             (route) => false);
                       },
                       child: Container(

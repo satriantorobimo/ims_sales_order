@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_display_widget.dart';
+import 'package:sales_order/features/application_list/presentation/widget/client_input_ktp_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/detail_info_widget.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
@@ -319,6 +320,18 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                     onChanged: (val) {
                                       setStates(() {
                                         selectedClientType = val;
+
+                                        ctrlMotherMaiden.clear();
+
+                                        ctrlKtpNo.clear();
+
+                                        ctrlFullName.clear();
+
+                                        ctrlPob.clear();
+
+                                        ctrlNpwp.clear();
+
+                                        dateSend = '';
                                       });
                                     },
                                   ),
@@ -336,7 +349,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                       onTap: () {},
                                     ),
                                     const SizedBox(width: 16),
-                                    ClientInputWidget(
+                                    ClientInputKtpWidget(
                                       title: 'KTP No',
                                       content: '',
                                       ctrl: ctrlKtpNo,
@@ -488,7 +501,19 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                         const SizedBox(width: 16),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).pop();
+                            setStates(() {
+                              ctrlMotherMaiden.clear();
+
+                              ctrlKtpNo.clear();
+
+                              ctrlFullName.clear();
+
+                              ctrlPob.clear();
+
+                              ctrlNpwp.clear();
+
+                              dateSend = '';
+                            });
                           },
                           child: Container(
                             width: 200,

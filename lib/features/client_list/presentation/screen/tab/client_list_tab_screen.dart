@@ -182,28 +182,40 @@ class _ClientListTabScreenState extends State<ClientListTabScreen> {
                   ),
                   const SizedBox(width: 8),
                   InkWell(
-                    onTap: () async {
-                      final data = await DatabaseHelper.getUserData();
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushNamed(context,
-                          StringRouterUtil.applicationForm1UseScreenTabRoute,
-                          arguments: AddClientRequestModel(
-                              pMarketingCode: data[0]['uid'],
-                              pMarketingName: data[0]['name'],
-                              pBranchCode: data[0]['branch_code'],
-                              pBranchName: data[0]['branch_name'],
-                              pClientCode: clientMathcingPersonalResponseModel
-                                  .clientCode,
-                              pClientNo:
-                                  clientMathcingPersonalResponseModel.clientNo,
-                              pDocNo: clientMathcingPersonalResponseModel.idNo,
-                              pDocType: 'KTP'));
-                    },
+                    onTap:
+                        clientMathcingPersonalResponseModel.checkStatus ==
+                                'CLEAR'
+                            ? () async {
+                                final data = await DatabaseHelper.getUserData();
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushNamed(context,
+                                    StringRouterUtil.applicationForm1UseScreenTabRoute,
+                                    arguments: AddClientRequestModel(
+                                        pMarketingCode: data[0]['uid'],
+                                        pMarketingName: data[0]['name'],
+                                        pBranchCode: data[0]['branch_code'],
+                                        pBranchName: data[0]['branch_name'],
+                                        pClientCode:
+                                            clientMathcingPersonalResponseModel
+                                                .clientCode,
+                                        pClientNo:
+                                            clientMathcingPersonalResponseModel
+                                                .clientNo,
+                                        pDocNo:
+                                            clientMathcingPersonalResponseModel
+                                                .idNo,
+                                        pDocType: 'KTP'));
+                              }
+                            : null,
                     child: Container(
                       width: 200,
                       height: 45,
                       decoration: BoxDecoration(
-                        color: primaryColor,
+                        color:
+                            clientMathcingPersonalResponseModel.checkStatus ==
+                                    'CLEAR'
+                                ? primaryColor
+                                : const Color(0xFFC6C6C6),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Center(

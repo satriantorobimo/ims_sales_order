@@ -9,15 +9,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
 import 'package:sales_order/features/application_form_7/data/document_delete_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
+import 'package:sales_order/features/application_form_7/data/document_update_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_upload_request_model.dart';
 import 'package:sales_order/features/application_form_7/domain/repo/form_7_repo.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_delete_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_list_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_preview_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_update_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/bloc/doc_upload_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_7/presentation/widget/empty_doc_widget.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
@@ -32,7 +36,9 @@ class ApplicationForm7TabScreen extends StatefulWidget {
       _ApplicationForm7TabScreenState();
 }
 
-class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
+class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
+    with TickerProviderStateMixin {
+  AnimationController? animationController;
   var selectedPageNumber = 0;
   var pagination = 0;
   var length = 0;
@@ -41,12 +47,24 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
   DocPreviewBloc docPreviewBloc = DocPreviewBloc(form7repo: Form7Repo());
   DocUploadBloc docUploadBloc = DocUploadBloc(form7repo: Form7Repo());
   DocDeleteBloc docDeleteBloc = DocDeleteBloc(form7repo: Form7Repo());
+  DocUpdateBloc docUpdateBloc = DocUpdateBloc(form7repo: Form7Repo());
   late List<Data> data = [];
   late List<Data> dataFilter = [];
   int count = 0;
+  bool isLoading = false;
+  bool noPic = false;
+
+  @override
+  void dispose() {
+    animationController!.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
+    animationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    animationController!.repeat();
     docListBloc.add(DocListAttempt(widget.applicationNo));
     super.initState();
   }
@@ -164,17 +182,18 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
             initialEntryMode: DatePickerEntryMode.calendarOnly,
             context: context,
             initialDate: DateTime.now(),
-            lastDate: DateTime.now(),
-            firstDate: DateTime.now().add(const Duration(days: -15000)))
+            lastDate: DateTime.now().add(const Duration(days: 90)),
+            firstDate: DateTime.now())
         .then((pickedDate) {
+      int indexes =
+          data.indexWhere((element) => element.id == dataFilter[index].id);
       if (pickedDate == null) {
         return;
       }
       setState(() {
-        setState(() {
-          dataFilter[index].promiseDate =
-              DateFormat('yyyy-MM-dd').format(pickedDate);
-        });
+        dataFilter[index].promiseDate =
+            DateFormat('yyyy-MM-dd').format(pickedDate);
+        data[indexes].promiseDate = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     });
   }
@@ -184,17 +203,40 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
             initialEntryMode: DatePickerEntryMode.calendarOnly,
             context: context,
             initialDate: DateTime.now(),
-            lastDate: DateTime.now(),
-            firstDate: DateTime.now().add(const Duration(days: -15000)))
+            lastDate: DateTime.now().add(const Duration(days: 15000)),
+            firstDate: DateTime.now())
         .then((pickedDate) {
+      int indexes =
+          data.indexWhere((element) => element.id == dataFilter[index].id);
       if (pickedDate == null) {
         return;
       }
       setState(() {
-        setState(() {
-          dataFilter[index].expiredDate =
-              DateFormat('yyyy-MM-dd').format(pickedDate);
-        });
+        dataFilter[index].expiredDate =
+            DateFormat('yyyy-MM-dd').format(pickedDate);
+        data[indexes].expiredDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      });
+    });
+  }
+
+  void _effDatePicker(int index) {
+    showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            context: context,
+            initialDate: DateTime.now(),
+            lastDate: DateTime.now(),
+            firstDate: DateTime.now().add(const Duration(days: -15000)))
+        .then((pickedDate) {
+      int indexes =
+          data.indexWhere((element) => element.id == dataFilter[index].id);
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        dataFilter[index].effectiveDate =
+            DateFormat('yyyy-MM-dd').format(pickedDate);
+        data[indexes].effectiveDate =
+            DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     });
   }
@@ -214,6 +256,32 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
           ),
           elevation: 0,
           backgroundColor: Colors.white,
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    CancelWidget()
+                        .showBottomCancel(context, widget.applicationNo);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Colors.redAccent,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Center(
+                      child: Text(
+                        'CANCEL',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -565,6 +633,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                           itemBuilder: (BuildContext context, int index) {
                             var promDate = '';
                             var expDate = '';
+                            var effDate = '';
                             if (dataFilter[index].expiredDate != null) {
                               DateTime tempExpDate = DateFormat('yyyy-MM-dd')
                                   .parse(dataFilter[index].expiredDate!);
@@ -582,6 +651,15 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                               var outputPromFormat = DateFormat('dd/MM/yyyy');
                               promDate = outputPromFormat.format(inputPromDate);
                             }
+
+                            if (dataFilter[index].effectiveDate != null) {
+                              DateTime tempPromDate = DateFormat('yyyy-MM-dd')
+                                  .parse(dataFilter[index].effectiveDate!);
+                              var inputPromDate =
+                                  DateTime.parse(tempPromDate.toString());
+                              var outputPromFormat = DateFormat('dd/MM/yyyy');
+                              effDate = outputPromFormat.format(inputPromDate);
+                            }
                             final ext =
                                 path.extension(dataFilter[index].filename!);
                             final fp = path.extension(dataFilter[index].paths!);
@@ -592,12 +670,26 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Document',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Document',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        dataFilter[index].isRequired == '1'
+                                            ? const Text(
+                                                ' *',
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )
+                                            : Container(),
+                                      ],
                                     ),
                                     const SizedBox(height: 8),
                                     Container(
@@ -622,12 +714,16 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                                           left: 16.0, right: 16.0),
                                       child: Align(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          '${dataFilter[index].docName}',
-                                          style: const TextStyle(
-                                              color: Color(0xFF333333),
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              '${dataFilter[index].docName}',
+                                              style: const TextStyle(
+                                                  color: Color(0xFF333333),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     )
@@ -709,6 +805,115 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                                     ],
                                   ),
                                 ),
+                                dataFilter[index].docSource == 'CLIENT_DOCUMENT'
+                                    ? InkWell(
+                                        onTap: () {
+                                          _effDatePicker(index);
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Effective Date',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Container(
+                                              width: 130,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1)),
+                                                color: Colors.white,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(-6,
+                                                        4), // Shadow position
+                                                  ),
+                                                ],
+                                              ),
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0, right: 16.0),
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  effDate,
+                                                  style: const TextStyle(
+                                                      color: Color(0xFF333333),
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    : InkWell(
+                                        onTap: () {
+                                          _promDatePicker(index);
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Promise Date',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Container(
+                                              width: 130,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1)),
+                                                color: Colors.white,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(-6,
+                                                        4), // Shadow position
+                                                  ),
+                                                ],
+                                              ),
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0, right: 16.0),
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  promDate,
+                                                  style: const TextStyle(
+                                                      color: Color(0xFF333333),
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                 InkWell(
                                   onTap: () {
                                     _expDatePicker(index);
@@ -726,7 +931,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                                       ),
                                       const SizedBox(height: 8),
                                       Container(
-                                        width: 180,
+                                        width: 130,
                                         height: 50,
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -752,59 +957,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                                           child: Text(
                                             expDate,
                                             style: const TextStyle(
-                                                color: Color(0xFF333333),
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    _promDatePicker(index);
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Promise Date',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        width: 185,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1)),
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 6,
-                                              offset: const Offset(
-                                                  -6, 4), // Shadow position
-                                            ),
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0, right: 16.0),
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            promDate,
-                                            style: const TextStyle(
-                                                color: Color(0xFF333333),
+                                                color: Colors.black,
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w400),
                                           ),
@@ -952,142 +1105,29 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    BlocListener(
-                        bloc: docUploadBloc,
-                        listener: (_, DocUploadState state) async {
-                          if (state is DocUploadLoading) {}
-                          if (state is DocUploadLoaded) {
-                            count++;
-                            if (count < data.length) {
-                              for (count; count < data.length; count++) {
-                                log('Count Loaded : $count');
-                                if (data[count].isNew!) {
-                                  log('Count Loaded is new : $count');
-                                  File imagefile = File(data[count].paths!);
-                                  Uint8List imagebytes =
-                                      await imagefile.readAsBytes();
-                                  String base64string =
-                                      base64.encode(imagebytes);
-                                  docUploadBloc.add(DocUploadAttempt(
-                                      DocumentUploadRequestModel(
-                                          pBase64: base64string,
-                                          pChild: data[count].headerCode,
-                                          pFileName: data[count].filename,
-                                          pFilePaths: data[count].id,
-                                          pId: data[count].id,
-                                          pHeader: data[count].docSource,
-                                          pModule: "IFINLOS")));
-
-                                  break;
-                                }
-                              }
-                            } else {
-                              count = 0;
-                              Navigator.pushNamed(
-                                  context,
-                                  StringRouterUtil
-                                      .applicationFormSummaryScreenTabRoute,
-                                  arguments: widget.applicationNo);
-                            }
-                          }
-                          if (state is DocUploadError) {
-                            GeneralUtil().showSnackBar(context, state.error!);
-                          }
-                          if (state is DocUploadException) {}
-                        },
-                        child: BlocBuilder(
-                            bloc: docUploadBloc,
-                            builder: (_, DocUploadState state) {
-                              if (state is DocUploadLoading) {
-                                return const SizedBox(
-                                  width: 200,
-                                  height: 45,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-                              if (state is DocUploadLoaded) {
-                                return InkWell(
-                                  onTap: () async {
-                                    for (count; count < data.length; count++) {
-                                      if (data[count].isNew!) {
-                                        File imagefile =
-                                            File(data[count].paths!);
-                                        Uint8List imagebytes =
-                                            await imagefile.readAsBytes();
-                                        String base64string =
-                                            base64.encode(imagebytes);
-                                        docUploadBloc.add(DocUploadAttempt(
-                                            DocumentUploadRequestModel(
-                                                pBase64: base64string,
-                                                pChild: data[count].headerCode,
-                                                pFileName: data[count].filename,
-                                                pFilePaths: data[count].id,
-                                                pId: data[count].id,
-                                                pHeader: data[count].docSource,
-                                                pModule: "IFINLOS")));
-                                        break;
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 200,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: thirdColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Center(
-                                        child: Text('NEXT',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600))),
-                                  ),
-                                );
-                              }
-                              return InkWell(
-                                onTap: () async {
-                                  for (count; count < data.length; count++) {
-                                    log('Count : $count');
-                                    if (data[count].isNew!) {
-                                      log('Count is new : $count');
-                                      File imagefile = File(data[count].paths!);
-                                      Uint8List imagebytes =
-                                          await imagefile.readAsBytes();
-                                      String base64string =
-                                          base64.encode(imagebytes);
-                                      docUploadBloc.add(DocUploadAttempt(
-                                          DocumentUploadRequestModel(
-                                              pBase64: base64string,
-                                              pChild: data[count].headerCode,
-                                              pFileName: data[count].filename,
-                                              pFilePaths: data[count].id,
-                                              pId: data[count].id,
-                                              pHeader: data[count].docSource,
-                                              pModule: "IFINLOS")));
-
-                                      break;
-                                    }
-                                  }
-                                },
-                                child: Container(
-                                  width: 200,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    color: thirdColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Center(
-                                      child: Text('NEXT',
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600))),
-                                ),
-                              );
-                            }))
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context,
+                            StringRouterUtil
+                                .applicationFormSummaryScreenTabRoute,
+                            arguments: widget.applicationNo);
+                      },
+                      child: Container(
+                        width: 200,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: thirdColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Center(
+                            child: Text('NEXT',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600))),
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -1097,6 +1137,8 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
   }
 
   Widget actionDelete(int index) {
+    int indexes =
+        data.indexWhere((element) => element.id == dataFilter[index].id);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1106,27 +1148,234 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen> {
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: () {
-            docDeleteBloc.add(DocDeleteAttempt(DocumentDeleteRequestModel(
-                pHeader: dataFilter[count].docSource,
-                pId: dataFilter[index].id,
-                pFileName: dataFilter[index].filename,
-                pFilePaths: dataFilter[index].paths)));
-          },
-          child: SizedBox(
-              width: 40,
-              height: 40,
-              child: Center(
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  color:
-                      dataFilter[index].paths == "" ? Colors.grey : Colors.red,
-                  size: 45,
-                ),
-              )),
+        Row(
+          children: [
+            InkWell(
+              onTap: () {
+                docDeleteBloc.add(DocDeleteAttempt(DocumentDeleteRequestModel(
+                    pHeader: dataFilter[count].docSource,
+                    pId: dataFilter[index].id,
+                    pFileName: dataFilter[index].filename,
+                    pFilePaths: dataFilter[index].paths)));
+              },
+              child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Center(
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: dataFilter[index].paths == ""
+                          ? Colors.grey
+                          : Colors.red,
+                      size: 45,
+                    ),
+                  )),
+            ),
+            const SizedBox(width: 16),
+            MultiBlocListener(
+                listeners: [
+                  BlocListener(
+                      bloc: docUploadBloc,
+                      listener: (_, DocUploadState state) async {
+                        if (state is DocUploadLoading) {}
+                        if (state is DocUploadLoaded) {
+                          if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
+                            docUpdateBloc.add(DocUpdateAttempt(
+                                DocumentUDateRequestModel(
+                                    pApplicationNo: widget.applicationNo,
+                                    pExpiredDate: data[indexes].expiredDate,
+                                    pEffectiveDate: data[indexes].effectiveDate,
+                                    pPromiseDate: '',
+                                    pId: data[indexes].id,
+                                    pSourceDoc: data[indexes].docSource)));
+                          } else {
+                            if (data[indexes].expiredDate != null) {
+                              docUpdateBloc.add(DocUpdateAttempt(
+                                  DocumentUDateRequestModel(
+                                      pApplicationNo: widget.applicationNo,
+                                      pExpiredDate: data[indexes].expiredDate,
+                                      pEffectiveDate: '',
+                                      pPromiseDate: '',
+                                      pId: data[indexes].id,
+                                      pSourceDoc: data[indexes].docSource)));
+                            } else {
+                              if (count == 0) {
+                                setState(() {
+                                  count = 1;
+                                  data[indexes].isUpload = true;
+                                });
+                                Navigator.pop(context);
+                                GeneralUtil().showSnackBarSuccess(
+                                    context, 'Berhasil Upload');
+                              }
+                            }
+                          }
+                        }
+                        if (state is DocUploadError) {
+                          GeneralUtil().showSnackBar(context, state.error!);
+                        }
+                        if (state is DocUploadException) {}
+                      }),
+                  BlocListener(
+                      bloc: docUpdateBloc,
+                      listener: (_, DocUpdateState state) async {
+                        if (state is DocUpdateLoading) {}
+                        if (state is DocUpdateLoaded) {
+                          if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
+                            setState(() {
+                              data[indexes].isUpload = true;
+                            });
+                          }
+                          if (count == 0) {
+                            setState(() {
+                              count = 1;
+                            });
+                            Navigator.pop(context);
+                            GeneralUtil().showSnackBarSuccess(
+                                context, 'Berhasil Upload');
+                          }
+                        }
+                        if (state is DocUpdateError) {
+                          GeneralUtil().showSnackBar(context, state.error!);
+                        }
+                        if (state is DocUpdateException) {}
+                      })
+                ],
+                child: InkWell(
+                  onTap: () async {
+                    setState(() {
+                      count = 0;
+                    });
+                    if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+                        data[indexes].paths == '') {
+                      EmptyDocWidget().showBottomEmpty(
+                          context, 'Harap lengkapi data pendukung');
+                    } else {
+                      if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+                          data[indexes].effectiveDate == null &&
+                          data[indexes].expiredDate == null) {
+                        EmptyDocWidget().showBottomEmpty(context,
+                            'Harap isi Effective Date dan Expired Date');
+                      } else {
+                        if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
+                          _uploadAttempt(context);
+                          File imagefile = File(data[count].paths!);
+                          Uint8List imagebytes = await imagefile.readAsBytes();
+                          String base64string = base64.encode(imagebytes);
+                          docUploadBloc.add(DocUploadAttempt(
+                              DocumentUploadRequestModel(
+                                  pBase64: base64string,
+                                  pChild: data[indexes].headerCode,
+                                  pFileName: data[indexes].filename,
+                                  pFilePaths: data[indexes].id,
+                                  pId: data[indexes].id,
+                                  pHeader: data[indexes].docSource,
+                                  pModule: "IFINLOS")));
+                        } else {
+                          if (data[indexes].isNew!) {
+                            _uploadAttempt(context);
+                            File imagefile = File(data[count].paths!);
+                            Uint8List imagebytes =
+                                await imagefile.readAsBytes();
+                            String base64string = base64.encode(imagebytes);
+                            docUploadBloc.add(DocUploadAttempt(
+                                DocumentUploadRequestModel(
+                                    pBase64: base64string,
+                                    pChild: data[indexes].headerCode,
+                                    pFileName: data[indexes].filename,
+                                    pFilePaths: data[indexes].id,
+                                    pId: data[indexes].id,
+                                    pHeader: data[indexes].docSource,
+                                    pModule: "IFINLOS")));
+                          } else {
+                            if (data[indexes].isRequired == '1' &&
+                                data[indexes].promiseDate == null) {
+                              EmptyDocWidget().showBottomEmpty(context,
+                                  'Harap isi Promise Date jika tidak dapat memberikan Document yang dibutuhkan');
+                            } else if (data[indexes].isRequired == '1') {
+                              _uploadAttempt(context);
+                              docUpdateBloc.add(DocUpdateAttempt(
+                                  DocumentUDateRequestModel(
+                                      pApplicationNo: widget.applicationNo,
+                                      pExpiredDate: '',
+                                      pEffectiveDate: '',
+                                      pPromiseDate: data[indexes].promiseDate,
+                                      pId: data[indexes].id,
+                                      pSourceDoc: data[indexes].docSource)));
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  child: Container(
+                    height: 40,
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                        child: Text('UPLOAD',
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600))),
+                  ),
+                ))
+          ],
         )
       ],
+    );
+  }
+
+  void _uploadAttempt(BuildContext context) {
+    showDialog(
+      useSafeArea: true,
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          actionsPadding:
+              const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          title: Container(),
+          titlePadding: const EdgeInsets.only(top: 20, left: 20),
+          contentPadding: const EdgeInsets.only(
+            top: 0,
+            bottom: 24,
+            left: 24,
+            right: 24,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: CircularProgressIndicator(
+                    valueColor: animationController!.drive(
+                        ColorTween(begin: thirdColor, end: secondaryColor)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Mohon menunggu sebentar',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF575551)),
+              ),
+            ],
+          ),
+          actions: const [],
+        );
+      },
     );
   }
 }

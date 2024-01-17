@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
@@ -10,9 +11,12 @@ import 'package:sales_order/features/application_form_1/presentation/bloc/check_
 import 'package:sales_order/features/application_form_1/presentation/bloc/city_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/prov_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/zip_code_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/wrong_widget.dart';
 import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
 import '../../bloc/marital_status_bloc/bloc.dart';
@@ -494,8 +498,12 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                 dateOb = -6935;
                               } else if (selectMaritalStatus == 'SINGLE') {
                                 dateOb = -7665;
+                                ctrlSpouseId.clear();
+                                ctrlSpouseName.clear();
                               } else {
                                 dateOb = -6570;
+                                ctrlSpouseId.clear();
+                                ctrlSpouseName.clear();
                               }
                             });
                             Navigator.pop(context);
@@ -901,7 +909,12 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlIdNo,
-                                        keyboardType: TextInputType.text,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                          LengthLimitingTextInputFormatter(16),
+                                        ],
                                         decoration: InputDecoration(
                                             hintText: 'ID NO',
                                             isDense: true,
@@ -1370,7 +1383,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   Row(
                                     children: const [
                                       Text(
-                                        '. Mother Maiden Name',
+                                        '7. Mother Maiden Name',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1459,7 +1472,13 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlEmail,
-                                        keyboardType: TextInputType.text,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp("[0-9@a-zA-Z.]")),
+                                        ],
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        textInputAction: TextInputAction.done,
                                         decoration: InputDecoration(
                                             hintText: 'Email',
                                             isDense: true,
@@ -1527,7 +1546,15 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlPhoneCode,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    4),
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'Code',
                                                   isDense: true,
@@ -1566,7 +1593,15 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlPhoneNumber,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    15),
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'Phone Number',
                                                   isDense: true,
@@ -1633,10 +1668,11 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlSpouseName,
-                                        readOnly:
-                                            selectMaritalStatus == 'SINGLE'
-                                                ? true
-                                                : false,
+                                        readOnly: selectMaritalStatus ==
+                                                    'SINGLE' ||
+                                                selectMaritalStatus == 'WIDOW'
+                                            ? true
+                                            : false,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Spouse Name',
@@ -1648,7 +1684,12 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                 color: Colors.grey
                                                     .withOpacity(0.5)),
                                             filled: true,
-                                            fillColor: Colors.white,
+                                            fillColor: selectMaritalStatus ==
+                                                        'SINGLE' ||
+                                                    selectMaritalStatus ==
+                                                        'WIDOW'
+                                                ? const Color(0xFFFAF9F9)
+                                                : Colors.white,
                                             border: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -1703,11 +1744,17 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                       height: 50,
                                       child: TextFormField(
                                         controller: ctrlSpouseId,
-                                        readOnly:
-                                            selectMaritalStatus == 'SINGLE'
-                                                ? true
-                                                : false,
-                                        keyboardType: TextInputType.text,
+                                        readOnly: selectMaritalStatus ==
+                                                    'SINGLE' ||
+                                                selectMaritalStatus == 'WIDOW'
+                                            ? true
+                                            : false,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                          LengthLimitingTextInputFormatter(16),
+                                        ],
                                         decoration: InputDecoration(
                                             hintText: 'Spouse ID',
                                             isDense: true,
@@ -1718,7 +1765,12 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                 color: Colors.grey
                                                     .withOpacity(0.5)),
                                             filled: true,
-                                            fillColor: Colors.white,
+                                            fillColor: selectMaritalStatus ==
+                                                        'SINGLE' ||
+                                                    selectMaritalStatus ==
+                                                        'WIDOW'
+                                                ? const Color(0xFFFAF9F9)
+                                                : Colors.white,
                                             border: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -2428,7 +2480,13 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlRt,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'RT',
                                                   isDense: true,
@@ -2467,7 +2525,13 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlRw,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'RW',
                                                   isDense: true,
@@ -2806,45 +2870,191 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                               ctrlStatus.text == 'NOT PASS'
                           ? null
                           : () async {
-                              final data = await DatabaseHelper.getUserData();
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushNamed(
-                                  context,
-                                  StringRouterUtil
-                                      .applicationForm2ScreenTabRoute,
-                                  arguments: AddClientRequestModel(
-                                      pIdNo: ctrlIdNo.text,
-                                      pFullName: ctrlFullName.text,
-                                      pBranchCode: data[0]['branch_code'],
-                                      pBranchName: data[0]['branch_name'],
-                                      pMotherMaidenName: ctrlMotherName.text,
-                                      pPlaceOfBirth: ctrlPob.text,
-                                      pDateOfBirth: dateSend,
-                                      pClientType: 'PERSONAL',
-                                      pDocumentType: 'KTP',
-                                      pClientGenderCode:
-                                          gender == 'Male' ? 'M' : 'F',
-                                      pClientEmail: ctrlEmail.text,
-                                      pClientAreaMobileNo: ctrlPhoneCode.text,
-                                      pClientMobileNo: ctrlPhoneNumber.text,
-                                      pClientMaritalStatusCode:
-                                          selectMaritalStatus,
-                                      pClientSpouseName: ctrlSpouseName.text,
-                                      pClientSpouseIdNo: ctrlSpouseId.text,
-                                      pAddressProvinceName: selectProv,
-                                      pAddressProvinceCode: selectProvCode,
-                                      pAddressCityCode: selectCityCode,
-                                      pAddressCityName: selectCity,
-                                      pAddressZipCodeCode: selectPostalCode,
-                                      pAddressZipName: selectPostalName,
-                                      pAddressZipCode: selectPostal,
-                                      pAddressSubDistrict: ctrlSubDistrict.text,
-                                      pAddressVillage: ctrlSubVillage.text,
-                                      pAddressAddress: ctrlAddress.text,
-                                      pAddressRt: ctrlRt.text,
-                                      pAddressRw: ctrlRw.text,
-                                      pMarketingCode: data[0]['uid'],
-                                      pMarketingName: data[0]['name']));
+                              if (GeneralUtil.regexes
+                                  .hasMatch(ctrlEmail.text)) {
+                                if (selectMaritalStatus != '') {
+                                  if (selectMaritalStatus == 'SINGLE' ||
+                                      selectMaritalStatus == 'WIDOW') {
+                                    if (ctrlDate.text.isEmpty ||
+                                        ctrlDate.text == '' ||
+                                        ctrlIdNo.text.isEmpty ||
+                                        ctrlIdNo.text == '' ||
+                                        ctrlFullName.text.isEmpty ||
+                                        ctrlFullName.text == '' ||
+                                        ctrlPob.text.isEmpty ||
+                                        ctrlPob.text == '' ||
+                                        ctrlMotherName.text.isEmpty ||
+                                        ctrlMotherName.text == '' ||
+                                        ctrlEmail.text.isEmpty ||
+                                        ctrlEmail.text == '' ||
+                                        ctrlPhoneCode.text.isEmpty ||
+                                        ctrlPhoneCode.text == '' ||
+                                        ctrlPhoneNumber.text.isEmpty ||
+                                        ctrlPhoneNumber.text == '' ||
+                                        ctrlSubDistrict.text.isEmpty ||
+                                        ctrlSubDistrict.text == '' ||
+                                        ctrlSubVillage.text.isEmpty ||
+                                        ctrlSubVillage.text == '' ||
+                                        ctrlAddress.text.isEmpty ||
+                                        ctrlAddress.text == '' ||
+                                        ctrlRt.text.isEmpty ||
+                                        ctrlRt.text == '' ||
+                                        ctrlRw.text.isEmpty ||
+                                        ctrlRw.text == '' ||
+                                        selectProv == '' ||
+                                        selectCity == '' ||
+                                        selectPostal == '' ||
+                                        selectPostal == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      final data =
+                                          await DatabaseHelper.getUserData();
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushNamed(
+                                          context,
+                                          StringRouterUtil
+                                              .applicationForm2ScreenTabRoute,
+                                          arguments: AddClientRequestModel(
+                                              pIdNo: ctrlIdNo.text,
+                                              pFullName: ctrlFullName.text,
+                                              pBranchCode: data[0]
+                                                  ['branch_code'],
+                                              pBranchName: data[0]
+                                                  ['branch_name'],
+                                              pMotherMaidenName:
+                                                  ctrlMotherName.text,
+                                              pPlaceOfBirth: ctrlPob.text,
+                                              pDateOfBirth: dateSend,
+                                              pClientType: 'PERSONAL',
+                                              pDocumentType: 'KTP',
+                                              pClientGenderCode:
+                                                  gender == 'Male' ? 'M' : 'F',
+                                              pClientEmail: ctrlEmail.text,
+                                              pClientAreaMobileNo:
+                                                  ctrlPhoneCode.text,
+                                              pClientMobileNo:
+                                                  ctrlPhoneNumber.text,
+                                              pClientMaritalStatusCode:
+                                                  selectMaritalStatus,
+                                              pClientSpouseName:
+                                                  ctrlSpouseName.text,
+                                              pClientSpouseIdNo:
+                                                  ctrlSpouseId.text,
+                                              pAddressProvinceName: selectProv,
+                                              pAddressProvinceCode:
+                                                  selectProvCode,
+                                              pAddressCityCode: selectCityCode,
+                                              pAddressCityName: selectCity,
+                                              pAddressZipCodeCode:
+                                                  selectPostalCode,
+                                              pAddressZipName: selectPostalName,
+                                              pAddressZipCode: selectPostal,
+                                              pAddressSubDistrict:
+                                                  ctrlSubDistrict.text,
+                                              pAddressVillage:
+                                                  ctrlSubVillage.text,
+                                              pAddressAddress: ctrlAddress.text,
+                                              pAddressRt: ctrlRt.text,
+                                              pAddressRw: ctrlRw.text,
+                                              pMarketingCode: data[0]['uid'],
+                                              pMarketingName: data[0]['name']));
+                                    }
+                                  } else {
+                                    if (ctrlDate.text.isEmpty ||
+                                        ctrlDate.text == '' ||
+                                        ctrlIdNo.text.isEmpty ||
+                                        ctrlIdNo.text == '' ||
+                                        ctrlFullName.text.isEmpty ||
+                                        ctrlFullName.text == '' ||
+                                        ctrlPob.text.isEmpty ||
+                                        ctrlPob.text == '' ||
+                                        ctrlMotherName.text.isEmpty ||
+                                        ctrlMotherName.text == '' ||
+                                        ctrlEmail.text.isEmpty ||
+                                        ctrlEmail.text == '' ||
+                                        ctrlPhoneCode.text.isEmpty ||
+                                        ctrlPhoneCode.text == '' ||
+                                        ctrlPhoneNumber.text.isEmpty ||
+                                        ctrlPhoneNumber.text == '' ||
+                                        ctrlSpouseName.text.isEmpty ||
+                                        ctrlSpouseName.text == '' ||
+                                        ctrlSpouseId.text.isEmpty ||
+                                        ctrlSpouseId.text == '' ||
+                                        ctrlSubDistrict.text.isEmpty ||
+                                        ctrlSubDistrict.text == '' ||
+                                        ctrlSubVillage.text.isEmpty ||
+                                        ctrlSubVillage.text == '' ||
+                                        ctrlAddress.text.isEmpty ||
+                                        ctrlAddress.text == '' ||
+                                        ctrlRt.text.isEmpty ||
+                                        ctrlRt.text == '' ||
+                                        ctrlRw.text.isEmpty ||
+                                        ctrlRw.text == '' ||
+                                        selectProv == '' ||
+                                        selectCity == '' ||
+                                        selectPostal == '' ||
+                                        selectPostal == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      final data =
+                                          await DatabaseHelper.getUserData();
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushNamed(
+                                          context,
+                                          StringRouterUtil
+                                              .applicationForm2ScreenTabRoute,
+                                          arguments: AddClientRequestModel(
+                                              pIdNo: ctrlIdNo.text,
+                                              pFullName: ctrlFullName.text,
+                                              pBranchCode: data[0]
+                                                  ['branch_code'],
+                                              pBranchName: data[0]
+                                                  ['branch_name'],
+                                              pMotherMaidenName:
+                                                  ctrlMotherName.text,
+                                              pPlaceOfBirth: ctrlPob.text,
+                                              pDateOfBirth: dateSend,
+                                              pClientType: 'PERSONAL',
+                                              pDocumentType: 'KTP',
+                                              pClientGenderCode:
+                                                  gender == 'Male' ? 'M' : 'F',
+                                              pClientEmail: ctrlEmail.text,
+                                              pClientAreaMobileNo:
+                                                  ctrlPhoneCode.text,
+                                              pClientMobileNo:
+                                                  ctrlPhoneNumber.text,
+                                              pClientMaritalStatusCode:
+                                                  selectMaritalStatus,
+                                              pClientSpouseName:
+                                                  ctrlSpouseName.text,
+                                              pClientSpouseIdNo:
+                                                  ctrlSpouseId.text,
+                                              pAddressProvinceName: selectProv,
+                                              pAddressProvinceCode:
+                                                  selectProvCode,
+                                              pAddressCityCode: selectCityCode,
+                                              pAddressCityName: selectCity,
+                                              pAddressZipCodeCode:
+                                                  selectPostalCode,
+                                              pAddressZipName: selectPostalName,
+                                              pAddressZipCode: selectPostal,
+                                              pAddressSubDistrict:
+                                                  ctrlSubDistrict.text,
+                                              pAddressVillage:
+                                                  ctrlSubVillage.text,
+                                              pAddressAddress: ctrlAddress.text,
+                                              pAddressRt: ctrlRt.text,
+                                              pAddressRw: ctrlRw.text,
+                                              pMarketingCode: data[0]['uid'],
+                                              pMarketingName: data[0]['name']));
+                                    }
+                                  }
+                                } else {
+                                  EmptyWidget().showBottomEmpty(context);
+                                }
+                              } else {
+                                WrongWidget().showBottomEmpty(context);
+                              }
                             },
                       child: Container(
                         width: 200,

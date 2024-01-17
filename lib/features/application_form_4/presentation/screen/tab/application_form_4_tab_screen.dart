@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
 import 'package:sales_order/features/application_form_4/data/look_up_merk_model.dart';
 import 'package:sales_order/features/application_form_4/data/update_asset_request_model.dart';
 import 'package:sales_order/features/application_form_4/domain/repo/form_4_repo.dart';
@@ -424,6 +426,32 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
           ),
           elevation: 0,
           backgroundColor: Colors.white,
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    CancelWidget().showBottomCancel(
+                        context, widget.assetRequestModel.pApplicationNo!);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Colors.redAccent,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Center(
+                      child: Text(
+                        'CANCEL',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -2360,14 +2388,51 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                               if (state is UpdateAssetDataLoaded) {
                                 return InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context,
-                                        StringRouterUtil
-                                            .applicationForm5ScreenTabRoute,
-                                        arguments: UpdateTncRequestModel(
-                                            pApplicationNo: widget
-                                                .assetRequestModel
-                                                .pApplicationNo));
+                                    if (ctrlAmount.text.isEmpty ||
+                                        ctrlAmount.text == '' ||
+                                        ctrlColor.text.isEmpty ||
+                                        ctrlColor.text == '' ||
+                                        ctrlYear.text.isEmpty ||
+                                        ctrlYear.text == '' ||
+                                        ctrlChasisNo.text.isEmpty ||
+                                        ctrlChasisNo.text == '' ||
+                                        ctrlEngineNo.text.isEmpty ||
+                                        ctrlEngineNo.text == '' ||
+                                        ctrlPlatNo1.text.isEmpty ||
+                                        ctrlPlatNo1.text == '' ||
+                                        ctrlPlatNo2.text.isEmpty ||
+                                        ctrlPlatNo2.text == '' ||
+                                        ctrlPlatNo3.text.isEmpty ||
+                                        ctrlPlatNo3.text == '' ||
+                                        selectModel == '' ||
+                                        selectType == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      updateAssetDataBloc
+                                          .add(UpdateAssetDataAttempt(
+                                              UpdateAssetRequestModel(
+                                                  pApplicationNo:
+                                                      widget.assetRequestModel
+                                                          .pApplicationNo,
+                                                  pAssetAmount:
+                                                      double.parse(
+                                                              assetAmountValue)
+                                                          .toInt(),
+                                                  pAssetCondition: condition,
+                                                  pAssetYear: ctrlYear.text,
+                                                  pChassisNo: ctrlChasisNo.text,
+                                                  pColour: ctrlColor.text,
+                                                  pEngineNo: ctrlEngineNo.text,
+                                                  pPlatNo1: ctrlPlatNo1.text,
+                                                  pPlatNo2: ctrlPlatNo2.text,
+                                                  pPlatNo3: ctrlPlatNo3.text,
+                                                  pVehicleMerkCode:
+                                                      selectMerkCode,
+                                                  pVehicleModelCode:
+                                                      selectModelCode,
+                                                  pVehicleTypeCode:
+                                                      selectTypeCode)));
+                                    }
                                   },
                                   child: Container(
                                     width: 200,
@@ -2390,33 +2455,57 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                         ctrlStatus.text == 'NOT VALID'
                                     ? null
                                     : () {
-                                        updateAssetDataBloc.add(
-                                            UpdateAssetDataAttempt(
-                                                UpdateAssetRequestModel(
-                                                    pApplicationNo: widget
-                                                        .assetRequestModel
-                                                        .pApplicationNo,
-                                                    pAssetAmount:
-                                                        double
-                                                                .parse(
-                                                                    assetAmountValue)
-                                                            .toInt(),
-                                                    pAssetCondition: condition,
-                                                    pAssetYear: ctrlYear.text,
-                                                    pChassisNo:
-                                                        ctrlChasisNo.text,
-                                                    pColour: ctrlColor.text,
-                                                    pEngineNo:
-                                                        ctrlEngineNo.text,
-                                                    pPlatNo1: ctrlPlatNo1.text,
-                                                    pPlatNo2: ctrlPlatNo2.text,
-                                                    pPlatNo3: ctrlPlatNo3.text,
-                                                    pVehicleMerkCode:
-                                                        selectMerkCode,
-                                                    pVehicleModelCode:
-                                                        selectModelCode,
-                                                    pVehicleTypeCode:
-                                                        selectTypeCode)));
+                                        if (ctrlAmount.text.isEmpty ||
+                                            ctrlAmount.text == '' ||
+                                            ctrlColor.text.isEmpty ||
+                                            ctrlColor.text == '' ||
+                                            ctrlYear.text.isEmpty ||
+                                            ctrlYear.text == '' ||
+                                            ctrlChasisNo.text.isEmpty ||
+                                            ctrlChasisNo.text == '' ||
+                                            ctrlEngineNo.text.isEmpty ||
+                                            ctrlEngineNo.text == '' ||
+                                            ctrlPlatNo1.text.isEmpty ||
+                                            ctrlPlatNo1.text == '' ||
+                                            ctrlPlatNo2.text.isEmpty ||
+                                            ctrlPlatNo2.text == '' ||
+                                            ctrlPlatNo3.text.isEmpty ||
+                                            ctrlPlatNo3.text == '' ||
+                                            selectModel == '' ||
+                                            selectType == '') {
+                                          EmptyWidget()
+                                              .showBottomEmpty(context);
+                                        } else {
+                                          updateAssetDataBloc.add(
+                                              UpdateAssetDataAttempt(
+                                                  UpdateAssetRequestModel(
+                                                      pApplicationNo: widget
+                                                          .assetRequestModel
+                                                          .pApplicationNo,
+                                                      pAssetAmount: double.parse(
+                                                              assetAmountValue)
+                                                          .toInt(),
+                                                      pAssetCondition:
+                                                          condition,
+                                                      pAssetYear: ctrlYear.text,
+                                                      pChassisNo:
+                                                          ctrlChasisNo.text,
+                                                      pColour: ctrlColor.text,
+                                                      pEngineNo:
+                                                          ctrlEngineNo.text,
+                                                      pPlatNo1:
+                                                          ctrlPlatNo1.text,
+                                                      pPlatNo2:
+                                                          ctrlPlatNo2.text,
+                                                      pPlatNo3:
+                                                          ctrlPlatNo3.text,
+                                                      pVehicleMerkCode:
+                                                          selectMerkCode,
+                                                      pVehicleModelCode:
+                                                          selectModelCode,
+                                                      pVehicleTypeCode:
+                                                          selectTypeCode)));
+                                        }
                                       },
                                 child: Container(
                                   width: 200,

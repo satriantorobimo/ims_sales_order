@@ -4,6 +4,7 @@ import 'package:sales_order/features/application_form_2/data/add_client_response
 import 'package:sales_order/features/application_form_5/data/application_fee_detail_model.dart';
 import 'package:sales_order/features/application_form_5/data/look_up_insurance_package_model.dart';
 import 'package:sales_order/features/application_form_5/data/tnc_data_detail_response_model.dart';
+import 'package:sales_order/features/application_form_5/data/update_fee_request_model.dart';
 import 'package:sales_order/features/application_form_5/data/update_tnc_request_model.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/url_util.dart';
@@ -96,6 +97,35 @@ class Form5Api {
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       final res = await http.post(Uri.parse(urlUtil.getUrlTncUpdate()),
+          body: json, headers: header);
+      if (res.statusCode == 200) {
+        stopwatch.stop();
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        return addClientResponseModel;
+      } else if (res.statusCode == 401) {
+        throw 'expired';
+      } else {
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        throw addClientResponseModel.message!;
+      }
+    } catch (ex) {
+      throw ex.toString();
+    }
+  }
+
+  Future<AddClientResponseModel> attemptUpdateFeeData(
+      List<UpdateFeeRequestModel> updateFeeRequestModel) async {
+    final String? token = await SharedPrefUtil.getSharedString('token');
+
+    final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
+
+    final json = jsonEncode(updateFeeRequestModel);
+
+    try {
+      Stopwatch stopwatch = Stopwatch()..start();
+      final res = await http.post(Uri.parse(urlUtil.getUrlFeeUpdate()),
           body: json, headers: header);
       if (res.statusCode == 200) {
         stopwatch.stop();

@@ -47,36 +47,42 @@ class Data {
   String? headerCode;
   String? docSource;
   String? docName;
+  String? effectiveDate;
   String? expiredDate;
   String? promiseDate;
   String? filename;
   String? paths;
   String? isRequired;
   bool? isNew;
+  bool? isUpload;
 
   Data(
       {this.id,
       this.headerCode,
       this.docSource,
       this.docName,
+      this.effectiveDate,
       this.expiredDate,
       this.promiseDate,
       this.filename,
       this.paths,
       this.isRequired,
-      this.isNew});
+      this.isNew,
+      this.isUpload});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     headerCode = json['header_code'];
     docSource = json['doc_source'];
     docName = json['doc_name'];
+    effectiveDate = json['effective_date'];
     expiredDate = json['expired_date'];
     promiseDate = json['promise_date'];
     filename = json['filename'];
     paths = json['paths'];
     isRequired = json['is_required'];
     isNew = false;
+    isUpload = false;
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +91,7 @@ class Data {
     data['header_code'] = headerCode;
     data['doc_source'] = docSource;
     data['doc_name'] = docName;
+    data['effective_date'] = effectiveDate;
     data['expired_date'] = expiredDate;
     data['promise_date'] = promiseDate;
     data['filename'] = filename;

@@ -141,6 +141,13 @@ class UrlUtil {
     return baseUrl + getUrlGetClient2;
   }
 
+  static String urlCancelClient() => 'api/mobso_api/api/Application/Cancel';
+
+  String getUrlCancelClient() {
+    final String getUrlCancelClient2 = urlCancelClient();
+    return baseUrl + getUrlCancelClient2;
+  }
+
   static String urlAddClient() => 'api/mobso_api/api/Application/AddNewClient';
 
   String getUrlAddClient() {
@@ -258,6 +265,13 @@ class UrlUtil {
     return baseUrl + getUrlTncUpdate2;
   }
 
+  static String urlFeeUpdate() => 'api/mobso_api/api/Fee/Update';
+
+  String getUrlFeeUpdate() {
+    final String getUrlFeeUpdate2 = urlFeeUpdate();
+    return baseUrl + getUrlFeeUpdate2;
+  }
+
   static String urlFeeDetail() => 'api/mobso_api/api/Fee/Getrow';
 
   String getUrlFeeDetail() {
@@ -291,6 +305,13 @@ class UrlUtil {
   String getUrlDocUpload() {
     final String getUrlDocUpload2 = urlDocUpload();
     return baseUrl + getUrlDocUpload2;
+  }
+
+  static String urlDocUpdate() => 'api/mobso_api/api/Document/Update';
+
+  String getUrlDocUpdate() {
+    final String getUrlDocUpdate2 = urlDocUpdate();
+    return baseUrl + getUrlDocUpdate2;
   }
 
   static String urlDetailSummary() =>

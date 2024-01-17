@@ -1,9 +1,12 @@
+import 'package:flutter/services.dart';
 import 'package:sales_order/features/application_form_1/data/client_detail_response_model.dart'
     as cd;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
 import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/features/application_form_2/domain/repo/form_2_repo.dart';
 import 'package:sales_order/features/application_form_2/presentation/bloc/bank_bloc/bloc.dart';
@@ -124,6 +127,11 @@ class _ApplicationForm2UseTabScreenState
       if (widget.data.workIsLatest != null) {
         if (widget.data.workIsLatest == '1') {
           isPresent = true;
+          DateTime tempPromDate = DateTime.now();
+          var inputPromDate = DateTime.parse(tempPromDate.toString());
+          var outputPromFormat = DateFormat('dd MMMM yyyy');
+          dataSendEnd = DateFormat('yyyy-MM-dd').format(tempPromDate);
+          ctrlEnd.text = outputPromFormat.format(inputPromDate);
         } else {
           isPresent = false;
 
@@ -525,6 +533,32 @@ class _ApplicationForm2UseTabScreenState
           ),
           elevation: 0,
           backgroundColor: Colors.white,
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    CancelWidget()
+                        .showBottomCancel(context, widget.data.applicationNo!);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Colors.redAccent,
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: const Center(
+                      child: Text(
+                        'CANCEL',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -1042,7 +1076,13 @@ class _ApplicationForm2UseTabScreenState
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlBankNo,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'Bank Account No',
                                                   isDense: true,
@@ -1182,7 +1222,15 @@ class _ApplicationForm2UseTabScreenState
                                             height: 50,
                                             child: TextFormField(
                                               controller: ctrlIdNo,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    16),
+                                              ],
                                               decoration: InputDecoration(
                                                   hintText: 'ID No',
                                                   isDense: true,
@@ -2188,6 +2236,135 @@ class _ApplicationForm2UseTabScreenState
                               if (state is ClientUpdateLoaded) {
                                 return InkWell(
                                   onTap: () {
+                                    if (ctrlBankNo.text.isEmpty ||
+                                        ctrlBankNo.text == '' ||
+                                        ctrlBankName.text.isEmpty ||
+                                        ctrlBankName.text == '' ||
+                                        ctrlIdNo.text.isEmpty ||
+                                        ctrlIdNo.text == '' ||
+                                        ctrlFullName.text.isEmpty ||
+                                        ctrlFullName.text == '' ||
+                                        ctrlCompanyName.text.isEmpty ||
+                                        ctrlCompanyName.text == '' ||
+                                        ctrlDepartment.text.isEmpty ||
+                                        ctrlDepartment.text == '' ||
+                                        ctrlWorkPosition.text.isEmpty ||
+                                        ctrlWorkPosition.text == '' ||
+                                        ctrlStart.text.isEmpty ||
+                                        ctrlStart.text == '' ||
+                                        ctrlEnd.text.isEmpty ||
+                                        ctrlEnd.text == '' ||
+                                        selectFamily == '' ||
+                                        selectWorkType == '' ||
+                                        selectBank == '' ||
+                                        selectBank == '') {
+                                      EmptyWidget().showBottomEmpty(context);
+                                    } else {
+                                      clientBloc.add(ClientUpdateAttempt(AddClientRequestModel(
+                                          pApplicationNo:
+                                              widget.data.applicationNo,
+                                          pBankCode: selectBankCode,
+                                          pBankName: selectBank,
+                                          pBankAccountNo: ctrlBankNo.text,
+                                          pBankAccountName: ctrlBankName.text,
+                                          pFamilyFullName: ctrlFullName.text,
+                                          pFamilyIdNo: ctrlIdNo.text,
+                                          pFamilyTypeCode: selectFamilyCode,
+                                          pFamilyGenderCode:
+                                              gender == 'Male' ? 'M' : 'F',
+                                          pWorkCompanyName:
+                                              ctrlCompanyName.text,
+                                          pWorkTypeCode: selectWorkTypeCode,
+                                          pWorkDepartmentName:
+                                              ctrlDepartment.text,
+                                          pWorkPosition: ctrlWorkPosition.text,
+                                          pWorkStartDate: dataSendStart,
+                                          pWorkIsLatest: isPresent,
+                                          pClientType: 'PERSONAL',
+                                          pClientIdNo: widget.data.clientIdNo,
+                                          pClientFullName:
+                                              widget.data.clientFullName,
+                                          pClientAreaMobileNo:
+                                              widget.data.clientAreaMobileNo,
+                                          pClientMobileNo:
+                                              widget.data.clientMobileNo,
+                                          pClientEmail: widget.data.clientEmail,
+                                          pClientPlaceOfBirth:
+                                              widget.data.clientPlaceOfBirth,
+                                          pClientDateOfBirth:
+                                              widget.data.clientDateOfBirth,
+                                          pClientMotherMaidenName: widget
+                                              .data.clientMotherMaidenName,
+                                          pClientGenderCode:
+                                              widget.data.clientGenderCode,
+                                          pClientMaritalStatusCode: widget
+                                              .data.clientMaritalStatusCode,
+                                          pClientSpouseName:
+                                              widget.data.clientSpouseName,
+                                          pClientSpouseIdNo:
+                                              widget.data.clientSpouseIdNo,
+                                          pAddressProvinceCode:
+                                              widget.data.addressProvinceCode,
+                                          pAddressProvinceName:
+                                              widget.data.addressProvinceName,
+                                          pAddressCityCode:
+                                              widget.data.addressCityCode,
+                                          pAddressCityName:
+                                              widget.data.addressCityName,
+                                          pAddressZipCodeCode:
+                                              widget.data.addressZipCode,
+                                          pAddressZipCode: widget.data.addressZipCodeCode,
+                                          pAddressZipName: widget.data.addressZipName,
+                                          pAddressSubDistrict: widget.data.addressSubDistrict,
+                                          pAddressVillage: widget.data.addressVillage,
+                                          pAddressAddress: widget.data.addressAddress,
+                                          pAddressRt: widget.data.addressRt,
+                                          pAddressRw: widget.data.addressRw,
+                                          pWorkEndDate: widget.data.workEndDate)));
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                        child: Text('NEXT',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600))),
+                                  ),
+                                );
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  if (ctrlBankNo.text.isEmpty ||
+                                      ctrlBankNo.text == '' ||
+                                      ctrlBankName.text.isEmpty ||
+                                      ctrlBankName.text == '' ||
+                                      ctrlIdNo.text.isEmpty ||
+                                      ctrlIdNo.text == '' ||
+                                      ctrlFullName.text.isEmpty ||
+                                      ctrlFullName.text == '' ||
+                                      ctrlCompanyName.text.isEmpty ||
+                                      ctrlCompanyName.text == '' ||
+                                      ctrlDepartment.text.isEmpty ||
+                                      ctrlDepartment.text == '' ||
+                                      ctrlWorkPosition.text.isEmpty ||
+                                      ctrlWorkPosition.text == '' ||
+                                      ctrlStart.text.isEmpty ||
+                                      ctrlStart.text == '' ||
+                                      ctrlEnd.text.isEmpty ||
+                                      ctrlEnd.text == '' ||
+                                      selectFamily == '' ||
+                                      selectWorkType == '' ||
+                                      selectBank == '' ||
+                                      selectBank == '') {
+                                    EmptyWidget().showBottomEmpty(context);
+                                  } else {
                                     clientBloc.add(ClientUpdateAttempt(AddClientRequestModel(
                                         pApplicationNo:
                                             widget.data.applicationNo,
@@ -2251,88 +2428,7 @@ class _ApplicationForm2UseTabScreenState
                                         pAddressRt: widget.data.addressRt,
                                         pAddressRw: widget.data.addressRw,
                                         pWorkEndDate: widget.data.workEndDate)));
-                                  },
-                                  child: Container(
-                                    width: 200,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: thirdColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Center(
-                                        child: Text('NEXT',
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600))),
-                                  ),
-                                );
-                              }
-                              return InkWell(
-                                onTap: () {
-                                  clientBloc.add(ClientUpdateAttempt(AddClientRequestModel(
-                                      pApplicationNo: widget.data.applicationNo,
-                                      pBankCode: selectBankCode,
-                                      pBankName: selectBank,
-                                      pBankAccountNo: ctrlBankNo.text,
-                                      pBankAccountName: ctrlBankName.text,
-                                      pFamilyFullName: ctrlFullName.text,
-                                      pFamilyIdNo: ctrlIdNo.text,
-                                      pFamilyTypeCode: selectFamilyCode,
-                                      pFamilyGenderCode:
-                                          gender == 'Male' ? 'M' : 'F',
-                                      pWorkCompanyName: ctrlCompanyName.text,
-                                      pWorkTypeCode: selectWorkTypeCode,
-                                      pWorkDepartmentName: ctrlDepartment.text,
-                                      pWorkPosition: ctrlWorkPosition.text,
-                                      pWorkStartDate: dataSendStart,
-                                      pWorkIsLatest: isPresent,
-                                      pClientType: 'PERSONAL',
-                                      pClientIdNo: widget.data.clientIdNo,
-                                      pClientFullName:
-                                          widget.data.clientFullName,
-                                      pClientAreaMobileNo:
-                                          widget.data.clientAreaMobileNo,
-                                      pClientMobileNo:
-                                          widget.data.clientMobileNo,
-                                      pClientEmail: widget.data.clientEmail,
-                                      pClientPlaceOfBirth:
-                                          widget.data.clientPlaceOfBirth,
-                                      pClientDateOfBirth:
-                                          widget.data.clientDateOfBirth,
-                                      pClientMotherMaidenName:
-                                          widget.data.clientMotherMaidenName,
-                                      pClientGenderCode:
-                                          widget.data.clientGenderCode,
-                                      pClientMaritalStatusCode:
-                                          widget.data.clientMaritalStatusCode,
-                                      pClientSpouseName:
-                                          widget.data.clientSpouseName,
-                                      pClientSpouseIdNo:
-                                          widget.data.clientSpouseIdNo,
-                                      pAddressProvinceCode:
-                                          widget.data.addressProvinceCode,
-                                      pAddressProvinceName:
-                                          widget.data.addressProvinceName,
-                                      pAddressCityCode:
-                                          widget.data.addressCityCode,
-                                      pAddressCityName:
-                                          widget.data.addressCityName,
-                                      pAddressZipCodeCode:
-                                          widget.data.addressZipCode,
-                                      pAddressZipCode:
-                                          widget.data.addressZipCodeCode,
-                                      pAddressZipName:
-                                          widget.data.addressZipName,
-                                      pAddressSubDistrict:
-                                          widget.data.addressSubDistrict,
-                                      pAddressVillage:
-                                          widget.data.addressVillage,
-                                      pAddressAddress:
-                                          widget.data.addressAddress,
-                                      pAddressRt: widget.data.addressRt,
-                                      pAddressRw: widget.data.addressRw,
-                                      pWorkEndDate: widget.data.workEndDate)));
+                                  }
                                 },
                                 child: Container(
                                   width: 200,

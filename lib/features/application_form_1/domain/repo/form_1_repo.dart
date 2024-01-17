@@ -3,6 +3,7 @@ import 'package:sales_order/features/application_form_1/data/client_detail_respo
 import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
 import 'package:sales_order/features/application_form_1/data/zip_code_response_model.dart';
 import 'package:sales_order/features/application_form_1/domain/api/form_1_api.dart';
+import 'package:sales_order/features/application_form_2/data/add_client_response_model.dart';
 
 class Form1Repo {
   final Form1Api form1api = Form1Api();
@@ -24,4 +25,7 @@ class Form1Repo {
 
   Future<ZipCodeResponseModel> attemptLookupZipCode(String code) =>
       form1api.attemptLookupZipCode(code);
+
+  Future<AddClientResponseModel> attemptCancel(String code) =>
+      form1api.attemptCancel(code);
 }

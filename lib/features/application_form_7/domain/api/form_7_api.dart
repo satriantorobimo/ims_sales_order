@@ -5,6 +5,7 @@ import 'package:sales_order/features/application_form_7/data/document_delete_req
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
+import 'package:sales_order/features/application_form_7/data/document_update_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_upload_request_model.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/url_util.dart';
@@ -120,6 +121,37 @@ class Form7Api {
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       final res = await http.post(Uri.parse(urlUtil.getUrlDocUpload()),
+          body: json, headers: header);
+      if (res.statusCode == 200) {
+        stopwatch.stop();
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        return addClientResponseModel;
+      } else if (res.statusCode == 401) {
+        throw 'expired';
+      } else {
+        addClientResponseModel =
+            AddClientResponseModel.fromJson(jsonDecode(res.body));
+        throw addClientResponseModel.message!;
+      }
+    } catch (ex) {
+      throw ex.toString();
+    }
+  }
+
+  Future<AddClientResponseModel> attemptDocUpdate(
+      DocumentUDateRequestModel documentUDateRequestModel) async {
+    List a = [];
+    final String? token = await SharedPrefUtil.getSharedString('token');
+
+    final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
+    a.add(documentUDateRequestModel.toJson());
+
+    final json = jsonEncode(a);
+
+    try {
+      Stopwatch stopwatch = Stopwatch()..start();
+      final res = await http.post(Uri.parse(urlUtil.getUrlDocUpdate()),
           body: json, headers: header);
       if (res.statusCode == 200) {
         stopwatch.stop();
