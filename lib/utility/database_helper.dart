@@ -51,10 +51,10 @@ class DatabaseHelper {
   }
 
   // Delete
-  static Future<void> deleteUser(int id) async {
+  static Future<void> deleteUser() async {
     final db = await DatabaseHelper.db();
     try {
-      await db.delete('user', where: "id = ?", whereArgs: [id]);
+      await db.delete('user');
     } catch (err) {
       debugPrint("Something went wrong when deleting an item: $err");
     }

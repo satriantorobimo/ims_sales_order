@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
 import 'package:sales_order/features/application_form_7/domain/repo/form_7_repo.dart';
@@ -44,6 +45,19 @@ class _ApplicationForm7ViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -384,12 +398,13 @@ class _ApplicationForm7ViewTabScreenState
                                     itemCount: dataFilter.length,
                                     separatorBuilder:
                                         (BuildContext context, int index) {
-                                      return const SizedBox(height: 16);
+                                      return const SizedBox(height: 10);
                                     },
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       var promDate = '-';
                                       var expDate = '-';
+                                      var effDate = '';
                                       if (dataFilter[index].expiredDate !=
                                           null) {
                                         DateTime tempExpDate =
@@ -415,6 +430,19 @@ class _ApplicationForm7ViewTabScreenState
                                         promDate = outputPromFormat
                                             .format(inputPromDate);
                                       }
+                                      if (dataFilter[index].effectiveDate !=
+                                          null) {
+                                        DateTime tempPromDate =
+                                            DateFormat('yyyy-MM-dd').parse(
+                                                dataFilter[index]
+                                                    .effectiveDate!);
+                                        var inputPromDate = DateTime.parse(
+                                            tempPromDate.toString());
+                                        var outputPromFormat =
+                                            DateFormat('dd/MM/yyyy');
+                                        effDate = outputPromFormat
+                                            .format(inputPromDate);
+                                      }
                                       final ext = path.extension(state
                                           .documentListResponseModel
                                           .data![index]
@@ -431,13 +459,38 @@ class _ApplicationForm7ViewTabScreenState
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const Text(
-                                                'Document',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    dataFilter[index]
+                                                                .docSource ==
+                                                            'CLIENT_DOCUMENT'
+                                                        ? 'Document Client'
+                                                        : dataFilter[index]
+                                                                    .docSource ==
+                                                                'APPLICATION_ASSET_DOCUMENT'
+                                                            ? 'Document Asset Application'
+                                                            : 'Document Application',
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  dataFilter[index]
+                                                              .isRequired ==
+                                                          '1'
+                                                      ? const Text(
+                                                          ' *',
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        )
+                                                      : Container(),
+                                                ],
                                               ),
                                               const SizedBox(height: 8),
                                               Container(
@@ -478,79 +531,200 @@ class _ApplicationForm7ViewTabScreenState
                                               )
                                             ],
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'File',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              InkWell(
-                                                onTap:
-                                                    dataFilter[index].paths ==
-                                                            ""
-                                                        ? null
-                                                        : () {
-                                                            if (ext == '.PDF') {
-                                                              Navigator.pushNamed(
-                                                                  context,
-                                                                  StringRouterUtil
-                                                                      .applicationForm7PreviewPdfScreenTabRoute,
-                                                                  arguments: DocumentPreviewRequestModel(
-                                                                      pFileName:
-                                                                          dataFilter[index]
-                                                                              .filename,
-                                                                      pFilePaths:
-                                                                          dataFilter[index]
-                                                                              .paths));
-                                                            } else {
-                                                              Navigator.pushNamed(
-                                                                  context,
-                                                                  StringRouterUtil
-                                                                      .applicationForm7PreviewScreenTabRoute,
-                                                                  arguments: DocumentPreviewRequestModel(
-                                                                      pFileName:
-                                                                          dataFilter[index]
-                                                                              .filename,
-                                                                      pFilePaths:
-                                                                          dataFilter[index]
-                                                                              .paths));
-                                                            }
-                                                          },
-                                                child: Container(
-                                                  height: 50,
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  decoration: BoxDecoration(
-                                                    color: dataFilter[index]
-                                                                .paths ==
-                                                            ""
-                                                        ? Colors.grey
-                                                        : primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                          SizedBox(
+                                            width: 130,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'File',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                InkWell(
+                                                  onTap:
+                                                      dataFilter[index].paths ==
+                                                              ""
+                                                          ? null
+                                                          : () {
+                                                              if (ext ==
+                                                                  '.PDF') {
+                                                                Navigator.pushNamed(
+                                                                    context,
+                                                                    StringRouterUtil
+                                                                        .applicationForm7PreviewPdfScreenTabRoute,
+                                                                    arguments: DocumentPreviewRequestModel(
+                                                                        pFileName:
+                                                                            dataFilter[index]
+                                                                                .filename,
+                                                                        pFilePaths:
+                                                                            dataFilter[index].paths));
+                                                              } else {
+                                                                Navigator.pushNamed(
+                                                                    context,
+                                                                    StringRouterUtil
+                                                                        .applicationForm7PreviewScreenTabRoute,
+                                                                    arguments: DocumentPreviewRequestModel(
+                                                                        pFileName:
+                                                                            dataFilter[index]
+                                                                                .filename,
+                                                                        pFilePaths:
+                                                                            dataFilter[index].paths));
+                                                              }
+                                                            },
+                                                  child: Container(
+                                                    height: 50,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    decoration: BoxDecoration(
+                                                      color: dataFilter[index]
+                                                                  .paths ==
+                                                              ""
+                                                          ? Colors.grey
+                                                          : primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: const Center(
+                                                        child: Text('VIEW FILE',
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600))),
                                                   ),
-                                                  child: const Center(
-                                                      child: Text('VIEW FILE',
-                                                          style: TextStyle(
+                                                ),
+                                                const SizedBox(height: 4),
+                                              ],
+                                            ),
+                                          ),
+                                          dataFilter[index].docSource ==
+                                                  'CLIENT_DOCUMENT'
+                                              ? Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Effective Date',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Container(
+                                                      width: 130,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Text(
+                                                          effDate,
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xFF333333),
                                                               fontSize: 15,
-                                                              color:
-                                                                  Colors.white,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w600))),
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              : Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      'Promise Date',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Container(
+                                                      width: 130,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1)),
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            blurRadius: 6,
+                                                            offset: const Offset(
+                                                                -6,
+                                                                4), // Shadow position
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Text(
+                                                          promDate,
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xFF333333),
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
                                                 ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                            ],
-                                          ),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -565,59 +739,7 @@ class _ApplicationForm7ViewTabScreenState
                                               ),
                                               const SizedBox(height: 8),
                                               Container(
-                                                width: 180,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color:
-                                                      const Color(0xFFFAF9F9),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    expDate,
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF6E6E6E),
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Promise Date',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                width: 185,
+                                                width: 130,
                                                 height: 50,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
@@ -642,10 +764,9 @@ class _ApplicationForm7ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerRight,
                                                   child: Text(
-                                                    promDate,
+                                                    expDate,
                                                     style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF333333),
+                                                        color: Colors.black,
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400),

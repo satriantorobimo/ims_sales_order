@@ -107,7 +107,7 @@ class _HeaderTabWidgetState extends State<HeaderTabWidget> {
                     InkWell(
                       onTap: () async {
                         SharedPrefUtil.deleteSharedPref('token');
-                        await DatabaseHelper.deleteUser(1);
+                        await DatabaseHelper.deleteUser();
 
                         // ignore: use_build_context_synchronously
                         Navigator.pushNamedAndRemoveUntil(

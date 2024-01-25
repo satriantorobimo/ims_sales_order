@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/data/client_detail_response_model.dart'
     as cd;
-import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart'
+    as lookup;
 import 'package:sales_order/features/application_form_1/data/zip_code_response_model.dart';
 import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/check_scoring_bloc/bloc.dart';
@@ -16,6 +17,7 @@ import 'package:sales_order/features/application_form_1/presentation/bloc/prov_b
 import 'package:sales_order/features/application_form_1/presentation/bloc/zip_code_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/wrong_widget.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/general_util.dart';
@@ -86,354 +88,458 @@ class _ApplicationForm1ResumeTabScreenState
     super.initState();
   }
 
-  Future<void> _showBottom(LookUpMsoResponseModel lookUpMsoResponseModel) {
+  Future<void> _showBottom(
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
+    List<lookup.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Province',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Province',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMsoResponseModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexProv == index) {
-                                selectProv = '';
-                                selectProvCode = '';
-                                selectIndexProv = 10000;
-                                selectCity = '';
-                                selectCityCode = '';
-                                selectIndexCity = 10000;
-                                selectPostal = '';
-                                selectPostalCode = '';
-                                selectIndexPostal = 10000;
-                                selectPostalName = '';
-                              } else {
-                                cityBloc.add(CityAttempt(
-                                    lookUpMsoResponseModel.data![index].code!));
-                                selectProv = lookUpMsoResponseModel
-                                    .data![index].description!;
-                                selectProvCode =
-                                    lookUpMsoResponseModel.data![index].code!;
-                                selectIndexProv = index;
-                                selectCity = '';
-                                selectCityCode = '';
-                                selectIndexCity = 10000;
-                                selectPostal = '';
-                                selectPostalCode = '';
-                                selectIndexPostal = 10000;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMsoResponseModel
-                                    .data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexCity == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMsoResponseModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMsoResponseModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexProv == index) {
+                                    selectProv = '';
+                                    selectProvCode = '';
+                                    selectIndexProv = 10000;
+                                    selectCity = '';
+                                    selectCityCode = '';
+                                    selectIndexCity = 10000;
+                                    selectPostal = '';
+                                    selectPostalCode = '';
+                                    selectIndexPostal = 10000;
+                                    selectPostalName = '';
+                                    ctrlSubDistrict.clear();
+                                    ctrlSubVillage.clear();
+                                  } else {
+                                    cityBloc.add(CityAttempt(tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMsoResponseModel
+                                            .data![index].code!));
+                                    selectProv = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!;
+                                    selectProvCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMsoResponseModel
+                                            .data![index].code!;
+                                    selectIndexProv = index;
+                                    selectCity = '';
+                                    selectCityCode = '';
+                                    selectIndexCity = 10000;
+                                    selectPostal = '';
+                                    selectPostalCode = '';
+                                    selectIndexPostal = 10000;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexCity == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
-  Future<void> _showBottomCity(LookUpMsoResponseModel lookUpMsoResponseModel) {
+  Future<void> _showBottomCity(
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
+    List<lookup.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'City',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'City',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMsoResponseModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexCity == index) {
-                                selectCity = '';
-                                selectCityCode = '';
-                                selectIndexCity = 10000;
-                                selectPostal = '';
-                                selectPostalCode = '';
-                                selectIndexPostal = 10000;
-                                selectPostalName = '';
-                              } else {
-                                zipCodeBloc.add(ZipCodeAttempt(
-                                    lookUpMsoResponseModel.data![index].code!));
-                                selectCity = lookUpMsoResponseModel
-                                    .data![index].description!;
-                                selectCityCode =
-                                    lookUpMsoResponseModel.data![index].code!;
-                                selectIndexCity = index;
-                                selectPostal = '';
-                                selectPostalCode = '';
-                                selectIndexPostal = 10000;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMsoResponseModel
-                                    .data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexCity == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMsoResponseModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMsoResponseModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexCity == index) {
+                                    selectCity = '';
+                                    selectCityCode = '';
+                                    selectIndexCity = 10000;
+                                    selectPostal = '';
+                                    selectPostalCode = '';
+                                    selectIndexPostal = 10000;
+                                    selectPostalName = '';
+                                    ctrlSubDistrict.clear();
+                                    ctrlSubVillage.clear();
+                                  } else {
+                                    zipCodeBloc.add(ZipCodeAttempt(
+                                        tempList.isNotEmpty
+                                            ? tempList[index].code!
+                                            : lookUpMsoResponseModel
+                                                .data![index].code!));
+                                    selectCity = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!;
+                                    selectCityCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMsoResponseModel
+                                            .data![index].code!;
+                                    selectIndexCity = index;
+                                    selectPostal = '';
+                                    selectPostalCode = '';
+                                    selectIndexPostal = 10000;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexCity == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
   Future<void> _showBottomPostal(ZipCodeResponseModel zipCodeResponseModel) {
+    List<Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Postal',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Postal',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: zipCodeResponseModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexPostal == index) {
-                                selectPostal = '';
-                                selectPostalCode = '';
-                                selectIndexPostal = 1000;
-                              } else {
-                                selectPostal = zipCodeResponseModel
-                                    .data![index].postalCode!;
-                                selectPostalCode =
-                                    zipCodeResponseModel.data![index].code!;
-                                selectPostalName = zipCodeResponseModel
-                                    .data![index].zipCodeName!;
-                                selectIndexPostal = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${zipCodeResponseModel.data![index].postalCode!} - ${zipCodeResponseModel.data![index].village!}',
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexPostal == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = zipCodeResponseModel.data!
+                                    .where((item) => item.postalCode!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : zipCodeResponseModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexPostal == index) {
+                                    selectPostal = '';
+                                    selectPostalCode = '';
+                                    ctrlSubDistrict.clear();
+                                    ctrlSubVillage.clear();
+                                    selectIndexPostal = 1000;
+                                  } else {
+                                    selectPostal = tempList.isNotEmpty
+                                        ? tempList[index].postalCode!
+                                        : zipCodeResponseModel
+                                            .data![index].postalCode!;
+                                    selectPostalCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : zipCodeResponseModel
+                                            .data![index].code!;
+                                    selectPostalName = tempList.isNotEmpty
+                                        ? tempList[index].zipCodeName!
+                                        : zipCodeResponseModel
+                                            .data![index].zipCodeName!;
+                                    selectIndexPostal = index;
+                                    ctrlSubVillage.text = tempList.isNotEmpty
+                                        ? tempList[index].village!
+                                        : zipCodeResponseModel
+                                            .data![index].village!;
+                                    ctrlSubDistrict.text = tempList.isNotEmpty
+                                        ? tempList[index].subDistrict!
+                                        : zipCodeResponseModel
+                                            .data![index].subDistrict!;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? '${tempList[index].postalCode!} - ${tempList[index].village!}'
+                                        : '${zipCodeResponseModel.data![index].postalCode!} - ${zipCodeResponseModel.data![index].village!}',
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexPostal == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
   Future<void> _showBottomMaritalStatus(
-      LookUpMsoResponseModel lookUpMsoResponseModel) {
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -454,35 +560,8 @@ class _ApplicationForm1ResumeTabScreenState
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
-                      ),
-                    ),
-                  ),
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
                 ),
                 Expanded(
                   child: ListView.separated(
@@ -584,24 +663,12 @@ class _ApplicationForm1ResumeTabScreenState
                 padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
-                    CancelWidget()
-                        .showBottomCancel(context, widget.applicationNo);
+                    OptionWidget(isUsed: true)
+                        .showBottomOption(context, widget.applicationNo);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.redAccent,
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Center(
-                      child: Text(
-                        'CANCEL',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
                   ),
                 ))
           ],
@@ -1548,9 +1615,7 @@ class _ApplicationForm1ResumeTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlDate,
-                                                onTap: dateOb == 0
-                                                    ? null
-                                                    : _presentDatePicker,
+                                                onTap: _presentDatePicker,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 readOnly: true,
@@ -2771,6 +2836,9 @@ class _ApplicationForm1ResumeTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSubDistrict,
+                                                readOnly: true,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -2784,7 +2852,8 @@ class _ApplicationForm1ResumeTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -2848,6 +2917,9 @@ class _ApplicationForm1ResumeTabScreenState
                                               height: 50,
                                               child: TextFormField(
                                                 controller: ctrlSubVillage,
+                                                readOnly: true,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -2861,7 +2933,8 @@ class _ApplicationForm1ResumeTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(

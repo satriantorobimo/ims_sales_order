@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_3/domain/repo/form_3_repo.dart';
 import 'package:sales_order/features/application_form_3/presentation/bloc/loan_data_detail_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
@@ -39,6 +40,19 @@ class _ApplicationForm3ViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -395,7 +409,7 @@ class _ApplicationForm3ViewTabScreenState
                                 children: [
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.23,
+                                          0.4,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -432,7 +446,11 @@ class _ApplicationForm3ViewTabScreenState
                                                     const Alignment(0, 0),
                                                 children: [
                                                   Container(
-                                                    width: 280,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.38,
                                                     height: 50,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -442,7 +460,8 @@ class _ApplicationForm3ViewTabScreenState
                                                           color: Colors.grey
                                                               .withOpacity(
                                                                   0.1)),
-                                                      color: Colors.white,
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.grey
@@ -462,16 +481,10 @@ class _ApplicationForm3ViewTabScreenState
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        selectPackage == ''
-                                                            ? 'Select Package'
-                                                            : selectPackage,
-                                                        style: TextStyle(
-                                                            color: selectPackage ==
-                                                                    ''
-                                                                ? Colors.grey
-                                                                    .withOpacity(
-                                                                        0.5)
-                                                                : Colors.black,
+                                                        selectPackage,
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -479,13 +492,6 @@ class _ApplicationForm3ViewTabScreenState
                                                       ),
                                                     ),
                                                   ),
-                                                  const Positioned(
-                                                    right: 16,
-                                                    child: Icon(
-                                                      Icons.search_rounded,
-                                                      color: Color(0xFF3D3D3D),
-                                                    ),
-                                                  )
                                                 ],
                                               ),
                                             ],
@@ -523,7 +529,11 @@ class _ApplicationForm3ViewTabScreenState
                                                     const Alignment(0, 0),
                                                 children: [
                                                   Container(
-                                                    width: 280,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.38,
                                                     height: 50,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -533,7 +543,8 @@ class _ApplicationForm3ViewTabScreenState
                                                           color: Colors.grey
                                                               .withOpacity(
                                                                   0.1)),
-                                                      color: Colors.white,
+                                                      color: const Color(
+                                                          0xFFFAF9F9),
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.grey
@@ -553,16 +564,10 @@ class _ApplicationForm3ViewTabScreenState
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        selectDealer == ''
-                                                            ? 'Select Dealer'
-                                                            : selectDealer,
-                                                        style: TextStyle(
-                                                            color: selectDealer ==
-                                                                    ''
-                                                                ? Colors.grey
-                                                                    .withOpacity(
-                                                                        0.5)
-                                                                : Colors.black,
+                                                        selectDealer,
+                                                        style: const TextStyle(
+                                                            color: Color(
+                                                                0xFF6E6E6E),
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -570,13 +575,6 @@ class _ApplicationForm3ViewTabScreenState
                                                       ),
                                                     ),
                                                   ),
-                                                  const Positioned(
-                                                    right: 16,
-                                                    child: Icon(
-                                                      Icons.search_rounded,
-                                                      color: Color(0xFF3D3D3D),
-                                                    ),
-                                                  )
                                                 ],
                                               ),
                                             ],
@@ -585,7 +583,7 @@ class _ApplicationForm3ViewTabScreenState
                                       )),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.72,
+                                          0.55,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -632,6 +630,8 @@ class _ApplicationForm3ViewTabScreenState
                                                 readOnly: true,
                                                 maxLines: 6,
                                                 controller: ctrlRemark,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Remark',
                                                     isDense: true,
@@ -643,7 +643,8 @@ class _ApplicationForm3ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(

@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_summary/domain/repo/summary_repo.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/detail_summary_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/submit_summary_bloc/bloc.dart';
@@ -12,6 +14,8 @@ import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:signature/signature.dart';
+
+import '../../../../application_form_1/presentation/bloc/get_client_bloc/bloc.dart';
 
 class ApplicationFormSummaryTabScreen extends StatefulWidget {
   const ApplicationFormSummaryTabScreen(
@@ -29,11 +33,15 @@ class _ApplicationFormSummaryTabScreenState
   bool check2 = false;
   bool isDisableTtd = false;
   bool isDisableTtdSpouse = false;
+  bool isMarried = true;
+  double tdpAmount = 0.0;
+  double installmentAmount = 0.0;
+  String dueDate = '';
   DetailSummaryBloc detailSummaryBloc =
       DetailSummaryBloc(summaryRepo: SummaryRepo());
   SubmitSummaryBloc submitSummaryBloc =
       SubmitSummaryBloc(summaryRepo: SummaryRepo());
-
+  GetClientBloc getClientBloc = GetClientBloc(form1repo: Form1Repo());
   void _successDialog() {
     showDialog(
       useSafeArea: true,
@@ -140,6 +148,7 @@ class _ApplicationFormSummaryTabScreenState
     _controller.addListener(() => log('Value changed'));
     _controllerSpouse.addListener(() => log('Value changed'));
     detailSummaryBloc.add(DetailSummaryAttempt(widget.applicationNo));
+    getClientBloc.add(GetClientAttempt(widget.applicationNo));
   }
 
   @override
@@ -221,6 +230,20 @@ class _ApplicationFormSummaryTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: true)
+                        .showBottomOption(context, widget.applicationNo);
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -255,459 +278,446 @@ class _ApplicationFormSummaryTabScreenState
                   child: Padding(
                       padding: const EdgeInsets.only(
                           left: 80.0, right: 80.0, top: 8.0),
-                      child: BlocListener(
-                          bloc: detailSummaryBloc,
-                          listener: (_, DetailSummaryState state) async {
-                            if (state is DetailSummaryLoading) {}
-                            if (state is DetailSummaryLoaded) {}
-                            if (state is DetailSummaryError) {
-                              GeneralUtil().showSnackBar(context, state.error!);
-                            }
-                            if (state is DetailSummaryException) {}
-                          },
-                          child: BlocBuilder(
-                              bloc: detailSummaryBloc,
-                              builder: (_, DetailSummaryState state) {
-                                if (state is DetailSummaryLoading) {
-                                  return _loading();
+                      child: MultiBlocListener(
+                          listeners: [
+                            BlocListener(
+                              bloc: getClientBloc,
+                              listener: (_, GetClientState state) {
+                                if (state is GetClientLoading) {}
+                                if (state is GetClientLoaded) {
+                                  if (state.clientDetailResponseModel.data![0]
+                                          .clientMaritalStatusType !=
+                                      'MARRIED') {
+                                    setState(() {
+                                      isMarried = false;
+                                    });
+                                  }
                                 }
+                                if (state is GetClientError) {
+                                  GeneralUtil()
+                                      .showSnackBar(context, state.error!);
+                                }
+                                if (state is GetClientException) {}
+                              },
+                            ),
+                            BlocListener(
+                              bloc: detailSummaryBloc,
+                              listener: (_, DetailSummaryState state) async {
+                                if (state is DetailSummaryLoading) {}
                                 if (state is DetailSummaryLoaded) {
-                                  return Column(
+                                  setState(() {
+                                    dueDate = state.detailSummaryResponseModel
+                                        .data![0].dueDate
+                                        .toString();
+                                    installmentAmount = state
+                                        .detailSummaryResponseModel
+                                        .data![0]
+                                        .installmentAmount!;
+                                    tdpAmount = state.detailSummaryResponseModel
+                                        .data![0].installmentAmount!;
+                                  });
+                                }
+                                if (state is DetailSummaryError) {
+                                  GeneralUtil()
+                                      .showSnackBar(context, state.error!);
+                                }
+                                if (state is DetailSummaryException) {}
+                              },
+                            )
+                          ],
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'TDP',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                width: 300,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color:
-                                                      const Color(0xFFFAF9F9),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    state
-                                                        .detailSummaryResponseModel
-                                                        .data![0]
-                                                        .tdpAmount
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF6E6E6E),
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Installment Amount',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                width: 300,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color:
-                                                      const Color(0xFFFAF9F9),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    state
-                                                        .detailSummaryResponseModel
-                                                        .data![0]
-                                                        .installmentAmount
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF6E6E6E),
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Due Date',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                width: 300,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1)),
-                                                  color:
-                                                      const Color(0xFFFAF9F9),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      blurRadius: 6,
-                                                      offset: const Offset(-6,
-                                                          4), // Shadow position
-                                                    ),
-                                                  ],
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Text(
-                                                    state
-                                                        .detailSummaryResponseModel
-                                                        .data![0]
-                                                        .dueDate
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF6E6E6E),
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ],
+                                      const Text(
+                                        'TDP',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      const SizedBox(
-                                        height: 55,
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        width: 300,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1)),
+                                          color: const Color(0xFFFAF9F9),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              blurRadius: 6,
+                                              offset: const Offset(
+                                                  -6, 4), // Shadow position
+                                            ),
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16.0),
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            GeneralUtil.convertToIdr(
+                                                tdpAmount, 2),
+                                            style: const TextStyle(
+                                                color: Color(0xFF6E6E6E),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Installment Amount',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        width: 300,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1)),
+                                          color: const Color(0xFFFAF9F9),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              blurRadius: 6,
+                                              offset: const Offset(
+                                                  -6, 4), // Shadow position
+                                            ),
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16.0),
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            GeneralUtil.convertToIdr(
+                                                installmentAmount, 2),
+                                            style: const TextStyle(
+                                                color: Color(0xFF6E6E6E),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Due Date',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        width: 300,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1)),
+                                          color: const Color(0xFFFAF9F9),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              blurRadius: 6,
+                                              offset: const Offset(
+                                                  -6, 4), // Shadow position
+                                            ),
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16.0),
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            dueDate,
+                                            style: const TextStyle(
+                                                color: Color(0xFF6E6E6E),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: Checkbox(
+                                      activeColor: primaryColor,
+                                      value: check1,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          check1 = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  const Text(
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        color: Color(0xFF222222),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: Checkbox(
+                                      activeColor: primaryColor,
+                                      value: check2,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          check2 = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.height *
+                                        1.25,
+                                    height: 90,
+                                    child: const Text(
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          color: Color(0xFF222222),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'TTD',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Stack(
                                         children: [
-                                          SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: Checkbox(
-                                              activeColor: primaryColor,
-                                              value: check1,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  check1 = newValue!;
-                                                });
-                                              },
+                                          Material(
+                                            elevation: 6,
+                                            shadowColor:
+                                                Colors.grey.withOpacity(0.4),
+                                            child: AbsorbPointer(
+                                              absorbing: !isDisableTtd,
+                                              child: Signature(
+                                                key: const Key('signature'),
+                                                controller: _controller,
+                                                height: 200,
+                                                width: 500,
+                                                backgroundColor: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                          const SizedBox(width: 16),
-                                          const Text(
-                                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                color: Color(0xFF222222),
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: Checkbox(
-                                              activeColor: primaryColor,
-                                              value: check2,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  check2 = newValue!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 16),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                1.25,
-                                            height: 90,
-                                            child: const Text(
-                                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  color: Color(0xFF222222),
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'TTD',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Stack(
-                                                children: [
-                                                  Material(
-                                                    elevation: 6,
-                                                    shadowColor: Colors.grey
-                                                        .withOpacity(0.4),
-                                                    child: AbsorbPointer(
-                                                      absorbing: !isDisableTtd,
-                                                      child: Signature(
-                                                        key: const Key(
-                                                            'signature'),
-                                                        controller: _controller,
-                                                        height: 200,
-                                                        width: 500,
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    right: 8,
-                                                    bottom: 8,
-                                                    child: Row(
-                                                      children: [
-                                                        isDisableTtd
-                                                            ? GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    isDisableTtd =
-                                                                        false;
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .check_rounded,
-                                                                  color:
-                                                                      primaryColor,
-                                                                ),
-                                                              )
-                                                            : Container(),
-                                                        const SizedBox(
-                                                            width: 16),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if (isDisableTtd) {
-                                                              _controller
-                                                                  .clear();
-                                                            } else {
-                                                              setState(() {
-                                                                isDisableTtd =
-                                                                    true;
-                                                              });
-                                                            }
-                                                          },
-                                                          child: Icon(
-                                                            !isDisableTtd
-                                                                ? Icons
-                                                                    .edit_rounded
-                                                                : Icons
-                                                                    .delete_outline_rounded,
-                                                            color: !isDisableTtd
-                                                                ? Colors.black
-                                                                : Colors.red,
-                                                          ),
+                                          Positioned(
+                                            right: 8,
+                                            bottom: 8,
+                                            child: Row(
+                                              children: [
+                                                isDisableTtd
+                                                    ? GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            isDisableTtd =
+                                                                false;
+                                                          });
+                                                        },
+                                                        child: const Icon(
+                                                          Icons.check_rounded,
+                                                          color: primaryColor,
                                                         ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'TTD Spouse',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Stack(
-                                                children: [
-                                                  Material(
-                                                    elevation: 6,
-                                                    shadowColor: Colors.grey
-                                                        .withOpacity(0.4),
-                                                    child: AbsorbPointer(
-                                                      absorbing:
-                                                          !isDisableTtdSpouse,
-                                                      child: Signature(
-                                                        key: const Key(
-                                                            'signature'),
-                                                        controller:
-                                                            _controllerSpouse,
-                                                        height: 200,
-                                                        width: 500,
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                      ),
-                                                    ),
+                                                      )
+                                                    : Container(),
+                                                const SizedBox(width: 16),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if (isDisableTtd) {
+                                                      _controller.clear();
+                                                    } else {
+                                                      setState(() {
+                                                        isDisableTtd = true;
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Icon(
+                                                    !isDisableTtd
+                                                        ? Icons.edit_rounded
+                                                        : Icons
+                                                            .delete_outline_rounded,
+                                                    color: !isDisableTtd
+                                                        ? Colors.black
+                                                        : Colors.red,
                                                   ),
-                                                  Positioned(
-                                                    right: 8,
-                                                    bottom: 8,
-                                                    child: Row(
-                                                      children: [
-                                                        isDisableTtdSpouse
-                                                            ? GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    isDisableTtdSpouse =
-                                                                        false;
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .check_rounded,
-                                                                  color:
-                                                                      primaryColor,
-                                                                ),
-                                                              )
-                                                            : Container(),
-                                                        const SizedBox(
-                                                            width: 16),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if (isDisableTtdSpouse) {
-                                                              _controllerSpouse
-                                                                  .clear();
-                                                            } else {
-                                                              setState(() {
-                                                                isDisableTtdSpouse =
-                                                                    true;
-                                                              });
-                                                            }
-                                                          },
-                                                          child: Icon(
-                                                            !isDisableTtdSpouse
-                                                                ? Icons
-                                                                    .edit_rounded
-                                                                : Icons
-                                                                    .delete_outline_rounded,
-                                                            color:
-                                                                !isDisableTtdSpouse
-                                                                    ? Colors
-                                                                        .black
-                                                                    : Colors
-                                                                        .red,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ],
-                                  );
-                                }
-                                return _loading();
-                              })))),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      isMarried
+                                          ? const Text(
+                                              'TTD Spouse',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          : Container(),
+                                      const SizedBox(height: 8),
+                                      isMarried
+                                          ? Stack(
+                                              children: [
+                                                Material(
+                                                  elevation: 6,
+                                                  shadowColor: Colors.grey
+                                                      .withOpacity(0.4),
+                                                  child: AbsorbPointer(
+                                                    absorbing:
+                                                        !isDisableTtdSpouse,
+                                                    child: Signature(
+                                                      key: const Key(
+                                                          'signature'),
+                                                      controller:
+                                                          _controllerSpouse,
+                                                      height: 200,
+                                                      width: 500,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  right: 8,
+                                                  bottom: 8,
+                                                  child: Row(
+                                                    children: [
+                                                      isDisableTtdSpouse
+                                                          ? GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  isDisableTtdSpouse =
+                                                                      false;
+                                                                });
+                                                              },
+                                                              child: const Icon(
+                                                                Icons
+                                                                    .check_rounded,
+                                                                color:
+                                                                    primaryColor,
+                                                              ),
+                                                            )
+                                                          : Container(),
+                                                      const SizedBox(width: 16),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          if (isDisableTtdSpouse) {
+                                                            _controllerSpouse
+                                                                .clear();
+                                                          } else {
+                                                            setState(() {
+                                                              isDisableTtdSpouse =
+                                                                  true;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Icon(
+                                                          !isDisableTtdSpouse
+                                                              ? Icons
+                                                                  .edit_rounded
+                                                              : Icons
+                                                                  .delete_outline_rounded,
+                                                          color:
+                                                              !isDisableTtdSpouse
+                                                                  ? Colors.black
+                                                                  : Colors.red,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )))),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.05,

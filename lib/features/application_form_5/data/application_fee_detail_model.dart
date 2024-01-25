@@ -47,14 +47,21 @@ class Data {
   String? feeDesc;
   double? feeAmount;
   String? feePaymentType;
+  String? isCalculated;
 
-  Data({this.id, this.feeDesc, this.feeAmount, this.feePaymentType});
+  Data(
+      {this.id,
+      this.feeDesc,
+      this.feeAmount,
+      this.feePaymentType,
+      this.isCalculated});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     feeDesc = json['fee_desc'];
     feeAmount = json['fee_amount'];
     feePaymentType = json['fee_payment_type'];
+    isCalculated = json['is_calculated'];
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +70,7 @@ class Data {
     data['fee_desc'] = feeDesc;
     data['fee_amount'] = feeAmount;
     data['fee_payment_type'] = feePaymentType;
+    data['is_calculated'] = isCalculated;
     return data;
   }
 }

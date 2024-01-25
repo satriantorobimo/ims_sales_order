@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart';
+import 'package:sales_order/features/application_form_1/data/look_up_mso_response_model.dart'
+    as lookup;
 import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/features/application_form_2/domain/repo/form_2_repo.dart';
 import 'package:sales_order/features/application_form_2/presentation/bloc/bank_bloc/bloc.dart';
@@ -64,7 +66,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
     super.initState();
   }
 
-  Future<void> _showBottom(LookUpMsoResponseModel lookUpMsoResponseModel) {
+  Future<void> _showBottom(
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -85,35 +88,8 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
-                      ),
-                    ),
-                  ),
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
                 ),
                 Expanded(
                   child: ListView.separated(
@@ -172,217 +148,272 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
   }
 
   Future<void> _showBottomWorktype(
-      LookUpMsoResponseModel lookUpMsoResponseModel) {
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
+    List<lookup.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Work Type',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Work Type',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMsoResponseModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexWorkType == index) {
-                                selectWorkType = '';
-                                selectWorkTypeCode = '';
-                                selectIndexWorkType = 1000;
-                              } else {
-                                selectWorkType = lookUpMsoResponseModel
-                                    .data![index].description!;
-                                selectWorkTypeCode =
-                                    lookUpMsoResponseModel.data![index].code!;
-                                selectIndexWorkType = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMsoResponseModel
-                                    .data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexWorkType == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMsoResponseModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMsoResponseModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexWorkType == index) {
+                                    selectWorkType = '';
+                                    selectWorkTypeCode = '';
+                                    selectIndexWorkType = 1000;
+                                  } else {
+                                    selectWorkType = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!;
+                                    selectWorkTypeCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMsoResponseModel
+                                            .data![index].code!;
+                                    selectIndexWorkType = index;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexWorkType == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
-  Future<void> _showBottomBank(LookUpMsoResponseModel lookUpMsoResponseModel) {
+  Future<void> _showBottomBank(
+      lookup.LookUpMsoResponseModel lookUpMsoResponseModel) {
+    List<lookup.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Bank',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Bank',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMsoResponseModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexBank == index) {
-                                selectBank = '';
-                                selectBankCode = '';
-                                selectIndexBank = 1000;
-                              } else {
-                                selectBank = lookUpMsoResponseModel
-                                    .data![index].description!;
-                                selectBankCode =
-                                    lookUpMsoResponseModel.data![index].code!;
-                                selectIndexBank = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMsoResponseModel
-                                    .data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexBank == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMsoResponseModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMsoResponseModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexBank == index) {
+                                    selectBank = '';
+                                    selectBankCode = '';
+                                    selectIndexBank = 1000;
+                                  } else {
+                                    selectBank = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!;
+                                    selectBankCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMsoResponseModel
+                                            .data![index].code!;
+                                    selectIndexBank = index;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMsoResponseModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexBank == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
@@ -431,6 +462,19 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -1033,7 +1077,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '4. ID No',
+                                        '4. ID Family No',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1311,7 +1355,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '7. Gender',
+                                        '7. Family Gender',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1741,7 +1785,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '12. Start Date',
+                                        '12. Work Start Date',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1772,13 +1816,13 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                         readOnly: true,
                                         controller: ctrlStart,
                                         onTap: _startDatePicker,
+                                        textAlign: TextAlign.left,
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText: 'Start Date',
                                             isDense: true,
-                                            contentPadding:
-                                                const EdgeInsets.fromLTRB(
-                                                    16.0, 20.0, 20.0, 16.0),
                                             hintStyle: TextStyle(
                                                 color: Colors.grey
                                                     .withOpacity(0.5)),
@@ -1803,7 +1847,7 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '13. End Date',
+                                        '13. Work End Date',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1833,23 +1877,34 @@ class _ApplicationForm2TabScreenState extends State<ApplicationForm2TabScreen> {
                                                 color: Color(0xFFEAEAEA))),
                                         child: SizedBox(
                                           width: 190,
-                                          height: 50,
+                                          height: 55,
                                           child: TextFormField(
                                             controller: ctrlEnd,
                                             readOnly: true,
-                                            onTap: _endDatePicker,
+                                            onTap: isPresent
+                                                ? null
+                                                : () {
+                                                    _endDatePicker();
+                                                  },
                                             keyboardType: TextInputType.text,
+                                            textAlign: TextAlign.left,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            style: TextStyle(
+                                              color: isPresent
+                                                  ? const Color(0xFF6E6E6E)
+                                                  : Colors.black,
+                                            ),
                                             decoration: InputDecoration(
                                                 hintText: 'End Date',
                                                 isDense: true,
-                                                contentPadding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        16.0, 20.0, 20.0, 16.0),
                                                 hintStyle: TextStyle(
                                                     color: Colors.grey
                                                         .withOpacity(0.5)),
                                                 filled: true,
-                                                fillColor: Colors.white,
+                                                fillColor: isPresent
+                                                    ? const Color(0xFFFAF9F9)
+                                                    : Colors.white,
                                                 border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(10),

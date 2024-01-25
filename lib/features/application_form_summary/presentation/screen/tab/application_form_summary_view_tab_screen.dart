@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_summary/domain/repo/summary_repo.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/detail_summary_bloc/bloc.dart';
 
@@ -137,6 +138,19 @@ class _ApplicationFormSummaryViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -234,11 +248,12 @@ class _ApplicationFormSummaryViewTabScreenState
                                                   alignment:
                                                       Alignment.centerRight,
                                                   child: Text(
-                                                    state
-                                                        .detailSummaryResponseModel
-                                                        .data![0]
-                                                        .tdpAmount
-                                                        .toString(),
+                                                    GeneralUtil.convertToIdr(
+                                                        state
+                                                            .detailSummaryResponseModel
+                                                            .data![0]
+                                                            .tdpAmount,
+                                                        2),
                                                     style: const TextStyle(
                                                         color:
                                                             Color(0xFF6E6E6E),
@@ -290,11 +305,12 @@ class _ApplicationFormSummaryViewTabScreenState
                                                   alignment:
                                                       Alignment.centerRight,
                                                   child: Text(
-                                                    state
-                                                        .detailSummaryResponseModel
-                                                        .data![0]
-                                                        .installmentAmount
-                                                        .toString(),
+                                                    GeneralUtil.convertToIdr(
+                                                        state
+                                                            .detailSummaryResponseModel
+                                                            .data![0]
+                                                            .installmentAmount,
+                                                        2),
                                                     style: const TextStyle(
                                                         color:
                                                             Color(0xFF6E6E6E),
@@ -365,7 +381,7 @@ class _ApplicationFormSummaryViewTabScreenState
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 70,
+                                        height: 40,
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -396,7 +412,7 @@ class _ApplicationFormSummaryViewTabScreenState
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 16,
+                                        height: 20,
                                       ),
                                       Row(
                                         crossAxisAlignment:

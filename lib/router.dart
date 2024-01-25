@@ -25,11 +25,13 @@ import 'package:sales_order/features/application_form_7/data/document_preview_re
 import 'package:sales_order/features/application_form_7/presentation/screen/mobile/application_form_7_mobile_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/application_form_7_tab_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/application_form_7_view_tab_screen.dart';
+import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_asset_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_image_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_pdf_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/mobile/application_form_summary_mobile_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/tab/application_form_summary_tab_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/tab/application_form_summary_view_tab_screen.dart';
+import 'package:sales_order/features/application_list/presentation/screen/tab/application_list_filter_tab_screen.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:sales_order/features/client_list/presentation/screen/mobile/client_list_mobile_screen.dart';
 import 'package:sales_order/features/client_list/presentation/screen/tab/client_list_tab_screen.dart';
@@ -93,6 +95,15 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 ClientListTabScreen(clientMathcingModel: clientMathcingModel),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationFilterListScreenTabRoute:
+        final String status = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationListFilterTabScreen(status: status),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -300,6 +311,14 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 DocPreviewPdfScreen(documentPreviewRequestModel),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm7PreviewAssetScreenTabRoute:
+        final String path = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => DocPreviewAssetScreen(path),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));

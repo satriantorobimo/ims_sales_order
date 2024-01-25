@@ -4,12 +4,15 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_7/data/document_delete_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
@@ -97,7 +100,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                     child: InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        pickImage('camera', index, id);
+                        pickImage(index, id);
                       },
                       child: Row(
                         children: const [
@@ -119,7 +122,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                     child: InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        pickImage('gallery', index, id);
+                        pickFile(index, id);
                       },
                       child: Row(
                         children: const [
@@ -142,12 +145,44 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
         });
   }
 
-  Future<bool> pickImage(String type, int index, int id) async {
+  Future<bool> pickFile(int index, int id) async {
+    var maxFileSizeInBytes = 5 * 1048576;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'pdf', 'png', 'doc', 'docx', 'xls', 'xlsx'],
+    );
+
+    if (result != null) {
+      var fileSize = result.files.length; // Get the file size in bytes
+      if (fileSize <= maxFileSizeInBytes) {
+        String filePath = result.files.single.path!;
+        String basename = path.basename(filePath);
+        int indexes = data.indexWhere((element) => element.id == id);
+        log(basename);
+        setState(() {
+          dataFilter[index].paths = filePath;
+          dataFilter[index].filename = basename;
+          dataFilter[index].isNew = true;
+          data[indexes].filename = basename;
+          data[indexes].paths = filePath;
+          data[indexes].isNew = true;
+        });
+        log('${data[indexes].isNew}');
+      } else {
+        return false;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> pickImage(int index, int id) async {
     try {
       var maxFileSizeInBytes = 5 * 1048576;
       ImagePicker imagePicker = ImagePicker();
       XFile? pickedImage = await imagePicker.pickImage(
-        source: type == 'gallery' ? ImageSource.gallery : ImageSource.camera,
+        source: ImageSource.camera,
         imageQuality: 90,
       );
       if (pickedImage == null) return false;
@@ -261,24 +296,12 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                 padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
-                    CancelWidget()
-                        .showBottomCancel(context, widget.applicationNo);
+                    OptionWidget(isUsed: true)
+                        .showBottomOption(context, widget.applicationNo);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.redAccent,
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Center(
-                      child: Text(
-                        'CANCEL',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
                   ),
                 ))
           ],
@@ -672,9 +695,15 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                   children: [
                                     Row(
                                       children: [
-                                        const Text(
-                                          'Document',
-                                          style: TextStyle(
+                                        Text(
+                                          dataFilter[index].docSource ==
+                                                  'CLIENT_DOCUMENT'
+                                              ? 'Document Client'
+                                              : dataFilter[index].docSource ==
+                                                      'APPLICATION_ASSET_DOCUMENT'
+                                                  ? 'Document Asset Application'
+                                                  : 'Document Application',
+                                          style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold),
@@ -749,37 +778,50 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                                 _showBottomAttachment(index,
                                                     dataFilter[index].id);
                                               }
-                                            : () {
-                                                if (ext == '.PDF') {
-                                                  Navigator.pushNamed(
-                                                      context,
-                                                      StringRouterUtil
-                                                          .applicationForm7PreviewPdfScreenTabRoute,
-                                                      arguments:
-                                                          DocumentPreviewRequestModel(
-                                                              pFileName:
-                                                                  dataFilter[
-                                                                          index]
-                                                                      .filename,
-                                                              pFilePaths:
-                                                                  dataFilter[
-                                                                          index]
-                                                                      .paths));
+                                            : () async {
+                                                if (dataFilter[index].isNew!) {
+                                                  if (ext == '.pdf') {
+                                                    await OpenFile.open(
+                                                        "${dataFilter[index].paths}");
+                                                  } else {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        StringRouterUtil
+                                                            .applicationForm7PreviewAssetScreenTabRoute,
+                                                        arguments:
+                                                            dataFilter[index]
+                                                                .paths);
+                                                  }
                                                 } else {
-                                                  Navigator.pushNamed(
-                                                      context,
-                                                      StringRouterUtil
-                                                          .applicationForm7PreviewScreenTabRoute,
-                                                      arguments:
-                                                          DocumentPreviewRequestModel(
-                                                              pFileName:
-                                                                  dataFilter[
-                                                                          index]
-                                                                      .filename,
-                                                              pFilePaths:
-                                                                  dataFilter[
-                                                                          index]
-                                                                      .paths));
+                                                  if (ext == '.PDF') {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        StringRouterUtil
+                                                            .applicationForm7PreviewPdfScreenTabRoute,
+                                                        arguments: DocumentPreviewRequestModel(
+                                                            pFileName:
+                                                                dataFilter[
+                                                                        index]
+                                                                    .filename,
+                                                            pFilePaths:
+                                                                dataFilter[
+                                                                        index]
+                                                                    .paths));
+                                                  } else {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        StringRouterUtil
+                                                            .applicationForm7PreviewScreenTabRoute,
+                                                        arguments: DocumentPreviewRequestModel(
+                                                            pFileName:
+                                                                dataFilter[
+                                                                        index]
+                                                                    .filename,
+                                                            pFilePaths:
+                                                                dataFilter[
+                                                                        index]
+                                                                    .paths));
+                                                  }
                                                 }
                                               },
                                         child: Container(
@@ -1152,11 +1194,19 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
           children: [
             InkWell(
               onTap: () {
-                docDeleteBloc.add(DocDeleteAttempt(DocumentDeleteRequestModel(
-                    pHeader: dataFilter[count].docSource,
-                    pId: dataFilter[index].id,
-                    pFileName: dataFilter[index].filename,
-                    pFilePaths: dataFilter[index].paths)));
+                if (data[indexes].isNew!) {
+                  setState(() {
+                    data[indexes].paths = '';
+                    data[indexes].filename = '';
+                    data[indexes].isNew = false;
+                  });
+                } else {
+                  docDeleteBloc.add(DocDeleteAttempt(DocumentDeleteRequestModel(
+                      pHeader: dataFilter[count].docSource,
+                      pId: dataFilter[index].id,
+                      pFileName: dataFilter[index].filename,
+                      pFilePaths: dataFilter[index].paths)));
+                }
               },
               child: SizedBox(
                   width: 40,
@@ -1242,77 +1292,87 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                       })
                 ],
                 child: InkWell(
-                  onTap: () async {
-                    setState(() {
-                      count = 0;
-                    });
-                    if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
-                        data[indexes].paths == '') {
-                      EmptyDocWidget().showBottomEmpty(
-                          context, 'Harap lengkapi data pendukung');
-                    } else {
-                      if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
-                          data[indexes].effectiveDate == null &&
-                          data[indexes].expiredDate == null) {
-                        EmptyDocWidget().showBottomEmpty(context,
-                            'Harap isi Effective Date dan Expired Date');
-                      } else {
-                        if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
-                          _uploadAttempt(context);
-                          File imagefile = File(data[count].paths!);
-                          Uint8List imagebytes = await imagefile.readAsBytes();
-                          String base64string = base64.encode(imagebytes);
-                          docUploadBloc.add(DocUploadAttempt(
-                              DocumentUploadRequestModel(
-                                  pBase64: base64string,
-                                  pChild: data[indexes].headerCode,
-                                  pFileName: data[indexes].filename,
-                                  pFilePaths: data[indexes].id,
-                                  pId: data[indexes].id,
-                                  pHeader: data[indexes].docSource,
-                                  pModule: "IFINLOS")));
-                        } else {
-                          if (data[indexes].isNew!) {
-                            _uploadAttempt(context);
-                            File imagefile = File(data[count].paths!);
-                            Uint8List imagebytes =
-                                await imagefile.readAsBytes();
-                            String base64string = base64.encode(imagebytes);
-                            docUploadBloc.add(DocUploadAttempt(
-                                DocumentUploadRequestModel(
-                                    pBase64: base64string,
-                                    pChild: data[indexes].headerCode,
-                                    pFileName: data[indexes].filename,
-                                    pFilePaths: data[indexes].id,
-                                    pId: data[indexes].id,
-                                    pHeader: data[indexes].docSource,
-                                    pModule: "IFINLOS")));
+                  onTap: data[indexes].isUpload!
+                      ? null
+                      : () async {
+                          setState(() {
+                            count = 0;
+                          });
+                          if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+                              data[indexes].paths == '') {
+                            EmptyDocWidget().showBottomEmpty(
+                                context, 'Harap lengkapi data pendukung');
                           } else {
-                            if (data[indexes].isRequired == '1' &&
-                                data[indexes].promiseDate == null) {
+                            if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+                                data[indexes].effectiveDate == null &&
+                                data[indexes].expiredDate == null) {
                               EmptyDocWidget().showBottomEmpty(context,
-                                  'Harap isi Promise Date jika tidak dapat memberikan Document yang dibutuhkan');
-                            } else if (data[indexes].isRequired == '1') {
-                              _uploadAttempt(context);
-                              docUpdateBloc.add(DocUpdateAttempt(
-                                  DocumentUDateRequestModel(
-                                      pApplicationNo: widget.applicationNo,
-                                      pExpiredDate: '',
-                                      pEffectiveDate: '',
-                                      pPromiseDate: data[indexes].promiseDate,
-                                      pId: data[indexes].id,
-                                      pSourceDoc: data[indexes].docSource)));
+                                  'Harap isi Effective Date dan Expired Date');
+                            } else {
+                              if (data[indexes].docSource ==
+                                  'CLIENT_DOCUMENT') {
+                                _uploadAttempt(context);
+                                File imagefile = File(data[count].paths!);
+                                Uint8List imagebytes =
+                                    await imagefile.readAsBytes();
+                                String base64string = base64.encode(imagebytes);
+                                docUploadBloc.add(DocUploadAttempt(
+                                    DocumentUploadRequestModel(
+                                        pBase64: base64string,
+                                        pChild: data[indexes].headerCode,
+                                        pFileName: data[indexes].filename,
+                                        pFilePaths: data[indexes].id,
+                                        pId: data[indexes].id,
+                                        pHeader: data[indexes].docSource,
+                                        pModule: "IFINLOS")));
+                              } else {
+                                if (data[indexes].isNew!) {
+                                  _uploadAttempt(context);
+                                  File imagefile = File(data[count].paths!);
+                                  Uint8List imagebytes =
+                                      await imagefile.readAsBytes();
+                                  String base64string =
+                                      base64.encode(imagebytes);
+                                  docUploadBloc.add(DocUploadAttempt(
+                                      DocumentUploadRequestModel(
+                                          pBase64: base64string,
+                                          pChild: data[indexes].headerCode,
+                                          pFileName: data[indexes].filename,
+                                          pFilePaths: data[indexes].id,
+                                          pId: data[indexes].id,
+                                          pHeader: data[indexes].docSource,
+                                          pModule: "IFINLOS")));
+                                } else {
+                                  if (data[indexes].isRequired == '1' &&
+                                      data[indexes].promiseDate == null) {
+                                    EmptyDocWidget().showBottomEmpty(context,
+                                        'Harap isi Promise Date jika tidak dapat memberikan Document yang dibutuhkan');
+                                  } else if (data[indexes].isRequired == '1') {
+                                    _uploadAttempt(context);
+                                    docUpdateBloc.add(DocUpdateAttempt(
+                                        DocumentUDateRequestModel(
+                                            pApplicationNo:
+                                                widget.applicationNo,
+                                            pExpiredDate: '',
+                                            pEffectiveDate: '',
+                                            pPromiseDate:
+                                                data[indexes].promiseDate,
+                                            pId: data[indexes].id,
+                                            pSourceDoc:
+                                                data[indexes].docSource)));
+                                  }
+                                }
+                              }
                             }
                           }
-                        }
-                      }
-                    }
-                  },
+                        },
                   child: Container(
                     height: 40,
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: primaryColor,
+                      color: data[indexes].isUpload!
+                          ? const Color(0xFFE1E1E1)
+                          : primaryColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(

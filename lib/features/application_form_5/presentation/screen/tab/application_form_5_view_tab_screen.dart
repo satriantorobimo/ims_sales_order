@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_5/domain/repo/form_5_repo.dart';
 import 'package:sales_order/features/application_form_5/presentation/bloc/fee_data_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_5/presentation/bloc/tnc_data_bloc/bloc.dart';
@@ -39,6 +40,19 @@ class _ApplicationForm5ViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -654,7 +668,12 @@ class _ApplicationForm5ViewTabScreenState
                                                       alignment:
                                                           Alignment.centerRight,
                                                       child: Text(
-                                                        '${state.tncDataDetailResponseModel.data![0].dpAmount}',
+                                                        GeneralUtil.convertToIdr(
+                                                            state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .dpAmount,
+                                                            2),
                                                         style: const TextStyle(
                                                             color: Color(
                                                                 0xFF6E6E6E),
@@ -667,7 +686,17 @@ class _ApplicationForm5ViewTabScreenState
                                                   )
                                                 ],
                                               ),
-                                              const SizedBox(height: 20),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.23,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -713,7 +742,12 @@ class _ApplicationForm5ViewTabScreenState
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Text(
-                                                        '${state.tncDataDetailResponseModel.data![0].installmentAmount}',
+                                                        GeneralUtil.convertToIdr(
+                                                            state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .installmentAmount,
+                                                            2),
                                                         style: const TextStyle(
                                                             color: Color(
                                                                 0xFF6E6E6E),
@@ -726,17 +760,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   )
                                                 ],
                                               ),
-                                            ],
-                                          )),
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.23,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
+                                              const SizedBox(height: 20),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -852,7 +876,8 @@ class _ApplicationForm5ViewTabScreenState
                                                               color: Colors.grey
                                                                   .withOpacity(
                                                                       0.1)),
-                                                          color: Colors.white,
+                                                          color: const Color(
+                                                              0xFFFAF9F9),
                                                           boxShadow: [
                                                             BoxShadow(
                                                               color: Colors.grey
@@ -874,32 +899,15 @@ class _ApplicationForm5ViewTabScreenState
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           child: Text(
-                                                            selectInsurance ==
-                                                                    ''
-                                                                ? 'Select Insurance'
-                                                                : selectInsurance,
-                                                            style: TextStyle(
-                                                                color: selectInsurance ==
-                                                                        ''
-                                                                    ? Colors
-                                                                        .grey
-                                                                        .withOpacity(
-                                                                            0.5)
-                                                                    : Colors
-                                                                        .black,
+                                                            selectInsurance,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E),
                                                                 fontSize: 15,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400),
                                                           ),
-                                                        ),
-                                                      ),
-                                                      const Positioned(
-                                                        right: 16,
-                                                        child: Icon(
-                                                          Icons.search_rounded,
-                                                          color:
-                                                              Color(0xFF3D3D3D),
                                                         ),
                                                       )
                                                     ],
@@ -1008,7 +1016,13 @@ class _ApplicationForm5ViewTabScreenState
                                                           alignment: Alignment
                                                               .centerRight,
                                                           child: Text(
-                                                            '${state.applicationFeeDetailModel.data![0].feeAmount}',
+                                                            GeneralUtil.convertToIdr(
+                                                                state
+                                                                    .applicationFeeDetailModel
+                                                                    .data![
+                                                                        index]
+                                                                    .feeAmount,
+                                                                2),
                                                             style: const TextStyle(
                                                                 color: Color(
                                                                     0xFF6E6E6E),

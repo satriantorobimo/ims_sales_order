@@ -10,6 +10,8 @@ class StringRouterUtil {
   static const String tabScreenTabRoute = '/tab-tab-route';
   static const String tabScreenMobileRoute = '/tab-mobile-route';
   static const String clientListScreenTabRoute = '/tab-client-list-route';
+  static const String applicationFilterListScreenTabRoute =
+      '/tab-app-filter-list-route';
   static const String clientListScreenMobileRoute = '/mobile-client-list-route';
   static const String applicationForm1ScreenTabRoute =
       '/application-form1-tab-route';
@@ -56,9 +58,11 @@ class StringRouterUtil {
   static const String applicationForm7ScreenMobileRoute =
       '/application-form7-mobile-route';
   static const String applicationForm7PreviewScreenTabRoute =
-      '/application-form7-preview-mobile-route';
+      '/application-form7-preview-tab-route';
   static const String applicationForm7PreviewPdfScreenTabRoute =
-      '/application-form7-preview-pdf-mobile-route';
+      '/application-form7-preview-pdf-tab-route';
+  static const String applicationForm7PreviewAssetScreenTabRoute =
+      '/application-form7-preview-asset-tab-route';
   static const String applicationFormSummaryScreenTabRoute =
       '/application-form-summary-tab-route';
   static const String applicationFormSummaryViewScreenTabRoute =

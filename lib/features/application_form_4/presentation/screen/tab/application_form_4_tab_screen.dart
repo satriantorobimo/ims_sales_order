@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_4/data/look_up_merk_model.dart';
 import 'package:sales_order/features/application_form_4/data/update_asset_request_model.dart';
 import 'package:sales_order/features/application_form_4/domain/repo/form_4_repo.dart';
@@ -74,340 +75,421 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
   }
 
   Future<void> _showBottomMerk(LookUpMerkModel lookUpMerkModel) {
+    List<Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Merk',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Merk',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMerkModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexMerk == index) {
-                                selectMerk = '';
-                                selectMerkCode = '';
-                                selectType = '';
-                                selectTypeCode = '';
-                                selectModel = '';
-                                selectModelCode = '';
-                                selectIndexMerk = 10000;
-                                selectIndexModel = 10000;
-                                selectIndexType = 10000;
-                              } else {
-                                selectMerk =
-                                    lookUpMerkModel.data![index].description!;
-                                selectMerkCode =
-                                    lookUpMerkModel.data![index].code!;
-                                selectIndexMerk = index;
-                                selectType = '';
-                                selectTypeCode = '';
-                                selectModel = '';
-                                selectModelCode = '';
-                                selectIndexModel = 10000;
-                                selectIndexType = 10000;
-                                modelBloc.add(ModelAttempt(selectMerkCode));
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMerkModel.data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexMerk == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMerkModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMerkModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexMerk == index) {
+                                    selectMerk = '';
+                                    selectMerkCode = '';
+                                    selectType = '';
+                                    selectTypeCode = '';
+                                    selectModel = '';
+                                    selectModelCode = '';
+                                    selectIndexMerk = 10000;
+                                    selectIndexModel = 10000;
+                                    selectIndexType = 10000;
+                                  } else {
+                                    selectMerk = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!;
+                                    selectMerkCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMerkModel.data![index].code!;
+                                    selectIndexMerk = index;
+                                    selectType = '';
+                                    selectTypeCode = '';
+                                    selectModel = '';
+                                    selectModelCode = '';
+                                    selectIndexModel = 10000;
+                                    selectIndexType = 10000;
+                                    modelBloc.add(ModelAttempt(selectMerkCode));
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexMerk == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
   Future<void> _showBottomModel(LookUpMerkModel lookUpMerkModel) {
+    List<Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Model',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Model',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMerkModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexModel == index) {
-                                selectType = '';
-                                selectTypeCode = '';
-                                selectModel = '';
-                                selectModelCode = '';
-                                selectIndexModel = 10000;
-                                selectIndexType = 10000;
-                              } else {
-                                selectModel =
-                                    lookUpMerkModel.data![index].description!;
-                                selectModelCode =
-                                    lookUpMerkModel.data![index].code!;
-                                selectIndexModel = index;
-                                selectType = '';
-                                selectTypeCode = '';
-                                selectIndexType = 10000;
-                                typeBloc.add(TypeAttempt(selectModelCode));
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMerkModel.data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexModel == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMerkModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMerkModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexModel == index) {
+                                    selectType = '';
+                                    selectTypeCode = '';
+                                    selectModel = '';
+                                    selectModelCode = '';
+                                    selectIndexModel = 10000;
+                                    selectIndexType = 10000;
+                                  } else {
+                                    selectModel = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!;
+                                    selectModelCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMerkModel.data![index].code!;
+                                    selectIndexModel = index;
+                                    selectType = '';
+                                    selectTypeCode = '';
+                                    selectIndexType = 10000;
+                                    typeBloc.add(TypeAttempt(selectModelCode));
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexModel == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
   Future<void> _showBottomType(LookUpMerkModel lookUpMerkModel) {
+    List<Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Type',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Type',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpMerkModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexType == index) {
-                                selectType = '';
-                                selectTypeCode = '';
-                                selectIndexType = 10000;
-                              } else {
-                                selectType =
-                                    lookUpMerkModel.data![index].description!;
-                                selectTypeCode =
-                                    lookUpMerkModel.data![index].code!;
-                                selectIndexType = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpMerkModel.data![index].description!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexType == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpMerkModel.data!
+                                    .where((item) => item.description!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpMerkModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexType == index) {
+                                    selectType = '';
+                                    selectTypeCode = '';
+                                    selectIndexType = 10000;
+                                  } else {
+                                    selectType = tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!;
+                                    selectTypeCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpMerkModel.data![index].code!;
+                                    selectIndexType = index;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].description!
+                                        : lookUpMerkModel
+                                            .data![index].description!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexType == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
@@ -431,24 +513,12 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                 padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
-                    CancelWidget().showBottomCancel(
+                    OptionWidget(isUsed: true).showBottomOption(
                         context, widget.assetRequestModel.pApplicationNo!);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.redAccent,
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Center(
-                      child: Text(
-                        'CANCEL',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
                   ),
                 ))
           ],
@@ -1761,6 +1831,13 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                     controller: ctrlYear,
                                                     keyboardType:
                                                         TextInputType.number,
+                                                    inputFormatters: <
+                                                        TextInputFormatter>[
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                      LengthLimitingTextInputFormatter(
+                                                          4),
+                                                    ],
                                                     decoration: InputDecoration(
                                                         hintText: 'Asset Year',
                                                         isDense: true,
@@ -1806,8 +1883,8 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
-                                                children: const [
-                                                  Text(
+                                                children: [
+                                                  const Text(
                                                     '7. Chasis No',
                                                     style: TextStyle(
                                                         color: Colors.black,
@@ -1815,14 +1892,17 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Text(
-                                                    ' *',
-                                                    style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
+                                                  condition == 'New'
+                                                      ? Container()
+                                                      : const Text(
+                                                          ' *',
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
                                                 ],
                                               ),
                                               const SizedBox(height: 8),
@@ -1882,8 +1962,8 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
-                                                children: const [
-                                                  Text(
+                                                children: [
+                                                  const Text(
                                                     '8. Engine No',
                                                     style: TextStyle(
                                                         color: Colors.black,
@@ -1891,14 +1971,17 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Text(
-                                                    ' *',
-                                                    style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
+                                                  condition == 'New'
+                                                      ? Container()
+                                                      : const Text(
+                                                          ' *',
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
                                                 ],
                                               ),
                                               const SizedBox(height: 8),
@@ -1958,8 +2041,8 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
-                                                children: const [
-                                                  Text(
+                                                children: [
+                                                  const Text(
                                                     '9. Plat no',
                                                     style: TextStyle(
                                                         color: Colors.black,
@@ -1967,14 +2050,17 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Text(
-                                                    ' *',
-                                                    style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
+                                                  condition == 'New'
+                                                      ? Container()
+                                                      : const Text(
+                                                          ' *',
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
                                                 ],
                                               ),
                                               const SizedBox(height: 8),
@@ -2388,50 +2474,94 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                               if (state is UpdateAssetDataLoaded) {
                                 return InkWell(
                                   onTap: () {
-                                    if (ctrlAmount.text.isEmpty ||
-                                        ctrlAmount.text == '' ||
-                                        ctrlColor.text.isEmpty ||
-                                        ctrlColor.text == '' ||
-                                        ctrlYear.text.isEmpty ||
-                                        ctrlYear.text == '' ||
-                                        ctrlChasisNo.text.isEmpty ||
-                                        ctrlChasisNo.text == '' ||
-                                        ctrlEngineNo.text.isEmpty ||
-                                        ctrlEngineNo.text == '' ||
-                                        ctrlPlatNo1.text.isEmpty ||
-                                        ctrlPlatNo1.text == '' ||
-                                        ctrlPlatNo2.text.isEmpty ||
-                                        ctrlPlatNo2.text == '' ||
-                                        ctrlPlatNo3.text.isEmpty ||
-                                        ctrlPlatNo3.text == '' ||
-                                        selectModel == '' ||
-                                        selectType == '') {
-                                      EmptyWidget().showBottomEmpty(context);
+                                    if (condition == 'New') {
+                                      if (ctrlAmount.text.isEmpty ||
+                                          ctrlAmount.text == '' ||
+                                          ctrlColor.text.isEmpty ||
+                                          ctrlColor.text == '' ||
+                                          ctrlYear.text.isEmpty ||
+                                          ctrlYear.text == '' ||
+                                          selectModel == '' ||
+                                          selectType == '') {
+                                        EmptyWidget().showBottomEmpty(context);
+                                      } else {
+                                        updateAssetDataBloc.add(
+                                            UpdateAssetDataAttempt(
+                                                UpdateAssetRequestModel(
+                                                    pApplicationNo: widget
+                                                        .assetRequestModel
+                                                        .pApplicationNo,
+                                                    pAssetAmount:
+                                                        double
+                                                                .parse(
+                                                                    assetAmountValue)
+                                                            .toInt(),
+                                                    pAssetCondition: condition,
+                                                    pAssetYear: ctrlYear.text,
+                                                    pChassisNo:
+                                                        ctrlChasisNo.text,
+                                                    pColour: ctrlColor.text,
+                                                    pEngineNo:
+                                                        ctrlEngineNo.text,
+                                                    pPlatNo1: ctrlPlatNo1.text,
+                                                    pPlatNo2: ctrlPlatNo2.text,
+                                                    pPlatNo3: ctrlPlatNo3.text,
+                                                    pVehicleMerkCode:
+                                                        selectMerkCode,
+                                                    pVehicleModelCode:
+                                                        selectModelCode,
+                                                    pVehicleTypeCode:
+                                                        selectTypeCode)));
+                                      }
                                     } else {
-                                      updateAssetDataBloc
-                                          .add(UpdateAssetDataAttempt(
-                                              UpdateAssetRequestModel(
-                                                  pApplicationNo:
-                                                      widget.assetRequestModel
-                                                          .pApplicationNo,
-                                                  pAssetAmount:
-                                                      double.parse(
-                                                              assetAmountValue)
-                                                          .toInt(),
-                                                  pAssetCondition: condition,
-                                                  pAssetYear: ctrlYear.text,
-                                                  pChassisNo: ctrlChasisNo.text,
-                                                  pColour: ctrlColor.text,
-                                                  pEngineNo: ctrlEngineNo.text,
-                                                  pPlatNo1: ctrlPlatNo1.text,
-                                                  pPlatNo2: ctrlPlatNo2.text,
-                                                  pPlatNo3: ctrlPlatNo3.text,
-                                                  pVehicleMerkCode:
-                                                      selectMerkCode,
-                                                  pVehicleModelCode:
-                                                      selectModelCode,
-                                                  pVehicleTypeCode:
-                                                      selectTypeCode)));
+                                      if (ctrlAmount.text.isEmpty ||
+                                          ctrlAmount.text == '' ||
+                                          ctrlColor.text.isEmpty ||
+                                          ctrlColor.text == '' ||
+                                          ctrlYear.text.isEmpty ||
+                                          ctrlYear.text == '' ||
+                                          ctrlChasisNo.text.isEmpty ||
+                                          ctrlChasisNo.text == '' ||
+                                          ctrlEngineNo.text.isEmpty ||
+                                          ctrlEngineNo.text == '' ||
+                                          ctrlPlatNo1.text.isEmpty ||
+                                          ctrlPlatNo1.text == '' ||
+                                          ctrlPlatNo2.text.isEmpty ||
+                                          ctrlPlatNo2.text == '' ||
+                                          ctrlPlatNo3.text.isEmpty ||
+                                          ctrlPlatNo3.text == '' ||
+                                          selectModel == '' ||
+                                          selectType == '') {
+                                        EmptyWidget().showBottomEmpty(context);
+                                      } else {
+                                        updateAssetDataBloc.add(
+                                            UpdateAssetDataAttempt(
+                                                UpdateAssetRequestModel(
+                                                    pApplicationNo: widget
+                                                        .assetRequestModel
+                                                        .pApplicationNo,
+                                                    pAssetAmount:
+                                                        double
+                                                                .parse(
+                                                                    assetAmountValue)
+                                                            .toInt(),
+                                                    pAssetCondition: condition,
+                                                    pAssetYear: ctrlYear.text,
+                                                    pChassisNo:
+                                                        ctrlChasisNo.text,
+                                                    pColour: ctrlColor.text,
+                                                    pEngineNo:
+                                                        ctrlEngineNo.text,
+                                                    pPlatNo1: ctrlPlatNo1.text,
+                                                    pPlatNo2: ctrlPlatNo2.text,
+                                                    pPlatNo3: ctrlPlatNo3.text,
+                                                    pVehicleMerkCode:
+                                                        selectMerkCode,
+                                                    pVehicleModelCode:
+                                                        selectModelCode,
+                                                    pVehicleTypeCode:
+                                                        selectTypeCode)));
+                                      }
                                     }
                                   },
                                   child: Container(
@@ -2455,56 +2585,104 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                         ctrlStatus.text == 'NOT VALID'
                                     ? null
                                     : () {
-                                        if (ctrlAmount.text.isEmpty ||
-                                            ctrlAmount.text == '' ||
-                                            ctrlColor.text.isEmpty ||
-                                            ctrlColor.text == '' ||
-                                            ctrlYear.text.isEmpty ||
-                                            ctrlYear.text == '' ||
-                                            ctrlChasisNo.text.isEmpty ||
-                                            ctrlChasisNo.text == '' ||
-                                            ctrlEngineNo.text.isEmpty ||
-                                            ctrlEngineNo.text == '' ||
-                                            ctrlPlatNo1.text.isEmpty ||
-                                            ctrlPlatNo1.text == '' ||
-                                            ctrlPlatNo2.text.isEmpty ||
-                                            ctrlPlatNo2.text == '' ||
-                                            ctrlPlatNo3.text.isEmpty ||
-                                            ctrlPlatNo3.text == '' ||
-                                            selectModel == '' ||
-                                            selectType == '') {
-                                          EmptyWidget()
-                                              .showBottomEmpty(context);
+                                        if (condition == 'New') {
+                                          if (ctrlAmount.text.isEmpty ||
+                                              ctrlAmount.text == '' ||
+                                              ctrlColor.text.isEmpty ||
+                                              ctrlColor.text == '' ||
+                                              ctrlYear.text.isEmpty ||
+                                              ctrlYear.text == '' ||
+                                              selectModel == '' ||
+                                              selectType == '') {
+                                            EmptyWidget()
+                                                .showBottomEmpty(context);
+                                          } else {
+                                            updateAssetDataBloc.add(
+                                                UpdateAssetDataAttempt(
+                                                    UpdateAssetRequestModel(
+                                                        pApplicationNo: widget
+                                                            .assetRequestModel
+                                                            .pApplicationNo,
+                                                        pAssetAmount: double
+                                                                .parse(
+                                                                    assetAmountValue)
+                                                            .toInt(),
+                                                        pAssetCondition:
+                                                            condition,
+                                                        pAssetYear:
+                                                            ctrlYear.text,
+                                                        pChassisNo:
+                                                            ctrlChasisNo.text,
+                                                        pColour: ctrlColor.text,
+                                                        pEngineNo:
+                                                            ctrlEngineNo.text,
+                                                        pPlatNo1:
+                                                            ctrlPlatNo1.text,
+                                                        pPlatNo2:
+                                                            ctrlPlatNo2.text,
+                                                        pPlatNo3:
+                                                            ctrlPlatNo3.text,
+                                                        pVehicleMerkCode:
+                                                            selectMerkCode,
+                                                        pVehicleModelCode:
+                                                            selectModelCode,
+                                                        pVehicleTypeCode:
+                                                            selectTypeCode)));
+                                          }
                                         } else {
-                                          updateAssetDataBloc.add(
-                                              UpdateAssetDataAttempt(
-                                                  UpdateAssetRequestModel(
-                                                      pApplicationNo: widget
-                                                          .assetRequestModel
-                                                          .pApplicationNo,
-                                                      pAssetAmount: double.parse(
-                                                              assetAmountValue)
-                                                          .toInt(),
-                                                      pAssetCondition:
-                                                          condition,
-                                                      pAssetYear: ctrlYear.text,
-                                                      pChassisNo:
-                                                          ctrlChasisNo.text,
-                                                      pColour: ctrlColor.text,
-                                                      pEngineNo:
-                                                          ctrlEngineNo.text,
-                                                      pPlatNo1:
-                                                          ctrlPlatNo1.text,
-                                                      pPlatNo2:
-                                                          ctrlPlatNo2.text,
-                                                      pPlatNo3:
-                                                          ctrlPlatNo3.text,
-                                                      pVehicleMerkCode:
-                                                          selectMerkCode,
-                                                      pVehicleModelCode:
-                                                          selectModelCode,
-                                                      pVehicleTypeCode:
-                                                          selectTypeCode)));
+                                          if (ctrlAmount.text.isEmpty ||
+                                              ctrlAmount.text == '' ||
+                                              ctrlColor.text.isEmpty ||
+                                              ctrlColor.text == '' ||
+                                              ctrlYear.text.isEmpty ||
+                                              ctrlYear.text == '' ||
+                                              ctrlChasisNo.text.isEmpty ||
+                                              ctrlChasisNo.text == '' ||
+                                              ctrlEngineNo.text.isEmpty ||
+                                              ctrlEngineNo.text == '' ||
+                                              ctrlPlatNo1.text.isEmpty ||
+                                              ctrlPlatNo1.text == '' ||
+                                              ctrlPlatNo2.text.isEmpty ||
+                                              ctrlPlatNo2.text == '' ||
+                                              ctrlPlatNo3.text.isEmpty ||
+                                              ctrlPlatNo3.text == '' ||
+                                              selectModel == '' ||
+                                              selectType == '') {
+                                            EmptyWidget()
+                                                .showBottomEmpty(context);
+                                          } else {
+                                            updateAssetDataBloc.add(
+                                                UpdateAssetDataAttempt(
+                                                    UpdateAssetRequestModel(
+                                                        pApplicationNo: widget
+                                                            .assetRequestModel
+                                                            .pApplicationNo,
+                                                        pAssetAmount: double
+                                                                .parse(
+                                                                    assetAmountValue)
+                                                            .toInt(),
+                                                        pAssetCondition:
+                                                            condition,
+                                                        pAssetYear:
+                                                            ctrlYear.text,
+                                                        pChassisNo:
+                                                            ctrlChasisNo.text,
+                                                        pColour: ctrlColor.text,
+                                                        pEngineNo:
+                                                            ctrlEngineNo.text,
+                                                        pPlatNo1:
+                                                            ctrlPlatNo1.text,
+                                                        pPlatNo2:
+                                                            ctrlPlatNo2.text,
+                                                        pPlatNo3:
+                                                            ctrlPlatNo3.text,
+                                                        pVehicleMerkCode:
+                                                            selectMerkCode,
+                                                        pVehicleModelCode:
+                                                            selectModelCode,
+                                                        pVehicleTypeCode:
+                                                            selectTypeCode)));
+                                          }
                                         }
                                       },
                                 child: Container(

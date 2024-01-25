@@ -262,7 +262,7 @@ class _FormReloginWidgetState extends State<FormReloginWidget> {
   }
 
   Future<void> _processDb(Datalist datalist) async {
-    await DatabaseHelper.deleteUser(1);
+    await DatabaseHelper.deleteUser();
     await DatabaseHelper.insertUser(datalist);
   }
 

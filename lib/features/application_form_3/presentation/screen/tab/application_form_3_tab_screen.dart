@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sales_order/features/application_form_1/presentation/widget/cancel_widget.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/empty_widget.dart';
-import 'package:sales_order/features/application_form_3/data/look_up_dealer_model.dart';
-import 'package:sales_order/features/application_form_3/data/look_up_package_model.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
+import 'package:sales_order/features/application_form_3/data/look_up_dealer_model.dart'
+    as dealer;
+import 'package:sales_order/features/application_form_3/data/look_up_package_model.dart'
+    as package;
 import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
 import 'package:sales_order/features/application_form_3/domain/repo/form_3_repo.dart';
 import 'package:sales_order/features/application_form_3/presentation/bloc/dealer_bloc/bloc.dart';
@@ -33,6 +35,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
   int selectIndexDealer = 0;
   String selectDealer = '';
   String selectDealerCode = '';
+  bool isPackage = false;
   LoanDataDetailBloc loanDataDetailBloc =
       LoanDataDetailBloc(form3repo: Form3Repo());
   UpdateLoanDataBloc updateLoanDataBloc =
@@ -49,216 +52,269 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
     super.initState();
   }
 
-  Future<void> _showBottom(LookUpPackageModel lookUpPackageModel) {
+  Future<void> _showBottom(package.LookUpPackageModel lookUpPackageModel) {
+    List<package.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Package',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Package',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpPackageModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexPackage == index) {
-                                selectPackage = '';
-                                selectPackageCode = '';
-                                selectIndexPackage = 10000;
-                              } else {
-                                selectPackage = lookUpPackageModel
-                                    .data![index].packageDescription!;
-                                selectPackageCode =
-                                    lookUpPackageModel.data![index].code!;
-                                selectIndexPackage = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpPackageModel
-                                    .data![index].packageDescription!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexPackage == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpPackageModel.data!
+                                    .where((item) => item.packageDescription!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpPackageModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexPackage == index) {
+                                    selectPackage = '';
+                                    selectPackageCode = '';
+                                    selectIndexPackage = 10000;
+                                  } else {
+                                    selectPackage = tempList.isNotEmpty
+                                        ? tempList[index].packageDescription!
+                                        : lookUpPackageModel
+                                            .data![index].packageDescription!;
+                                    selectPackageCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpPackageModel.data![index].code!;
+                                    selectIndexPackage = index;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].packageDescription!
+                                        : lookUpPackageModel
+                                            .data![index].packageDescription!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexPackage == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
-  Future<void> _showBottomDealer(LookUpDealerModel lookUpDealerModel) {
+  Future<void> _showBottomDealer(dealer.LookUpDealerModel lookUpDealerModel) {
+    List<dealer.Data> tempList = [];
     return showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Dealer',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Material(
-                    elevation: 6,
-                    shadowColor: Colors.grey.withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                            width: 1.0, color: Color(0xFFEAEAEA))),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            hintText: 'Search',
-                            isDense: true,
-                            contentPadding: const EdgeInsets.all(24),
-                            hintStyle:
-                                TextStyle(color: Colors.grey.withOpacity(0.5)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            )),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                      child: Text(
+                        'Dealer',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, bottom: 24),
-                      itemCount: lookUpDealerModel.data!.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 4, bottom: 4),
-                          child: Divider(),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (selectIndexDealer == index) {
-                                selectDealer = '';
-                                selectDealerCode = '';
-                                selectIndexDealer = 100000;
-                              } else {
-                                selectDealer =
-                                    lookUpDealerModel.data![index].vendorName!;
-                                selectDealerCode =
-                                    lookUpDealerModel.data![index].code!;
-                                selectIndexDealer = index;
-                              }
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lookUpDealerModel.data![index].vendorName!,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              selectIndexDealer == index
-                                  ? const Icon(Icons.check_rounded,
-                                      color: primaryColor)
-                                  : Container()
-                            ],
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        elevation: 6,
+                        shadowColor: Colors.grey.withOpacity(0.4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                width: 1.0, color: Color(0xFFEAEAEA))),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            onChanged: (value) {
+                              setStates(() {
+                                tempList = lookUpDealerModel.data!
+                                    .where((item) => item.vendorName!
+                                        .toUpperCase()
+                                        .contains(value.toUpperCase()))
+                                    .toList();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                isDense: true,
+                                contentPadding: const EdgeInsets.all(24),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.withOpacity(0.5)),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                )),
                           ),
-                        );
-                      }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(
+                              left: 24, right: 24, bottom: 24),
+                          itemCount: tempList.isNotEmpty
+                              ? tempList.length
+                              : lookUpDealerModel.data!.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 4, bottom: 4),
+                              child: Divider(),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (selectIndexDealer == index) {
+                                    selectDealer = '';
+                                    selectDealerCode = '';
+                                    selectIndexDealer = 100000;
+                                  } else {
+                                    selectDealer = tempList.isNotEmpty
+                                        ? tempList[index].vendorName!
+                                        : lookUpDealerModel
+                                            .data![index].vendorName!;
+                                    selectDealerCode = tempList.isNotEmpty
+                                        ? tempList[index].code!
+                                        : lookUpDealerModel.data![index].code!;
+                                    selectIndexDealer = index;
+                                  }
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    tempList.isNotEmpty
+                                        ? tempList[index].vendorName!
+                                        : lookUpDealerModel
+                                            .data![index].vendorName!,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  selectIndexDealer == index
+                                      ? const Icon(Icons.check_rounded,
+                                          color: primaryColor)
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          });
         });
   }
 
@@ -282,24 +338,12 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                 padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
-                    CancelWidget().showBottomCancel(context,
+                    OptionWidget(isUsed: true).showBottomOption(context,
                         widget.updateLoanDataRequestModel.pApplicationNo!);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Colors.redAccent,
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Center(
-                      child: Text(
-                        'CANCEL',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
                   ),
                 ))
           ],
@@ -604,6 +648,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                             if (state.loanDataDetailResponseModel.data![0]
                                     .packageCode !=
                                 null) {
+                              isPackage = true;
                               selectPackageCode = state
                                   .loanDataDetailResponseModel
                                   .data![0]
@@ -714,10 +759,12 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                             if (state
                                                                 is PackageLoaded) {
                                                               return InkWell(
-                                                                onTap: () {
-                                                                  _showBottom(state
-                                                                      .lookUpPackageModel);
-                                                                },
+                                                                onTap: isPackage
+                                                                    ? null
+                                                                    : () {
+                                                                        _showBottom(
+                                                                            state.lookUpPackageModel);
+                                                                      },
                                                                 child:
                                                                     Container(
                                                                   width: MediaQuery.of(
@@ -735,8 +782,11 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                         color: Colors
                                                                             .grey
                                                                             .withOpacity(0.1)),
-                                                                    color: Colors
-                                                                        .white,
+                                                                    color: isPackage
+                                                                        ? const Color(
+                                                                            0xFFFAF9F9)
+                                                                        : Colors
+                                                                            .white,
                                                                     boxShadow: [
                                                                       BoxShadow(
                                                                         color: Colors
@@ -760,21 +810,29 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                     alignment:
                                                                         Alignment
                                                                             .centerLeft,
-                                                                    child: Text(
-                                                                      selectPackage ==
-                                                                              ''
-                                                                          ? 'Select Package'
-                                                                          : selectPackage,
-                                                                      style: TextStyle(
-                                                                          color: selectPackage == ''
-                                                                              ? Colors.grey.withOpacity(
-                                                                                  0.5)
-                                                                              : Colors
-                                                                                  .black,
-                                                                          fontSize:
-                                                                              15,
-                                                                          fontWeight:
-                                                                              FontWeight.w400),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.33,
+                                                                      child:
+                                                                          Text(
+                                                                        selectPackage ==
+                                                                                ''
+                                                                            ? 'Select Package'
+                                                                            : selectPackage,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        style: TextStyle(
+                                                                            color: selectPackage == ''
+                                                                                ? Colors.grey.withOpacity(0.5)
+                                                                                : isPackage
+                                                                                    ? const Color(0xFF6E6E6E)
+                                                                                    : Colors.black,
+                                                                            fontSize: 15,
+                                                                            fontWeight: FontWeight.w400),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -840,12 +898,16 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                               ),
                                                             );
                                                           })),
-                                                  const Positioned(
+                                                  Positioned(
                                                     right: 16,
-                                                    child: Icon(
-                                                      Icons.search_rounded,
-                                                      color: Color(0xFF3D3D3D),
-                                                    ),
+                                                    child: isPackage
+                                                        ? Container()
+                                                        : const Icon(
+                                                            Icons
+                                                                .search_rounded,
+                                                            color: Color(
+                                                                0xFF3D3D3D),
+                                                          ),
                                                   )
                                                 ],
                                               ),
@@ -1164,6 +1226,12 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                         listener: (_, UpdateLoanDataState state) {
                           if (state is UpdateLoanDataLoading) {}
                           if (state is UpdateLoanDataLoaded) {
+                            if (selectPackage != '') {
+                              setState(() {
+                                isPackage = true;
+                              });
+                            }
+
                             Navigator.pushNamed(context,
                                 StringRouterUtil.applicationForm4ScreenTabRoute,
                                 arguments: UpdateAssetRequestModel(

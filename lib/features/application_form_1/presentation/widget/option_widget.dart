@@ -7,12 +7,12 @@ import 'package:sales_order/utility/string_router_util.dart';
 
 import '../bloc/cancel_client_bloc/bloc.dart';
 
-class CancelWidget {
+class OptionWidget {
   final bool isUsed;
   CancelClientBloc cancelClientBloc = CancelClientBloc(form1repo: Form1Repo());
 
-  CancelWidget(this.isUsed);
-  void showBottomCancel(context, String applicationNo) {
+  OptionWidget({required this.isUsed});
+  void showBottomOption(context, String applicationNo) {
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
@@ -44,7 +44,7 @@ class CancelWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: const [
                       Text(
-                        'Are you sure?',
+                        'Option',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -52,7 +52,7 @@ class CancelWidget {
                       ),
                       SizedBox(height: 16),
                       Text(
-                        'Jika anda keluar dari halaman ini, maka proses akan ter-cancel',
+                        'Silahkan pilih option dibawah ini',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -68,6 +68,10 @@ class CancelWidget {
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            StringRouterUtil.tabScreenTabRoute,
+                            (route) => false);
                       },
                       child: Container(
                         width: 200,
@@ -77,7 +81,7 @@ class CancelWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Center(
-                            child: Text('TIDAK',
+                            child: Text('Kembali ke Home',
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.black,
@@ -119,43 +123,56 @@ class CancelWidget {
 
                               if (state is CancelClientLoaded) {
                                 return InkWell(
-                                  onTap: () {
-                                    cancelClientBloc.add(
-                                        CancelClientAttempt(applicationNo));
-                                  },
+                                  onTap: !isUsed
+                                      ? null
+                                      : () {
+                                          cancelClientBloc.add(
+                                              CancelClientAttempt(
+                                                  applicationNo));
+                                        },
                                   child: Container(
                                     width: 200,
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: thirdColor,
+                                      color: !isUsed
+                                          ? const Color(0xFFE1E1E1)
+                                          : thirdColor,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: const Center(
-                                        child: Text('YA',
+                                    child: Center(
+                                        child: Text('Cancel Aplikasi',
                                             style: TextStyle(
                                                 fontSize: 15,
-                                                color: Colors.black,
+                                                color: !isUsed
+                                                    ? Colors.white
+                                                    : Colors.black,
                                                 fontWeight: FontWeight.w600))),
                                   ),
                                 );
                               }
                               return InkWell(
-                                onTap: () {
-                                  cancelClientBloc
-                                      .add(CancelClientAttempt(applicationNo));
-                                },
+                                onTap: !isUsed
+                                    ? null
+                                    : () {
+                                        cancelClientBloc.add(
+                                            CancelClientAttempt(applicationNo));
+                                      },
                                 child: Container(
                                   width: 200,
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: thirdColor,
+                                    color: !isUsed
+                                        ? const Color(0xFFE1E1E1)
+                                        : thirdColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: const Center(
-                                      child: Text('YA',
+                                  child: Center(
+                                      child: Text('Cancel Aplikasi',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              color: Colors.black,
+                                              color: !isUsed
+                                                  ? Colors.white
+                                                  : Colors.black,
                                               fontWeight: FontWeight.w600))),
                                 ),
                               );

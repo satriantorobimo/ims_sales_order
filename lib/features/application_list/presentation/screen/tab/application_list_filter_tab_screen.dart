@@ -17,15 +17,17 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../home/data/app_list_response_model.dart';
 import '../../../../home/presentation/bloc/app_list_bloc/bloc.dart';
 
-class ApplicationListTabScreen extends StatefulWidget {
-  const ApplicationListTabScreen({super.key});
+class ApplicationListFilterTabScreen extends StatefulWidget {
+  const ApplicationListFilterTabScreen({super.key, required this.status});
+  final String status;
 
   @override
-  State<ApplicationListTabScreen> createState() =>
-      _ApplicationListTabScreenState();
+  State<ApplicationListFilterTabScreen> createState() =>
+      _ApplicationListFilterTabScreenState();
 }
 
-class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
+class _ApplicationListFilterTabScreenState
+    extends State<ApplicationListFilterTabScreen> {
   AppListBloc appListBloc = AppListBloc(homeRepo: HomeRepo());
   var selectedPageNumber = 0;
   var pagination = 0;
@@ -36,8 +38,6 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
   late List<Data> dataFilter = [];
   late List<Data> dataFilterSearch = [];
   late List<CustDropdownMenuItem> clientType = [];
-  late List<CustDropdownMenuItem> filter = [];
-  late List<String> filterValue = ['ALL', 'HOLD', 'ON PROCESS', 'APPROVE'];
   TextEditingController ctrlDate = TextEditingController();
   @override
   void initState() {
@@ -53,7 +53,6 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
               item.clientName!.toLowerCase().contains(query.toLowerCase()))
           .toList();
       dataFilter = dataFilterSearch;
-      selectedPageNumber = 0;
       length = dataFilter.length;
       pagination = (dataFilterSearch.length / 12).ceil();
     });
@@ -65,11 +64,6 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           .add(const CustDropdownMenuItem(value: 0, child: Text("PERSONAL")));
       clientType
           .add(const CustDropdownMenuItem(value: 1, child: Text("CORPORATE")));
-      filter.add(const CustDropdownMenuItem(value: 0, child: Text("ALL")));
-      filter.add(const CustDropdownMenuItem(value: 1, child: Text("HOLD")));
-      filter
-          .add(const CustDropdownMenuItem(value: 2, child: Text("ON PROCESS")));
-      filter.add(const CustDropdownMenuItem(value: 3, child: Text("APPROVE")));
     });
   }
 
@@ -556,10 +550,13 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.black, //change your color here
+          ),
           title: const Padding(
             padding: EdgeInsets.only(left: 16.0),
             child: Text(
-              'Application List',
+              'Application Status List',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 24,
@@ -569,19 +566,21 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           elevation: 0,
           backgroundColor: Colors.white,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 32.0),
-              child: InkWell(
-                onTap: () {
-                  _showBottomDialogClient();
-                },
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 28,
-                ),
-              ),
-            )
+            widget.status == 'APPROVE'
+                ? Container()
+                : Padding(
+                    padding: const EdgeInsets.only(right: 32.0),
+                    child: InkWell(
+                      onTap: () {
+                        _showBottomDialogClient();
+                      },
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.black,
+                        size: 28,
+                      ),
+                    ),
+                  )
           ],
         ),
         body: Padding(
@@ -591,94 +590,35 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Material(
-                      elevation: 6,
-                      shadowColor: Colors.grey.withOpacity(0.4),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(
-                              width: 1.0, color: Color(0xFFEAEAEA))),
-                      child: SizedBox(
-                        width: 350,
-                        height: 60,
-                        child: TextFormField(
-                          onChanged: (value) {
-                            filterSearchResults(value);
-                          },
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                              hintText: 'search record',
-                              isDense: true,
-                              contentPadding: const EdgeInsets.all(24),
-                              hintStyle: TextStyle(
-                                  color: Colors.grey.withOpacity(0.5)),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none,
-                              )),
-                        ),
-                      ),
+                Material(
+                  elevation: 6,
+                  shadowColor: Colors.grey.withOpacity(0.4),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(
+                          width: 1.0, color: Color(0xFFEAEAEA))),
+                  child: SizedBox(
+                    width: 350,
+                    height: 60,
+                    child: TextFormField(
+                      onChanged: (value) {
+                        filterSearchResults(value);
+                      },
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                          hintText: 'search record',
+                          isDense: true,
+                          contentPadding: const EdgeInsets.all(24),
+                          hintStyle:
+                              TextStyle(color: Colors.grey.withOpacity(0.5)),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          )),
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 150,
-                          height: 45,
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  blurRadius: 6,
-                                  offset:
-                                      const Offset(-6, 4), // Shadow position
-                                ),
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE1E1E1))),
-                          child: CustDropDown(
-                            maxListHeight: 300,
-                            items: filter,
-                            hintText: "Select Filter",
-                            borderRadius: 5,
-                            defaultSelectedIndex: 0,
-                            onChanged: (val) {
-                              log(val.toString());
-                              log(filterValue[val]);
-                              setState(() {
-                                if (filterValue[val] == 'ALL') {
-                                  dataFilter = data;
-                                } else {
-                                  dataFilterSearch = data
-                                      .where((item) => item.applicationStatus!
-                                          .toLowerCase()
-                                          .contains(
-                                              filterValue[val].toLowerCase()))
-                                      .toList();
-                                  dataFilter = dataFilterSearch;
-                                }
-                                selectedPageNumber = 0;
-                                pagination = (dataFilter.length / 12).ceil();
-                                length = dataFilter.length;
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.filter_alt_rounded,
-                          size: 32,
-                        )
-                      ],
-                    )
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 BlocListener(
@@ -687,20 +627,19 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                       if (state is AppListLoading) {}
                       if (state is AppListLoaded) {
                         setState(() {
-                          pagination =
-                              (state.appListResponseModel.data!.length / 12)
-                                  .ceil();
-                          length = state.appListResponseModel.data!.length;
-                          if (pagination == 1) {
-                            dataFilter = state.appListResponseModel.data!;
-                          } else {
-                            dataFilter = state.appListResponseModel.data!
-                                .sublist(
-                                    (selectedPageNumber * _perPage),
-                                    ((selectedPageNumber * _perPage) +
-                                        _perPage));
-                          }
-                          data.addAll(state.appListResponseModel.data!);
+                          dataFilter = state.appListResponseModel.data!
+                              .where((element) => element.applicationStatus!
+                                  .toUpperCase()
+                                  .contains(widget.status.toUpperCase()))
+                              .toList();
+
+                          pagination = (dataFilter.length / 12).ceil();
+                          length = dataFilter.length;
+                          data.addAll(state.appListResponseModel.data!
+                              .where((element) => element.applicationStatus!
+                                  .toUpperCase()
+                                  .contains(widget.status.toUpperCase()))
+                              .toList());
                         });
                       }
                       if (state is AppListError) {}

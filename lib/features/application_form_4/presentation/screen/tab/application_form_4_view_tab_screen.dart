@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_4/domain/repo/form_4_repo.dart';
 import 'package:sales_order/features/application_form_4/presentation/bloc/asset_data_detail_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
@@ -57,6 +58,20 @@ class _ApplicationForm4ViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context,
+                        '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -400,9 +415,10 @@ class _ApplicationForm4ViewTabScreenState
                               if (state.assetDetailResponseModel.data![0]
                                       .assetAmount !=
                                   null) {
-                                ctrlAmount.text = state.assetDetailResponseModel
-                                    .data![0].assetAmount!
-                                    .toString();
+                                ctrlAmount.text = GeneralUtil.convertToIdr(
+                                    state.assetDetailResponseModel.data![0]
+                                        .assetAmount!,
+                                    2);
                               }
                               if (state.assetDetailResponseModel.data![0]
                                       .colour !=
@@ -513,7 +529,8 @@ class _ApplicationForm4ViewTabScreenState
                                                             color: Colors.grey
                                                                 .withOpacity(
                                                                     0.1)),
-                                                        color: Colors.white,
+                                                        color: const Color(
+                                                            0xFFFAF9F9),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: Colors.grey
@@ -534,17 +551,10 @@ class _ApplicationForm4ViewTabScreenState
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         child: Text(
-                                                          selectMerk == ''
-                                                              ? 'Select Merk'
-                                                              : selectMerk,
-                                                          style: TextStyle(
-                                                              color: selectMerk ==
-                                                                      ''
-                                                                  ? Colors.grey
-                                                                      .withOpacity(
-                                                                          0.5)
-                                                                  : Colors
-                                                                      .black,
+                                                          selectMerk,
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xFF6E6E6E),
                                                               fontSize: 15,
                                                               fontWeight:
                                                                   FontWeight
@@ -552,14 +562,6 @@ class _ApplicationForm4ViewTabScreenState
                                                         ),
                                                       ),
                                                     ),
-                                                    const Positioned(
-                                                      right: 16,
-                                                      child: Icon(
-                                                        Icons.search_rounded,
-                                                        color:
-                                                            Color(0xFF3D3D3D),
-                                                      ),
-                                                    )
                                                   ],
                                                 ),
                                               ],
@@ -607,7 +609,8 @@ class _ApplicationForm4ViewTabScreenState
                                                             color: Colors.grey
                                                                 .withOpacity(
                                                                     0.1)),
-                                                        color: Colors.white,
+                                                        color: const Color(
+                                                            0xFFFAF9F9),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: Colors.grey
@@ -628,30 +631,15 @@ class _ApplicationForm4ViewTabScreenState
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         child: Text(
-                                                          selectModel == ''
-                                                              ? 'Select Model'
-                                                              : selectModel,
-                                                          style: TextStyle(
-                                                              color: selectModel ==
-                                                                      ''
-                                                                  ? Colors.grey
-                                                                      .withOpacity(
-                                                                          0.5)
-                                                                  : Colors
-                                                                      .black,
+                                                          selectModel,
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xFF6E6E6E),
                                                               fontSize: 15,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    const Positioned(
-                                                      right: 16,
-                                                      child: Icon(
-                                                        Icons.search_rounded,
-                                                        color:
-                                                            Color(0xFF3D3D3D),
                                                       ),
                                                     )
                                                   ],
@@ -701,7 +689,8 @@ class _ApplicationForm4ViewTabScreenState
                                                             color: Colors.grey
                                                                 .withOpacity(
                                                                     0.1)),
-                                                        color: Colors.white,
+                                                        color: const Color(
+                                                            0xFFFAF9F9),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: Colors.grey
@@ -722,30 +711,15 @@ class _ApplicationForm4ViewTabScreenState
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         child: Text(
-                                                          selectType == ''
-                                                              ? 'Type'
-                                                              : selectType,
-                                                          style: TextStyle(
-                                                              color: selectType ==
-                                                                      ''
-                                                                  ? Colors.grey
-                                                                      .withOpacity(
-                                                                          0.5)
-                                                                  : Colors
-                                                                      .black,
+                                                          selectType,
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xFF6E6E6E),
                                                               fontSize: 15,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    const Positioned(
-                                                      right: 16,
-                                                      child: Icon(
-                                                        Icons.search_rounded,
-                                                        color:
-                                                            Color(0xFF3D3D3D),
                                                       ),
                                                     )
                                                   ],
@@ -800,6 +774,9 @@ class _ApplicationForm4ViewTabScreenState
                                                       keyboardType:
                                                           TextInputType.number,
                                                       readOnly: true,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -813,13 +790,13 @@ class _ApplicationForm4ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -995,6 +972,9 @@ class _ApplicationForm4ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -1008,13 +988,13 @@ class _ApplicationForm4ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1078,6 +1058,9 @@ class _ApplicationForm4ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -1091,13 +1074,13 @@ class _ApplicationForm4ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1170,6 +1153,9 @@ class _ApplicationForm4ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -1183,13 +1169,13 @@ class _ApplicationForm4ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1253,6 +1239,9 @@ class _ApplicationForm4ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -1266,13 +1255,13 @@ class _ApplicationForm4ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1346,6 +1335,9 @@ class _ApplicationForm4ViewTabScreenState
                                                             keyboardType:
                                                                 TextInputType
                                                                     .text,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E)),
                                                             decoration:
                                                                 InputDecoration(
                                                                     hintText:
@@ -1366,8 +1358,8 @@ class _ApplicationForm4ViewTabScreenState
                                                                     filled:
                                                                         true,
                                                                     fillColor:
-                                                                        Colors
-                                                                            .white,
+                                                                        const Color(
+                                                                            0xFFFAF9F9),
                                                                     border:
                                                                         OutlineInputBorder(
                                                                       borderRadius:
@@ -1403,6 +1395,9 @@ class _ApplicationForm4ViewTabScreenState
                                                             keyboardType:
                                                                 TextInputType
                                                                     .number,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E)),
                                                             decoration:
                                                                 InputDecoration(
                                                                     hintText:
@@ -1423,8 +1418,8 @@ class _ApplicationForm4ViewTabScreenState
                                                                     filled:
                                                                         true,
                                                                     fillColor:
-                                                                        Colors
-                                                                            .white,
+                                                                        const Color(
+                                                                            0xFFFAF9F9),
                                                                     border:
                                                                         OutlineInputBorder(
                                                                       borderRadius:
@@ -1460,6 +1455,9 @@ class _ApplicationForm4ViewTabScreenState
                                                             keyboardType:
                                                                 TextInputType
                                                                     .text,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E)),
                                                             decoration:
                                                                 InputDecoration(
                                                                     hintText:
@@ -1480,8 +1478,8 @@ class _ApplicationForm4ViewTabScreenState
                                                                     filled:
                                                                         true,
                                                                     fillColor:
-                                                                        Colors
-                                                                            .white,
+                                                                        const Color(
+                                                                            0xFFFAF9F9),
                                                                     border:
                                                                         OutlineInputBorder(
                                                                       borderRadius:
@@ -1501,6 +1499,10 @@ class _ApplicationForm4ViewTabScreenState
                                             ),
                                           ],
                                         )),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.23,
+                                    ),
                                   ],
                                 );
                               }

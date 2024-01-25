@@ -5,6 +5,7 @@ import 'package:sales_order/features/application_form_1/data/client_detail_respo
     as cd;
 import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/get_client_bloc/bloc.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
@@ -69,6 +70,20 @@ class _ApplicationForm1ViewTabScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false)
+                        .showBottomOption(context, widget.applicationNo);
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 28,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -615,6 +630,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'ID NO',
                                                     isDense: true,
@@ -626,7 +643,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -683,6 +701,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Full Name',
                                                     isDense: true,
@@ -694,7 +714,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -747,7 +768,8 @@ class _ApplicationForm1ViewTabScreenState
                                                   border: Border.all(
                                                       color: Colors.grey
                                                           .withOpacity(0.1)),
-                                                  color: Colors.white,
+                                                  color:
+                                                      const Color(0xFFFAF9F9),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey
@@ -764,33 +786,16 @@ class _ApplicationForm1ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectMaritalStatus == ''
-                                                        ? 'Select Marital Status'
-                                                        : selectMaritalStatus,
-                                                    style: TextStyle(
+                                                    selectMaritalStatus,
+                                                    style: const TextStyle(
                                                         color:
-                                                            selectMaritalStatus ==
-                                                                    ''
-                                                                ? Colors.grey
-                                                                    .withOpacity(
-                                                                        0.5)
-                                                                : Colors.black,
+                                                            Color(0xFF6E6E6E),
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400),
                                                   ),
                                                 ),
                                               ),
-                                              Positioned(
-                                                right: 16,
-                                                child: GestureDetector(
-                                                  onTap: () {},
-                                                  child: const Icon(
-                                                    Icons.search_rounded,
-                                                    color: Color(0xFF3D3D3D),
-                                                  ),
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ],
@@ -841,6 +846,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 controller: ctrlPob,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Place of Birth',
                                                     isDense: true,
@@ -852,7 +859,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -911,6 +919,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 keyboardType:
                                                     TextInputType.text,
                                                 readOnly: true,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Date of Birth',
                                                     isDense: true,
@@ -922,76 +932,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          BorderSide.none,
-                                                    )),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: const [
-                                              Text(
-                                                '6. Mother Maiden Name',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                ' *',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Material(
-                                            elevation: 6,
-                                            shadowColor:
-                                                Colors.grey.withOpacity(0.4),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                side: const BorderSide(
-                                                    width: 1.0,
-                                                    color: Color(0xFFEAEAEA))),
-                                            child: SizedBox(
-                                              width: 280,
-                                              height: 50,
-                                              child: TextFormField(
-                                                controller: ctrlMotherName,
-                                                readOnly: true,
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                decoration: InputDecoration(
-                                                    hintText:
-                                                        'Mother Maiden Name',
-                                                    isDense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                                .fromLTRB(16.0,
-                                                            20.0, 20.0, 16.0),
-                                                    hintStyle: TextStyle(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5)),
-                                                    filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1022,7 +964,7 @@ class _ApplicationForm1ViewTabScreenState
                                                 CrossAxisAlignment.start,
                                             children: const [
                                               Text(
-                                                '7. Gender',
+                                                '6. Gender',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18,
@@ -1112,6 +1054,78 @@ class _ApplicationForm1ViewTabScreenState
                                             CrossAxisAlignment.start,
                                         children: [
                                           Row(
+                                            children: const [
+                                              Text(
+                                                '7. Mother Maiden Name',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                ' *',
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Material(
+                                            elevation: 6,
+                                            shadowColor:
+                                                Colors.grey.withOpacity(0.4),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: const BorderSide(
+                                                    width: 1.0,
+                                                    color: Color(0xFFEAEAEA))),
+                                            child: SizedBox(
+                                              width: 280,
+                                              height: 50,
+                                              child: TextFormField(
+                                                controller: ctrlMotherName,
+                                                readOnly: true,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
+                                                decoration: InputDecoration(
+                                                    hintText:
+                                                        'Mother Maiden Name',
+                                                    isDense: true,
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                                .fromLTRB(16.0,
+                                                            20.0, 20.0, 16.0),
+                                                    hintStyle: TextStyle(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.5)),
+                                                    filled: true,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                    )),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: const [
@@ -1152,6 +1166,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Email',
                                                     isDense: true,
@@ -1163,7 +1179,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1231,6 +1248,9 @@ class _ApplicationForm1ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText: 'Code',
@@ -1243,13 +1263,13 @@ class _ApplicationForm1ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1284,6 +1304,9 @@ class _ApplicationForm1ViewTabScreenState
                                                           ctrlPhoneNumber,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText:
@@ -1297,13 +1320,13 @@ class _ApplicationForm1ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -1368,6 +1391,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Spouse Name',
                                                     isDense: true,
@@ -1379,7 +1404,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1392,7 +1418,15 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 20),
+                                    ],
+                                  )),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.23,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1438,6 +1472,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
                                                     hintText: 'Spouse ID',
                                                     isDense: true,
@@ -1449,7 +1485,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1462,15 +1499,7 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  )),
-                              SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.23,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1510,7 +1539,8 @@ class _ApplicationForm1ViewTabScreenState
                                                   border: Border.all(
                                                       color: Colors.grey
                                                           .withOpacity(0.1)),
-                                                  color: Colors.white,
+                                                  color:
+                                                      const Color(0xFFFAF9F9),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey
@@ -1527,28 +1557,16 @@ class _ApplicationForm1ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectProv == ''
-                                                        ? 'Select Province'
-                                                        : selectProv,
-                                                    style: TextStyle(
-                                                        color: selectProv == ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
+                                                    selectProvCode,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF6E6E6E),
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400),
                                                   ),
                                                 ),
                                               ),
-                                              const Positioned(
-                                                right: 16,
-                                                child: Icon(
-                                                  Icons.search_rounded,
-                                                  color: Color(0xFF3D3D3D),
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ],
@@ -1593,7 +1611,8 @@ class _ApplicationForm1ViewTabScreenState
                                                   border: Border.all(
                                                       color: Colors.grey
                                                           .withOpacity(0.1)),
-                                                  color: Colors.white,
+                                                  color:
+                                                      const Color(0xFFFAF9F9),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey
@@ -1610,28 +1629,16 @@ class _ApplicationForm1ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectCity == ''
-                                                        ? 'Select City'
-                                                        : selectCity,
-                                                    style: TextStyle(
-                                                        color: selectCity == ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
+                                                    selectCity,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF6E6E6E),
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400),
                                                   ),
                                                 ),
                                               ),
-                                              const Positioned(
-                                                right: 16,
-                                                child: Icon(
-                                                  Icons.search_rounded,
-                                                  color: Color(0xFF3D3D3D),
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ],
@@ -1676,7 +1683,8 @@ class _ApplicationForm1ViewTabScreenState
                                                   border: Border.all(
                                                       color: Colors.grey
                                                           .withOpacity(0.1)),
-                                                  color: Colors.white,
+                                                  color:
+                                                      const Color(0xFFFAF9F9),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey
@@ -1693,29 +1701,16 @@ class _ApplicationForm1ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectPostal == ''
-                                                        ? 'Select Zipcode'
-                                                        : selectPostal,
-                                                    style: TextStyle(
-                                                        color: selectPostal ==
-                                                                ''
-                                                            ? Colors.grey
-                                                                .withOpacity(
-                                                                    0.5)
-                                                            : Colors.black,
+                                                    selectPostal,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF6E6E6E),
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400),
                                                   ),
                                                 ),
                                               ),
-                                              const Positioned(
-                                                right: 16,
-                                                child: Icon(
-                                                  Icons.search_rounded,
-                                                  color: Color(0xFF3D3D3D),
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ],
@@ -1764,6 +1759,8 @@ class _ApplicationForm1ViewTabScreenState
                                               child: TextFormField(
                                                 controller: ctrlSubDistrict,
                                                 readOnly: true,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1777,7 +1774,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1790,7 +1788,15 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 20),
+                                    ],
+                                  )),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.23,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1834,6 +1840,8 @@ class _ApplicationForm1ViewTabScreenState
                                               child: TextFormField(
                                                 controller: ctrlSubVillage,
                                                 readOnly: true,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration: InputDecoration(
@@ -1847,7 +1855,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1860,15 +1869,7 @@ class _ApplicationForm1ViewTabScreenState
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  )),
-                              SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.23,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                                      const SizedBox(height: 20),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1914,6 +1915,8 @@ class _ApplicationForm1ViewTabScreenState
                                                 readOnly: true,
                                                 keyboardType:
                                                     TextInputType.text,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF6E6E6E)),
                                                 maxLines: 6,
                                                 decoration: InputDecoration(
                                                     hintText: 'Address',
@@ -1926,7 +1929,8 @@ class _ApplicationForm1ViewTabScreenState
                                                         color: Colors.grey
                                                             .withOpacity(0.5)),
                                                     filled: true,
-                                                    fillColor: Colors.white,
+                                                    fillColor:
+                                                        const Color(0xFFFAF9F9),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1994,6 +1998,9 @@ class _ApplicationForm1ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText: 'RT',
@@ -2006,13 +2013,13 @@ class _ApplicationForm1ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
@@ -2046,6 +2053,9 @@ class _ApplicationForm1ViewTabScreenState
                                                       readOnly: true,
                                                       keyboardType:
                                                           TextInputType.text,
+                                                      style: const TextStyle(
+                                                          color: Color(
+                                                              0xFF6E6E6E)),
                                                       decoration:
                                                           InputDecoration(
                                                               hintText: 'RW',
@@ -2058,13 +2068,13 @@ class _ApplicationForm1ViewTabScreenState
                                                                       20.0,
                                                                       16.0),
                                                               hintStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .grey
+                                                                  color: Colors.grey
                                                                       .withOpacity(
                                                                           0.5)),
                                                               filled: true,
                                                               fillColor:
-                                                                  Colors.white,
+                                                                  const Color(
+                                                                      0xFFFAF9F9),
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderRadius:
