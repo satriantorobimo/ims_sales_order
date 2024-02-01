@@ -53,9 +53,10 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
   DocUpdateBloc docUpdateBloc = DocUpdateBloc(form7repo: Form7Repo());
   late List<Data> data = [];
   late List<Data> dataFilter = [];
-  int count = 0;
   bool isLoading = false;
   bool noPic = false;
+  int count = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void dispose() {
@@ -74,7 +75,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
 
   Future<void> _showBottomAttachment(int index, id) {
     return showModalBottomSheet(
-        context: context,
+        context: _scaffoldKey.currentContext!,
         builder: (context) {
           return Container(
             constraints: BoxConstraints(
@@ -99,8 +100,13 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                         vertical: 16.0, horizontal: 24.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.pop(context);
-                        pickImage(index, id);
+                        pickImage(index, id).then((value) {
+                          if (value == 'big') {
+                            GeneralUtil()
+                                .showSnackBar(context, 'Size Maximal 5MB');
+                          }
+                          Navigator.pop(context);
+                        });
                       },
                       child: Row(
                         children: const [
@@ -121,8 +127,13 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                         vertical: 16.0, horizontal: 24.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.pop(context);
-                        pickFile(index, id);
+                        pickFile(index, id).then((value) {
+                          if (value == 'big') {
+                            GeneralUtil()
+                                .showSnackBar(context, 'Size Maximal 5MB');
+                          }
+                          Navigator.pop(context);
+                        });
                       },
                       child: Row(
                         children: const [
@@ -145,7 +156,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
         });
   }
 
-  Future<bool> pickFile(int index, int id) async {
+  Future<String> pickFile(int index, int id) async {
     var maxFileSizeInBytes = 5 * 1048576;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -153,7 +164,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
     );
 
     if (result != null) {
-      var fileSize = result.files.length; // Get the file size in bytes
+      var fileSize = result.files.first.size;
       if (fileSize <= maxFileSizeInBytes) {
         String filePath = result.files.single.path!;
         String basename = path.basename(filePath);
@@ -169,15 +180,15 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
         });
         log('${data[indexes].isNew}');
       } else {
-        return false;
+        return 'big';
       }
-      return true;
+      return 'yes';
     } else {
-      return false;
+      return 'notselect';
     }
   }
 
-  Future<bool> pickImage(int index, int id) async {
+  Future<String> pickImage(int index, int id) async {
     try {
       var maxFileSizeInBytes = 5 * 1048576;
       ImagePicker imagePicker = ImagePicker();
@@ -185,7 +196,8 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
         source: ImageSource.camera,
         imageQuality: 90,
       );
-      if (pickedImage == null) return false;
+      if (pickedImage == null) return 'notselect';
+
       var imagePath = await pickedImage.readAsBytes();
       var fileSize = imagePath.length; // Get the file size in bytes
       if (fileSize <= maxFileSizeInBytes) {
@@ -202,13 +214,13 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
         });
         log('${data[indexes].isNew}');
       } else {
-        return false;
+        return 'big';
       }
 
-      return true;
+      return 'yes';
     } on PlatformException catch (e) {
       log('Failed to pick image: $e');
-      return false;
+      return 'notselect';
     }
   }
 
@@ -276,9 +288,139 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
     });
   }
 
+  void showBottomDelete(context, int index) {
+    int indexes =
+        data.indexWhere((element) => element.id == dataFilter[index].id);
+
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                    padding:
+                        const EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/img/back.png',
+                        width: 150,
+                      ),
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 24.0, left: 24, right: 24, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'Detele File',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Apakah anda yakin ingin menghapus File ini?',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Center(
+                            child: Text('TIDAK',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600))),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    isLoading
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            height: 45,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              setState(() {
+                                count = indexes;
+                              });
+                              if (data[indexes].isNew!) {
+                                setState(() {
+                                  data[indexes].paths = '';
+                                  data[indexes].filename = '';
+                                  data[indexes].isNew = false;
+                                });
+                                Navigator.pop(context);
+                              } else {
+                                docDeleteBloc.add(DocDeleteAttempt(
+                                    DocumentDeleteRequestModel(
+                                        pHeader: dataFilter[index].docSource,
+                                        pId: dataFilter[index].id,
+                                        pFileName: dataFilter[index].filename,
+                                        pFilePaths: dataFilter[index].paths)));
+                              }
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: thirdColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                  child: Text('YA',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600))),
+                            ),
+                          )
+                  ],
+                ),
+                const SizedBox(height: 32),
+              ],
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: const IconThemeData(
@@ -594,32 +736,93 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                     child: MultiBlocListener(
                       listeners: [
                         BlocListener(
+                            bloc: docUploadBloc,
+                            listener: (_, DocUploadState state) async {
+                              if (state is DocUploadLoading) {}
+                              if (state is DocUploadLoaded) {
+                                setState(() {
+                                  data[count].isUpload = true;
+                                  data[count].isNew = false;
+                                });
+                                if (data[count].docSource ==
+                                    'CLIENT_DOCUMENT') {
+                                  docUpdateBloc.add(DocUpdateAttempt(
+                                      DocumentUDateRequestModel(
+                                          pApplicationNo: widget.applicationNo,
+                                          pExpiredDate: data[count].expiredDate,
+                                          pEffectiveDate:
+                                              data[count].effectiveDate,
+                                          pPromiseDate: '',
+                                          pId: data[count].id,
+                                          pSourceDoc: data[count].docSource)));
+                                } else {
+                                  if (data[count].expiredDate != null) {
+                                    docUpdateBloc.add(DocUpdateAttempt(
+                                        DocumentUDateRequestModel(
+                                            pApplicationNo:
+                                                widget.applicationNo,
+                                            pExpiredDate:
+                                                data[count].expiredDate,
+                                            pEffectiveDate: '',
+                                            pPromiseDate: '',
+                                            pId: data[count].id,
+                                            pSourceDoc:
+                                                data[count].docSource)));
+                                  } else {
+                                    Navigator.pop(context);
+                                    GeneralUtil().showSnackBarSuccess(
+                                        context, 'Berhasil Upload Data');
+                                  }
+                                }
+                              }
+                              if (state is DocUploadError) {
+                                GeneralUtil()
+                                    .showSnackBar(context, state.error!);
+                              }
+                              if (state is DocUploadException) {}
+                            }),
+                        BlocListener(
+                            bloc: docUpdateBloc,
+                            listener: (_, DocUpdateState state) async {
+                              if (state is DocUpdateLoading) {}
+                              if (state is DocUpdateLoaded) {
+                                Navigator.pop(context);
+                                GeneralUtil().showSnackBarSuccess(
+                                    context, 'Berhasil Update Document');
+                              }
+                              if (state is DocUpdateError) {
+                                GeneralUtil()
+                                    .showSnackBar(context, state.error!);
+                              }
+                              if (state is DocUpdateException) {}
+                            }),
+                        BlocListener(
                           bloc: docListBloc,
                           listener: (_, DocListState state) {
                             if (state is DocListLoading) {}
                             if (state is DocListLoaded) {
                               setState(() {
-                                setState(() {
-                                  pagination = (state.documentListResponseModel
-                                              .data!.length /
-                                          5)
-                                      .ceil();
-                                  length = state
-                                      .documentListResponseModel.data!.length;
-                                  if (pagination == 1) {
-                                    dataFilter =
-                                        state.documentListResponseModel.data!;
-                                  } else {
-                                    dataFilter = state
-                                        .documentListResponseModel.data!
-                                        .sublist(
-                                            (selectedPageNumber * _perPage),
-                                            ((selectedPageNumber * _perPage) +
-                                                _perPage));
-                                  }
-                                  data.addAll(
-                                      state.documentListResponseModel.data!);
-                                });
+                                pagination = (state.documentListResponseModel
+                                            .data!.length /
+                                        5)
+                                    .ceil();
+                                length = state
+                                    .documentListResponseModel.data!.length;
+                                if (pagination == 1) {
+                                  dataFilter =
+                                      state.documentListResponseModel.data!;
+                                } else {
+                                  dataFilter = state
+                                      .documentListResponseModel.data!
+                                      .sublist(
+                                          (selectedPageNumber * _perPage),
+                                          ((selectedPageNumber * _perPage) +
+                                              _perPage));
+                                }
+                                data = [];
+                                isLoading = false;
+                                data.addAll(
+                                    state.documentListResponseModel.data!);
                               });
                             }
                             if (state is DocListError) {
@@ -631,14 +834,33 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                         BlocListener(
                           bloc: docDeleteBloc,
                           listener: (_, DocDeleteState state) {
+                            if (state is DocDeleteLoading) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                            }
                             if (state is DocDeleteLoaded) {
-                              docListBloc
-                                  .add(DocListAttempt(widget.applicationNo));
+                              setState(() {
+                                data[count].expiredDate = null;
+                                data[count].effectiveDate = null;
+                                data[count].promiseDate = null;
+                                data[count].paths = '';
+                                data[count].filename = '';
+                                data[count].isNew = false;
+                                data[count].isUpload = false;
+                              });
+                              Navigator.pop(context);
                             }
                             if (state is DocDeleteError) {
+                              setState(() {
+                                isLoading = false;
+                              });
                               GeneralUtil().showSnackBar(context, state.error!);
                             }
                             if (state is DocDeleteException) {
+                              setState(() {
+                                isLoading = false;
+                              });
                               GeneralUtil().showSnackBar(
                                   context, 'Terjadi Kesalahan Sistem Delete');
                             }
@@ -651,7 +873,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                           scrollDirection: Axis.vertical,
                           itemCount: dataFilter.length,
                           separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(height: 16);
+                            return const SizedBox(height: 8);
                           },
                           itemBuilder: (BuildContext context, int index) {
                             var promDate = '';
@@ -723,7 +945,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                     const SizedBox(height: 8),
                                     Container(
                                       width: 410,
-                                      height: 50,
+                                      height: 55,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
@@ -764,12 +986,26 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'File',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            'File',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          dataFilter[index].isRequired == '1'
+                                              ? const Text(
+                                                  ' *',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              : Container(),
+                                        ],
                                       ),
                                       const SizedBox(height: 8),
                                       InkWell(
@@ -825,7 +1061,7 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                                 }
                                               },
                                         child: Container(
-                                          height: 50,
+                                          height: 55,
                                           padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: primaryColor,
@@ -856,17 +1092,34 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text(
-                                              'Effective Date',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Effective Date',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                dataFilter[index].docSource ==
+                                                        'CLIENT_DOCUMENT'
+                                                    ? const Text(
+                                                        ' *',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                                    : Container(),
+                                              ],
                                             ),
                                             const SizedBox(height: 8),
                                             Container(
-                                              width: 130,
-                                              height: 50,
+                                              width: 150,
+                                              height: 55,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(12),
@@ -910,17 +1163,36 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text(
-                                              'Promise Date',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Promise Date',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                dataFilter[index].paths == '' &&
+                                                        dataFilter[index]
+                                                                .isRequired ==
+                                                            '1'
+                                                    ? const Text(
+                                                        ' *',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                                    : Container(),
+                                              ],
                                             ),
                                             const SizedBox(height: 8),
                                             Container(
-                                              width: 130,
-                                              height: 50,
+                                              width: 150,
+                                              height: 55,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(12),
@@ -964,17 +1236,32 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'Expired Date',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            'Expired Date',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          dataFilter[index].docSource ==
+                                                  'CLIENT_DOCUMENT'
+                                              ? const Text(
+                                                  ' *',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )
+                                              : Container(),
+                                        ],
                                       ),
                                       const SizedBox(height: 8),
                                       Container(
-                                        width: 130,
-                                        height: 50,
+                                        width: 150,
+                                        height: 55,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -1179,214 +1466,207 @@ class _ApplicationForm7TabScreenState extends State<ApplicationForm7TabScreen>
   }
 
   Widget actionDelete(int index) {
+    return SizedBox(
+      width: 160,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Action',
+            style: TextStyle(
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  showBottomDelete(context, index);
+                },
+                child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: Icon(
+                        Icons.delete_outline_rounded,
+                        color: dataFilter[index].paths == ""
+                            ? Colors.grey
+                            : Colors.red,
+                        size: 45,
+                      ),
+                    )),
+              ),
+              const SizedBox(width: 16),
+              InkWell(
+                onTap: () async {
+                  int indexes = data.indexWhere(
+                      (element) => element.id == dataFilter[index].id);
+                  setState(() {
+                    count = indexes;
+                  });
+                  if (data[indexes].paths != '' &&
+                      data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+                      data[indexes].effectiveDate != null &&
+                      data[indexes].expiredDate != null) {
+                    _uploadAttempt(context);
+                    File imagefile = File(data[indexes].paths!);
+                    Uint8List imagebytes = await imagefile.readAsBytes();
+                    String base64string = base64.encode(imagebytes);
+                    docUploadBloc.add(DocUploadAttempt(
+                        DocumentUploadRequestModel(
+                            pBase64: base64string,
+                            pChild: data[indexes].headerCode,
+                            pFileName: data[indexes].filename,
+                            pFilePaths: data[indexes].id,
+                            pId: data[indexes].id,
+                            pHeader: data[indexes].docSource,
+                            pModule: "IFINLOS")));
+                  } else {
+                    if (data[indexes].paths != "" &&
+                        data[indexes].docSource != 'CLIENT_DOCUMENT') {
+                      _uploadAttempt(context);
+                      File imagefile = File(data[indexes].paths!);
+                      Uint8List imagebytes = await imagefile.readAsBytes();
+                      String base64string = base64.encode(imagebytes);
+                      docUploadBloc.add(DocUploadAttempt(
+                          DocumentUploadRequestModel(
+                              pBase64: base64string,
+                              pChild: data[indexes].headerCode,
+                              pFileName: data[indexes].filename,
+                              pFilePaths: data[indexes].id,
+                              pId: data[indexes].id,
+                              pHeader: data[indexes].docSource,
+                              pModule: "IFINLOS")));
+                    } else if (data[indexes].promiseDate != null &&
+                        data[indexes].paths == "" &&
+                        data[indexes].docSource != 'CLIENT_DOCUMENT') {
+                      _uploadAttempt(context);
+                      docUpdateBloc.add(DocUpdateAttempt(
+                          DocumentUDateRequestModel(
+                              pApplicationNo: widget.applicationNo,
+                              pExpiredDate: '',
+                              pEffectiveDate: '',
+                              pPromiseDate: data[indexes].promiseDate,
+                              pId: data[indexes].id,
+                              pSourceDoc: data[indexes].docSource)));
+                    } else {
+                      log('lalalalala');
+                    }
+                  }
+                },
+                child: func(index),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget func(int index) {
     int indexes =
         data.indexWhere((element) => element.id == dataFilter[index].id);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Action',
-          style: TextStyle(
-              color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+    if (data[indexes].isUpload!) {
+      return Container(
+        height: 40,
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE1E1E1),
+          borderRadius: BorderRadius.circular(8),
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            InkWell(
-              onTap: () {
-                if (data[indexes].isNew!) {
-                  setState(() {
-                    data[indexes].paths = '';
-                    data[indexes].filename = '';
-                    data[indexes].isNew = false;
-                  });
-                } else {
-                  docDeleteBloc.add(DocDeleteAttempt(DocumentDeleteRequestModel(
-                      pHeader: dataFilter[count].docSource,
-                      pId: dataFilter[index].id,
-                      pFileName: dataFilter[index].filename,
-                      pFilePaths: dataFilter[index].paths)));
-                }
-              },
-              child: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Center(
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: dataFilter[index].paths == ""
-                          ? Colors.grey
-                          : Colors.red,
-                      size: 45,
-                    ),
-                  )),
+        child: const Center(
+            child: Text('UPLOAD',
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600))),
+      );
+    } else {
+      if (!data[indexes].isNew!) {
+        if (data[indexes].promiseDate != null &&
+            data[indexes].paths == "" &&
+            data[indexes].docSource != 'CLIENT_DOCUMENT') {
+          return Container(
+              height: 40,
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                  child: Text('UPDATE DOC',
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600))));
+        } else {
+          return Container(
+            height: 40,
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE1E1E1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(width: 16),
-            MultiBlocListener(
-                listeners: [
-                  BlocListener(
-                      bloc: docUploadBloc,
-                      listener: (_, DocUploadState state) async {
-                        if (state is DocUploadLoading) {}
-                        if (state is DocUploadLoaded) {
-                          if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
-                            docUpdateBloc.add(DocUpdateAttempt(
-                                DocumentUDateRequestModel(
-                                    pApplicationNo: widget.applicationNo,
-                                    pExpiredDate: data[indexes].expiredDate,
-                                    pEffectiveDate: data[indexes].effectiveDate,
-                                    pPromiseDate: '',
-                                    pId: data[indexes].id,
-                                    pSourceDoc: data[indexes].docSource)));
-                          } else {
-                            if (data[indexes].expiredDate != null) {
-                              docUpdateBloc.add(DocUpdateAttempt(
-                                  DocumentUDateRequestModel(
-                                      pApplicationNo: widget.applicationNo,
-                                      pExpiredDate: data[indexes].expiredDate,
-                                      pEffectiveDate: '',
-                                      pPromiseDate: '',
-                                      pId: data[indexes].id,
-                                      pSourceDoc: data[indexes].docSource)));
-                            } else {
-                              if (count == 0) {
-                                setState(() {
-                                  count = 1;
-                                  data[indexes].isUpload = true;
-                                });
-                                Navigator.pop(context);
-                                GeneralUtil().showSnackBarSuccess(
-                                    context, 'Berhasil Upload');
-                              }
-                            }
-                          }
-                        }
-                        if (state is DocUploadError) {
-                          GeneralUtil().showSnackBar(context, state.error!);
-                        }
-                        if (state is DocUploadException) {}
-                      }),
-                  BlocListener(
-                      bloc: docUpdateBloc,
-                      listener: (_, DocUpdateState state) async {
-                        if (state is DocUpdateLoading) {}
-                        if (state is DocUpdateLoaded) {
-                          if (data[indexes].docSource == 'CLIENT_DOCUMENT') {
-                            setState(() {
-                              data[indexes].isUpload = true;
-                            });
-                          }
-                          if (count == 0) {
-                            setState(() {
-                              count = 1;
-                            });
-                            Navigator.pop(context);
-                            GeneralUtil().showSnackBarSuccess(
-                                context, 'Berhasil Upload');
-                          }
-                        }
-                        if (state is DocUpdateError) {
-                          GeneralUtil().showSnackBar(context, state.error!);
-                        }
-                        if (state is DocUpdateException) {}
-                      })
-                ],
-                child: InkWell(
-                  onTap: data[indexes].isUpload!
-                      ? null
-                      : () async {
-                          setState(() {
-                            count = 0;
-                          });
-                          if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
-                              data[indexes].paths == '') {
-                            EmptyDocWidget().showBottomEmpty(
-                                context, 'Harap lengkapi data pendukung');
-                          } else {
-                            if (data[indexes].docSource == 'CLIENT_DOCUMENT' &&
-                                data[indexes].effectiveDate == null &&
-                                data[indexes].expiredDate == null) {
-                              EmptyDocWidget().showBottomEmpty(context,
-                                  'Harap isi Effective Date dan Expired Date');
-                            } else {
-                              if (data[indexes].docSource ==
-                                  'CLIENT_DOCUMENT') {
-                                _uploadAttempt(context);
-                                File imagefile = File(data[count].paths!);
-                                Uint8List imagebytes =
-                                    await imagefile.readAsBytes();
-                                String base64string = base64.encode(imagebytes);
-                                docUploadBloc.add(DocUploadAttempt(
-                                    DocumentUploadRequestModel(
-                                        pBase64: base64string,
-                                        pChild: data[indexes].headerCode,
-                                        pFileName: data[indexes].filename,
-                                        pFilePaths: data[indexes].id,
-                                        pId: data[indexes].id,
-                                        pHeader: data[indexes].docSource,
-                                        pModule: "IFINLOS")));
-                              } else {
-                                if (data[indexes].isNew!) {
-                                  _uploadAttempt(context);
-                                  File imagefile = File(data[count].paths!);
-                                  Uint8List imagebytes =
-                                      await imagefile.readAsBytes();
-                                  String base64string =
-                                      base64.encode(imagebytes);
-                                  docUploadBloc.add(DocUploadAttempt(
-                                      DocumentUploadRequestModel(
-                                          pBase64: base64string,
-                                          pChild: data[indexes].headerCode,
-                                          pFileName: data[indexes].filename,
-                                          pFilePaths: data[indexes].id,
-                                          pId: data[indexes].id,
-                                          pHeader: data[indexes].docSource,
-                                          pModule: "IFINLOS")));
-                                } else {
-                                  if (data[indexes].isRequired == '1' &&
-                                      data[indexes].promiseDate == null) {
-                                    EmptyDocWidget().showBottomEmpty(context,
-                                        'Harap isi Promise Date jika tidak dapat memberikan Document yang dibutuhkan');
-                                  } else if (data[indexes].isRequired == '1') {
-                                    _uploadAttempt(context);
-                                    docUpdateBloc.add(DocUpdateAttempt(
-                                        DocumentUDateRequestModel(
-                                            pApplicationNo:
-                                                widget.applicationNo,
-                                            pExpiredDate: '',
-                                            pEffectiveDate: '',
-                                            pPromiseDate:
-                                                data[indexes].promiseDate,
-                                            pId: data[indexes].id,
-                                            pSourceDoc:
-                                                data[indexes].docSource)));
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        },
-                  child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: data[indexes].isUpload!
-                          ? const Color(0xFFE1E1E1)
-                          : primaryColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                        child: Text('UPLOAD',
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600))),
-                  ),
-                ))
-          ],
-        )
-      ],
-    );
+            child: const Center(
+                child: Text('UPLOAD',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600))),
+          );
+        }
+      } else {
+        if (data[indexes].paths != '' &&
+            data[indexes].docSource == 'CLIENT_DOCUMENT' &&
+            data[indexes].effectiveDate != null &&
+            data[indexes].expiredDate != null) {
+          return Container(
+            height: 40,
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+                child: Text('UPLOAD',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600))),
+          );
+        } else if (data[indexes].paths != "" &&
+            data[indexes].docSource != 'CLIENT_DOCUMENT') {
+          return Container(
+              height: 40,
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                  child: Text('UPLOAD',
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600))));
+        } else {
+          return Container(
+            height: 40,
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE1E1E1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+                child: Text('UPLOAD',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600))),
+          );
+        }
+      }
+    }
   }
 
   void _uploadAttempt(BuildContext context) {

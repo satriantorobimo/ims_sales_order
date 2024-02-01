@@ -39,7 +39,7 @@ class ApplicationForm1UseTabScreen extends StatefulWidget {
 
 class _ApplicationForm1UseTabScreenState
     extends State<ApplicationForm1UseTabScreen> {
-  String gender = 'Male';
+  String gender = 'MALE';
   String selectMaritalStatus = '';
   int selectIndexMaritalStatus = 0;
   String selectProv = '';
@@ -438,11 +438,15 @@ class _ApplicationForm1UseTabScreenState
                             keyboardType: TextInputType.text,
                             onChanged: (value) {
                               setStates(() {
-                                tempList = zipCodeResponseModel.data!
-                                    .where((item) => item.postalCode!
-                                        .toUpperCase()
-                                        .contains(value.toUpperCase()))
-                                    .toList();
+                                tempList =
+                                    zipCodeResponseModel.data!.where((item) {
+                                  return item.postalCode!
+                                          .toUpperCase()
+                                          .contains(value.toUpperCase()) ||
+                                      item.zipCodeName!
+                                          .toUpperCase()
+                                          .contains(value.toUpperCase());
+                                }).toList();
                               });
                             },
                             decoration: InputDecoration(
@@ -1231,8 +1235,7 @@ class _ApplicationForm1UseTabScreenState
                                     null) {
                                   gender = state.clientDetailResponseModel
                                       .data![0].clientGenderType!
-                                      .toLowerCase()
-                                      .capitalizeOnlyFirstLater();
+                                      .toUpperCase();
                                 }
                                 if (state.clientDetailResponseModel.data![0]
                                         .clientMaritalStatusType !=
@@ -1418,7 +1421,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlIdNo,
                                                   keyboardType:
@@ -1498,7 +1501,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlFullName,
                                                   keyboardType:
@@ -1600,7 +1603,7 @@ class _ApplicationForm1UseTabScreenState
                                                               },
                                                               child: Container(
                                                                 width: 280,
-                                                                height: 50,
+                                                                height: 55,
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
@@ -1661,7 +1664,7 @@ class _ApplicationForm1UseTabScreenState
 
                                                           return Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -1768,7 +1771,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlPob,
                                                   keyboardType:
@@ -1844,7 +1847,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlDate,
                                                   onTap: _presentDatePicker,
@@ -1925,7 +1928,7 @@ class _ApplicationForm1UseTabScreenState
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        gender = 'Male';
+                                                        gender = 'MALE';
                                                       });
                                                     },
                                                     child: Container(
@@ -1934,7 +1937,7 @@ class _ApplicationForm1UseTabScreenState
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       decoration: BoxDecoration(
-                                                        color: gender == 'Male'
+                                                        color: gender == 'MALE'
                                                             ? primaryColor
                                                             : const Color(
                                                                 0xFFE1E1E1),
@@ -1943,7 +1946,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 .circular(10),
                                                       ),
                                                       child: const Center(
-                                                          child: Text('Male',
+                                                          child: Text('MALE',
                                                               style: TextStyle(
                                                                   fontSize: 15,
                                                                   color: Colors
@@ -1957,7 +1960,7 @@ class _ApplicationForm1UseTabScreenState
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        gender = 'Female';
+                                                        gender = 'FEMALE';
                                                       });
                                                     },
                                                     child: Container(
@@ -1967,7 +1970,7 @@ class _ApplicationForm1UseTabScreenState
                                                               8.0),
                                                       decoration: BoxDecoration(
                                                         color:
-                                                            gender == 'Female'
+                                                            gender == 'FEMALE'
                                                                 ? primaryColor
                                                                 : const Color(
                                                                     0xFFE1E1E1),
@@ -1976,7 +1979,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 .circular(10),
                                                       ),
                                                       child: const Center(
-                                                          child: Text('Female',
+                                                          child: Text('FEMALE',
                                                               style: TextStyle(
                                                                   fontSize: 15,
                                                                   color: Colors
@@ -2030,7 +2033,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlMotherName,
                                                   keyboardType:
@@ -2106,7 +2109,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlEmail,
                                                   inputFormatters: <
@@ -2197,7 +2200,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 90,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         controller:
                                                             ctrlPhoneCode,
@@ -2259,7 +2262,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 180,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         controller:
                                                             ctrlPhoneNumber,
@@ -2345,7 +2348,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlSpouseName,
                                                   readOnly: selectMaritalStatus ==
@@ -2412,7 +2415,7 @@ class _ApplicationForm1UseTabScreenState
                                                   CrossAxisAlignment.start,
                                               children: const [
                                                 Text(
-                                                  '11. Spouse ID',
+                                                  '11. Spouse ID No',
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 18,
@@ -2443,7 +2446,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlSpouseId,
                                                   readOnly: selectMaritalStatus ==
@@ -2462,7 +2465,7 @@ class _ApplicationForm1UseTabScreenState
                                                         16),
                                                   ],
                                                   decoration: InputDecoration(
-                                                      hintText: 'Spouse ID',
+                                                      hintText: 'Spouse ID No',
                                                       isDense: true,
                                                       contentPadding:
                                                           const EdgeInsets
@@ -2562,7 +2565,7 @@ class _ApplicationForm1UseTabScreenState
                                                               },
                                                               child: Container(
                                                                 width: 280,
-                                                                height: 50,
+                                                                height: 55,
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
@@ -2623,7 +2626,7 @@ class _ApplicationForm1UseTabScreenState
 
                                                           return Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -2749,7 +2752,7 @@ class _ApplicationForm1UseTabScreenState
                                                               },
                                                               child: Container(
                                                                 width: 280,
-                                                                height: 50,
+                                                                height: 55,
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
@@ -2810,7 +2813,7 @@ class _ApplicationForm1UseTabScreenState
 
                                                           return Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -2941,7 +2944,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 child:
                                                                     Container(
                                                                   width: 280,
-                                                                  height: 50,
+                                                                  height: 55,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -2998,7 +3001,7 @@ class _ApplicationForm1UseTabScreenState
 
                                                           return Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -3102,7 +3105,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlSubDistrict,
                                                   readOnly: true,
@@ -3191,7 +3194,7 @@ class _ApplicationForm1UseTabScreenState
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlSubVillage,
                                                   readOnly: true,
@@ -3356,7 +3359,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 130,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         controller: ctrlRt,
                                                         keyboardType:
@@ -3414,7 +3417,7 @@ class _ApplicationForm1UseTabScreenState
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 130,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         controller: ctrlRw,
                                                         keyboardType:
@@ -3506,7 +3509,7 @@ class _ApplicationForm1UseTabScreenState
                                                           children: [
                                                             const SizedBox(
                                                               width: 130,
-                                                              height: 50,
+                                                              height: 55,
                                                               child: Center(
                                                                 child:
                                                                     CircularProgressIndicator(),
@@ -3532,7 +3535,7 @@ class _ApplicationForm1UseTabScreenState
                                                                           0xFFEAEAEA))),
                                                               child: SizedBox(
                                                                 width: 140,
-                                                                height: 50,
+                                                                height: 55,
                                                                 child:
                                                                     TextFormField(
                                                                   readOnly:
@@ -3585,7 +3588,7 @@ class _ApplicationForm1UseTabScreenState
                                                               },
                                                               child: Container(
                                                                 width: 130,
-                                                                height: 50,
+                                                                height: 55,
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   color:
@@ -3626,7 +3629,7 @@ class _ApplicationForm1UseTabScreenState
                                                                           0xFFEAEAEA))),
                                                               child: SizedBox(
                                                                 width: 140,
-                                                                height: 50,
+                                                                height: 55,
                                                                 child:
                                                                     TextFormField(
                                                                   readOnly:
@@ -3678,7 +3681,7 @@ class _ApplicationForm1UseTabScreenState
                                                             },
                                                             child: Container(
                                                               width: 130,
-                                                              height: 50,
+                                                              height: 55,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color:
@@ -3719,7 +3722,7 @@ class _ApplicationForm1UseTabScreenState
                                                                         0xFFEAEAEA))),
                                                             child: SizedBox(
                                                               width: 140,
-                                                              height: 50,
+                                                              height: 55,
                                                               child:
                                                                   TextFormField(
                                                                 readOnly: true,
@@ -3851,7 +3854,7 @@ class _ApplicationForm1UseTabScreenState
                                             .clientDateOfBirth = dateSend;
                                         clientDetailResponseModel
                                                 .clientGenderCode =
-                                            gender == 'Male' ? 'M' : 'F';
+                                            gender == 'MALE' ? 'M' : 'F';
                                         clientDetailResponseModel
                                             .clientGenderType = gender;
                                         clientDetailResponseModel
@@ -3902,13 +3905,6 @@ class _ApplicationForm1UseTabScreenState
                                             ctrlRt.text;
                                         clientDetailResponseModel.addressRw =
                                             ctrlRw.text;
-
-                                        Navigator.pushNamed(
-                                            context,
-                                            StringRouterUtil
-                                                .applicationForm2UseScreenTabRoute,
-                                            arguments:
-                                                clientDetailResponseModel);
 
                                         Navigator.pushNamed(
                                             context,
@@ -3967,7 +3963,7 @@ class _ApplicationForm1UseTabScreenState
                                             .clientDateOfBirth = dateSend;
                                         clientDetailResponseModel
                                                 .clientGenderCode =
-                                            gender == 'Male' ? 'M' : 'F';
+                                            gender == 'MALE' ? 'M' : 'F';
                                         clientDetailResponseModel
                                             .clientGenderType = gender;
                                         clientDetailResponseModel

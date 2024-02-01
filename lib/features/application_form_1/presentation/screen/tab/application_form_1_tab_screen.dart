@@ -32,7 +32,7 @@ class ApplicationForm1TabScreen extends StatefulWidget {
 }
 
 class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
-  String gender = 'Male';
+  String gender = 'MALE';
   String selectMaritalStatus = '';
   int selectIndexMaritalStatus = 0;
   String selectProv = '';
@@ -426,11 +426,15 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                             keyboardType: TextInputType.text,
                             onChanged: (value) {
                               setStates(() {
-                                tempList = zipCodeResponseModel.data!
-                                    .where((item) => item.postalCode!
-                                        .toUpperCase()
-                                        .contains(value.toUpperCase()))
-                                    .toList();
+                                tempList =
+                                    zipCodeResponseModel.data!.where((item) {
+                                  return item.postalCode!
+                                          .toUpperCase()
+                                          .contains(value.toUpperCase()) ||
+                                      item.zipCodeName!
+                                          .toUpperCase()
+                                          .contains(value.toUpperCase());
+                                }).toList();
                               });
                             },
                             decoration: InputDecoration(
@@ -998,7 +1002,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlIdNo,
                                         keyboardType: TextInputType.number,
@@ -1061,7 +1065,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlFullName,
                                         keyboardType: TextInputType.text,
@@ -1145,7 +1149,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                     },
                                                     child: Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -1199,7 +1203,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
 
                                                 return Container(
                                                   width: 280,
-                                                  height: 50,
+                                                  height: 55,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -1286,7 +1290,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlPob,
                                         keyboardType: TextInputType.text,
@@ -1346,7 +1350,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlDate,
                                         onTap: _presentDatePicker,
@@ -1413,21 +1417,21 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                         InkWell(
                                           onTap: () {
                                             setState(() {
-                                              gender = 'Male';
+                                              gender = 'MALE';
                                             });
                                           },
                                           child: Container(
                                             height: 40,
                                             padding: const EdgeInsets.all(8.0),
                                             decoration: BoxDecoration(
-                                              color: gender == 'Male'
+                                              color: gender == 'MALE'
                                                   ? primaryColor
                                                   : const Color(0xFFE1E1E1),
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             child: const Center(
-                                                child: Text('Male',
+                                                child: Text('MALE',
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         color: Colors.white,
@@ -1439,21 +1443,21 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                         InkWell(
                                           onTap: () {
                                             setState(() {
-                                              gender = 'Female';
+                                              gender = 'FEMALE';
                                             });
                                           },
                                           child: Container(
                                             height: 40,
                                             padding: const EdgeInsets.all(8.0),
                                             decoration: BoxDecoration(
-                                              color: gender == 'Female'
+                                              color: gender == 'FEMALE'
                                                   ? primaryColor
                                                   : const Color(0xFFE1E1E1),
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             child: const Center(
-                                                child: Text('Female',
+                                                child: Text('FEMALE',
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         color: Colors.white,
@@ -1499,7 +1503,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlMotherName,
                                         keyboardType: TextInputType.text,
@@ -1559,7 +1563,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlEmail,
                                         inputFormatters: <TextInputFormatter>[
@@ -1633,7 +1637,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 90,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlPhoneCode,
                                               keyboardType:
@@ -1680,7 +1684,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 180,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlPhoneNumber,
                                               keyboardType:
@@ -1755,7 +1759,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlSpouseName,
                                         readOnly: selectMaritalStatus ==
@@ -1805,7 +1809,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                         CrossAxisAlignment.start,
                                     children: const [
                                       Text(
-                                        '11. Spouse ID',
+                                        '11. Spouse ID No',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -1831,7 +1835,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlSpouseId,
                                         readOnly: selectMaritalStatus ==
@@ -1846,7 +1850,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                           LengthLimitingTextInputFormatter(16),
                                         ],
                                         decoration: InputDecoration(
-                                            hintText: 'Spouse ID',
+                                            hintText: 'Spouse ID No',
                                             isDense: true,
                                             contentPadding:
                                                 const EdgeInsets.fromLTRB(
@@ -1924,7 +1928,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                     },
                                                     child: Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -1977,7 +1981,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
 
                                                 return Container(
                                                   width: 280,
-                                                  height: 50,
+                                                  height: 55,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2078,7 +2082,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                     },
                                                     child: Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -2131,7 +2135,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
 
                                                 return Container(
                                                   width: 280,
-                                                  height: 50,
+                                                  height: 55,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2233,7 +2237,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                       },
                                                       child: Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -2288,7 +2292,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
 
                                                 return Container(
                                                   width: 280,
-                                                  height: 50,
+                                                  height: 55,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2372,7 +2376,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlSubDistrict,
                                         readOnly: true,
@@ -2441,7 +2445,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             color: Color(0xFFEAEAEA))),
                                     child: SizedBox(
                                       width: 280,
-                                      height: 50,
+                                      height: 55,
                                       child: TextFormField(
                                         controller: ctrlSubVillage,
                                         readOnly: true,
@@ -2573,7 +2577,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 130,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlRt,
                                               keyboardType:
@@ -2618,7 +2622,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 130,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlRw,
                                               keyboardType:
@@ -2691,7 +2695,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                 children: [
                                                   const SizedBox(
                                                     width: 130,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: Center(
                                                       child:
                                                           CircularProgressIndicator(),
@@ -2712,7 +2716,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 140,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         readOnly: true,
                                                         controller: ctrlStatus,
@@ -2765,7 +2769,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                     },
                                                     child: Container(
                                                       width: 130,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         color: primaryColor,
                                                         borderRadius:
@@ -2799,7 +2803,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                                 0xFFEAEAEA))),
                                                     child: SizedBox(
                                                       width: 140,
-                                                      height: 50,
+                                                      height: 55,
                                                       child: TextFormField(
                                                         readOnly: true,
                                                         controller: ctrlStatus,
@@ -2852,7 +2856,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                   },
                                                   child: Container(
                                                     width: 130,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       color: primaryColor,
                                                       borderRadius:
@@ -2886,7 +2890,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 140,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       readOnly: true,
                                                       controller: ctrlStatus,
@@ -3024,7 +3028,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                               pClientType: 'PERSONAL',
                                               pDocumentType: 'KTP',
                                               pClientGenderCode:
-                                                  gender == 'Male' ? 'M' : 'F',
+                                                  gender == 'MALE' ? 'M' : 'F',
                                               pClientEmail: ctrlEmail.text,
                                               pClientAreaMobileNo:
                                                   ctrlPhoneCode.text,
@@ -3113,7 +3117,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                               pClientType: 'PERSONAL',
                                               pDocumentType: 'KTP',
                                               pClientGenderCode:
-                                                  gender == 'Male' ? 'M' : 'F',
+                                                  gender == 'MALE' ? 'M' : 'F',
                                               pClientEmail: ctrlEmail.text,
                                               pClientAreaMobileNo:
                                                   ctrlPhoneCode.text,

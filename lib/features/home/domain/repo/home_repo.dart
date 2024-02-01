@@ -6,12 +6,12 @@ import 'package:sales_order/features/home/domain/api/home_api.dart';
 class HomeRepo {
   final HomeApi homeApi = HomeApi();
 
-  Future<AppStatusResponseModel?> attemptGetAppStatus() =>
-      homeApi.attemptGetAppStatus();
+  Future<AppStatusResponseModel?> attemptGetAppStatus(String uid) =>
+      homeApi.attemptGetAppStatus(uid);
 
-  Future<AppListResponseModel?> attemptGetAppList() =>
-      homeApi.attemptGetAppList();
+  Future<AppListResponseModel?> attemptGetAppList(String uid) =>
+      homeApi.attemptGetAppList(uid);
 
-  Future<DataPeriodeResponseModel?> attemptPeriodeList() =>
-      homeApi.attemptPeriodeList();
+  Future<DataPeriodeResponseModel?> attemptPeriodeList(String uid) =>
+      homeApi.attemptPeriodeList(uid);
 }

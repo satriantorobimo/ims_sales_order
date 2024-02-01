@@ -647,12 +647,18 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                               .start,
                                                       children: [
                                                         InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              condition =
-                                                                  'ARREAR';
-                                                            });
-                                                          },
+                                                          onTap: state
+                                                                      .tncDataDetailResponseModel
+                                                                      .data![0]
+                                                                      .isEditable ==
+                                                                  '1'
+                                                              ? null
+                                                              : () {
+                                                                  setState(() {
+                                                                    condition =
+                                                                        'ARREAR';
+                                                                  });
+                                                                },
                                                           child: Container(
                                                             height: 40,
                                                             padding:
@@ -685,12 +691,18 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                         const SizedBox(
                                                             width: 8),
                                                         InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              condition =
-                                                                  'ADVANCE';
-                                                            });
-                                                          },
+                                                          onTap: state
+                                                                      .tncDataDetailResponseModel
+                                                                      .data![0]
+                                                                      .isEditable ==
+                                                                  '1'
+                                                              ? null
+                                                              : () {
+                                                                  setState(() {
+                                                                    condition =
+                                                                        'ADVANCE';
+                                                                  });
+                                                                },
                                                           child: Container(
                                                             height: 40,
                                                             padding:
@@ -741,7 +753,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -810,7 +822,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -869,7 +881,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -943,7 +955,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1007,7 +1019,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1177,7 +1189,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                                 }
                                                                 return Container(
                                                                   width: 280,
-                                                                  height: 50,
+                                                                  height: 55,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -1300,7 +1312,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                       const SizedBox(height: 8),
                                                       Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -1378,7 +1390,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                                         index);
                                                                   },
                                                             child: Container(
-                                                              height: 50,
+                                                              height: 55,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 borderRadius:
@@ -1502,19 +1514,15 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                               listener: (_, UpdateTncState state) {
                                 if (state is UpdateTncLoading) {}
                                 if (state is UpdateTncLoaded) {
-                                  for (int i = 0; i < data.length; i++) {
-                                    updateFee.add(UpdateFeeRequestModel(
-                                        pApplicationNo: widget
-                                            .updateTncRequestModel
-                                            .pApplicationNo,
-                                        pFeeAmount: data[i].feeAmount!.toInt(),
-                                        pFeePaymentType: data[i].feePaymentType,
-                                        pId: data[i].id));
-                                    if (i == data.length - 1) {
-                                      updateFeeBloc
-                                          .add(UpdateFeeAttempt(updateFee));
-                                    }
-                                  }
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushNamed(
+                                      context,
+                                      StringRouterUtil
+                                          .applicationForm7ScreenTabRoute,
+                                      arguments: widget.updateTncRequestModel
+                                          .pApplicationNo);
                                 }
                                 if (state is UpdateTncError) {
                                   setState(() {
@@ -1534,15 +1542,15 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                               listener: (_, UpdateFeeState state) {
                                 if (state is UpdateFeeLoading) {}
                                 if (state is UpdateFeeLoaded) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Navigator.pushNamed(
-                                      context,
-                                      StringRouterUtil
-                                          .applicationForm7ScreenTabRoute,
-                                      arguments: widget.updateTncRequestModel
-                                          .pApplicationNo);
+                                  updateTncBloc.add(UpdateTncAttempt(
+                                      UpdateTncRequestModel(
+                                          pApplicationNo: widget
+                                              .updateTncRequestModel
+                                              .pApplicationNo,
+                                          pInsurancePackageCode:
+                                              selectInsuranceCode,
+                                          pPaymentType: condition,
+                                          pTenor: tenor)));
                                 }
                                 if (state is UpdateFeeError) {
                                   setState(() {
@@ -1574,15 +1582,21 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                     setState(() {
                                       isLoading = true;
                                     });
-                                    updateTncBloc.add(UpdateTncAttempt(
-                                        UpdateTncRequestModel(
-                                            pApplicationNo: widget
-                                                .updateTncRequestModel
-                                                .pApplicationNo,
-                                            pInsurancePackageCode:
-                                                selectInsuranceCode,
-                                            pPaymentType: condition,
-                                            pTenor: tenor)));
+                                    for (int i = 0; i < data.length; i++) {
+                                      updateFee.add(UpdateFeeRequestModel(
+                                          pApplicationNo: widget
+                                              .updateTncRequestModel
+                                              .pApplicationNo,
+                                          pFeeAmount:
+                                              data[i].feeAmount!.toInt(),
+                                          pFeePaymentType:
+                                              data[i].feePaymentType,
+                                          pId: data[i].id));
+                                      if (i == data.length - 1) {
+                                        updateFeeBloc
+                                            .add(UpdateFeeAttempt(updateFee));
+                                      }
+                                    }
                                   }
                                 },
                                 child: Container(

@@ -1,40 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/mobile/application_form_1_mobile_screen.dart';
+import 'package:sales_order/features/application_form_1/presentation/screen/mobile/application_form_1_resume_mobile_screen.dart';
+import 'package:sales_order/features/application_form_1/presentation/screen/mobile/application_form_1_use_mobile_screen.dart';
+import 'package:sales_order/features/application_form_1/presentation/screen/mobile/application_form_1_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_resume_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_use_tab_screen.dart';
 import 'package:sales_order/features/application_form_1/presentation/screen/tab/application_form_1_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_2/data/add_client_request_model.dart';
 import 'package:sales_order/features/application_form_2/presentation/screen/mobile/application_form_2_mobile_screen.dart';
+import 'package:sales_order/features/application_form_2/presentation/screen/mobile/application_form_2_use_mobile_screen.dart';
+import 'package:sales_order/features/application_form_2/presentation/screen/mobile/application_form_2_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_2/presentation/screen/tab/application_form_2_use_tab_screen.dart';
 import 'package:sales_order/features/application_form_2/presentation/screen/tab/application_form_2_tab_screen.dart';
 import 'package:sales_order/features/application_form_2/presentation/screen/tab/application_form_2_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_3/data/update_loan_data_request_model.dart';
 import 'package:sales_order/features/application_form_3/presentation/screen/mobile/application_form_3_mobile_screen.dart';
+import 'package:sales_order/features/application_form_3/presentation/screen/mobile/application_form_3_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_3/presentation/screen/tab/application_form_3_tab_screen.dart';
 import 'package:sales_order/features/application_form_3/presentation/screen/tab/application_form_3_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_4/data/update_asset_request_model.dart';
 import 'package:sales_order/features/application_form_4/presentation/screen/mobile/application_form_4_mobile_screen.dart';
+import 'package:sales_order/features/application_form_4/presentation/screen/mobile/application_form_4_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_4/presentation/screen/tab/application_form_4_tab_screen.dart';
 import 'package:sales_order/features/application_form_4/presentation/screen/tab/application_form_4_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_5/data/update_tnc_request_model.dart';
 import 'package:sales_order/features/application_form_5/presentation/screen/mobile/application_form_5_mobile_screen.dart';
+import 'package:sales_order/features/application_form_5/presentation/screen/mobile/application_form_5_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_5/presentation/screen/tab/application_form_5_tab_screen.dart';
 import 'package:sales_order/features/application_form_5/presentation/screen/tab/application_form_5_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/mobile/application_form_7_mobile_screen.dart';
+import 'package:sales_order/features/application_form_7/presentation/screen/mobile/application_form_7_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/application_form_7_tab_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/application_form_7_view_tab_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_asset_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_image_screen.dart';
 import 'package:sales_order/features/application_form_7/presentation/screen/tab/doc_preview_pdf_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/mobile/application_form_summary_mobile_screen.dart';
+import 'package:sales_order/features/application_form_summary/presentation/screen/mobile/application_form_summary_view_mobile_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/tab/application_form_summary_tab_screen.dart';
 import 'package:sales_order/features/application_form_summary/presentation/screen/tab/application_form_summary_view_tab_screen.dart';
+import 'package:sales_order/features/application_list/presentation/screen/mobile/application_list_filter_mobile_screen.dart';
 import 'package:sales_order/features/application_list/presentation/screen/tab/application_list_filter_tab_screen.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:sales_order/features/client_list/presentation/screen/mobile/client_list_mobile_screen.dart';
 import 'package:sales_order/features/client_list/presentation/screen/tab/client_list_tab_screen.dart';
+import 'package:sales_order/features/login/presentation/screen/mobile/relogin_mobile_screen.dart';
 import 'package:sales_order/features/login/presentation/screen/tab/relogin_tab_screen.dart';
 import 'package:sales_order/features/splash/splash_screen.dart';
 import 'package:sales_order/features/tab/screen/mobile/tab_mobile_screen.dart';
@@ -54,6 +66,7 @@ class Routers {
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
+
       case StringRouterUtil.loginScreenTabRoute:
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) => const LoginTabScreen(),
@@ -71,6 +84,13 @@ class Routers {
       case StringRouterUtil.loginScreenMobileRoute:
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) => const LoginMobileScreen(),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.reloginScreenMobileRoute:
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => const ReloginMobileScreen(),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -108,9 +128,21 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
-      case StringRouterUtil.clientListScreenMobileRoute:
+      case StringRouterUtil.applicationFilterListScreenMobileRoute:
+        final String status = settings.arguments as String;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ClientListMobileScreen(),
+            pageBuilder: (_, __, ___) =>
+                ApplicationListFilterMobileScreen(status: status),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.clientListScreenMobileRoute:
+        final ClientMathcingModel clientMathcingModel =
+            settings.arguments as ClientMathcingModel;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ClientListMobileScreen(
+                clientMathcingModel: clientMathcingModel),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -150,6 +182,34 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
+      case StringRouterUtil.applicationForm1ViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm1ViewMobileScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm1UseScreenMobileRoute:
+        final AddClientRequestModel addClientRequestModel =
+            settings.arguments as AddClientRequestModel;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ApplicationForm1UseMobileScreen(
+                addClientRequestModel: addClientRequestModel),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm1ResumeScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ApplicationForm1ResumeMobileScreen(
+                applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
       case StringRouterUtil.applicationForm1ScreenMobileRoute:
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) => const ApplicationForm1MobileScreen(),
@@ -176,6 +236,15 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
+      case StringRouterUtil.applicationForm2UseScreenMobileRoute:
+        final cd.Data data = settings.arguments as cd.Data;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm2UseMobileScreen(data: data),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
       case StringRouterUtil.applicationForm2ViewScreenTabRoute:
         final cd.Data data = settings.arguments as cd.Data;
         return PageRouteBuilder<dynamic>(
@@ -185,9 +254,21 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
-      case StringRouterUtil.applicationForm2ScreenMobileRoute:
+      case StringRouterUtil.applicationForm2ViewScreenMobileRoute:
+        final cd.Data data = settings.arguments as cd.Data;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ApplicationForm2MobileScreen(),
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm2ViewMobileScreen(data: data),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm2ScreenMobileRoute:
+        final AddClientRequestModel addClientRequestModel =
+            settings.arguments as AddClientRequestModel;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ApplicationForm2MobileScreen(
+                addClientRequestModel: addClientRequestModel),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -203,8 +284,11 @@ class Routers {
                 FadeTransition(opacity: a, child: c));
 
       case StringRouterUtil.applicationForm3ScreenMobileRoute:
+        final UpdateLoanDataRequestModel updateLoanDataRequestModel =
+            settings.arguments as UpdateLoanDataRequestModel;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ApplicationForm3MobileScreen(),
+            pageBuilder: (_, __, ___) => ApplicationForm3MobileScreen(
+                updateLoanDataRequestModel: updateLoanDataRequestModel),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -214,6 +298,15 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 ApplicationForm3ViewTabScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm3ViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm3ViewMobileScreen(applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -237,9 +330,21 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
-      case StringRouterUtil.applicationForm4ScreenMobileRoute:
+      case StringRouterUtil.applicationForm4ViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ApplicationForm4MobileScreen(),
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm4ViewMobileScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm4ScreenMobileRoute:
+        final UpdateAssetRequestModel updateAssetRequestModel =
+            settings.arguments as UpdateAssetRequestModel;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ApplicationForm4MobileScreen(
+                assetRequestModel: updateAssetRequestModel),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -249,6 +354,15 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 ApplicationForm5ViewTabScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm5ViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm5ViewMobileScreen(applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -264,8 +378,11 @@ class Routers {
                 FadeTransition(opacity: a, child: c));
 
       case StringRouterUtil.applicationForm5ScreenMobileRoute:
+        final UpdateTncRequestModel updateTncRequestModel =
+            settings.arguments as UpdateTncRequestModel;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ApplicationForm5MobileScreen(),
+            pageBuilder: (_, __, ___) => ApplicationForm5MobileScreen(
+                updateTncRequestModel: updateTncRequestModel),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -280,8 +397,10 @@ class Routers {
                 FadeTransition(opacity: a, child: c));
 
       case StringRouterUtil.applicationForm7ScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) => const ApplicationForm7MobileScreen(),
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm7MobileScreen(applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -291,6 +410,15 @@ class Routers {
         return PageRouteBuilder<dynamic>(
             pageBuilder: (_, __, ___) =>
                 ApplicationForm7ViewTabScreen(applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationForm7ViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) =>
+                ApplicationForm7ViewMobileScreen(applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
@@ -341,10 +469,20 @@ class Routers {
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));
 
-      case StringRouterUtil.applicationFormSummaryScreenMobileRoute:
+      case StringRouterUtil.applicationFormSummaryViewScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
         return PageRouteBuilder<dynamic>(
-            pageBuilder: (_, __, ___) =>
-                const ApplicationFormSummaryMobileScreen(),
+            pageBuilder: (_, __, ___) => ApplicationFormSummaryViewMobileScreen(
+                applicationNo: applicationNo),
+            settings: RouteSettings(name: settings.name),
+            transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
+                FadeTransition(opacity: a, child: c));
+
+      case StringRouterUtil.applicationFormSummaryScreenMobileRoute:
+        final String applicationNo = settings.arguments as String;
+        return PageRouteBuilder<dynamic>(
+            pageBuilder: (_, __, ___) => ApplicationFormSummaryMobileScreen(
+                applicationNo: applicationNo),
             settings: RouteSettings(name: settings.name),
             transitionsBuilder: (_, Animation<double> a, __, Widget c) =>
                 FadeTransition(opacity: a, child: c));

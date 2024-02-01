@@ -5,6 +5,7 @@ import 'package:sales_order/features/login/domain/repo/auth_repo.dart';
 import 'package:sales_order/features/login/presentation/bloc/auth_bloc/bloc.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
@@ -355,8 +356,16 @@ class _FormReloginWidgetState extends State<FormReloginWidget> {
                     });
                     SharedPrefUtil.saveSharedString(
                         'token', state.authResponseModel.token!);
-                    Navigator.pushNamedAndRemoveUntil(context,
-                        StringRouterUtil.tabScreenTabRoute, (route) => false);
+
+                    if (GeneralUtil().deviceType() == 'tablet') {
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          StringRouterUtil.tabScreenTabRoute, (route) => false);
+                    } else {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          StringRouterUtil.tabScreenMobileRoute,
+                          (route) => false);
+                    }
                   });
                 } else {
                   _invalidUsernamePassword();

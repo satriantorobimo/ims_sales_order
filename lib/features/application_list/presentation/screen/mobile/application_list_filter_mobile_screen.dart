@@ -19,16 +19,17 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../home/data/app_list_response_model.dart';
 import '../../../../home/presentation/bloc/app_list_bloc/bloc.dart';
 
-class ApplicationListMobileScreen extends StatefulWidget {
-  const ApplicationListMobileScreen({super.key});
+class ApplicationListFilterMobileScreen extends StatefulWidget {
+  const ApplicationListFilterMobileScreen({super.key, required this.status});
+  final String status;
 
   @override
-  State<ApplicationListMobileScreen> createState() =>
-      _ApplicationListMobileScreenState();
+  State<ApplicationListFilterMobileScreen> createState() =>
+      _ApplicationListFilterMobileScreenState();
 }
 
-class _ApplicationListMobileScreenState
-    extends State<ApplicationListMobileScreen> {
+class _ApplicationListFilterMobileScreenState
+    extends State<ApplicationListFilterMobileScreen> {
   bool isLoading = true;
   List<ApplicationModel> menu = [];
 
@@ -40,9 +41,6 @@ class _ApplicationListMobileScreenState
   late List<Data> data = [];
   late List<Data> dataFilter = [];
   late List<Data> dataFilterSearch = [];
-  late List<CustDropdownMenuItem> filter = [];
-  late List<String> filterValue = ['ALL', 'HOLD', 'ON PROCESS', 'APPROVE'];
-  late String filterSelect = '';
   TextEditingController ctrlDate = TextEditingController();
 
   @override
@@ -63,21 +61,6 @@ class _ApplicationListMobileScreenState
           .add(const CustDropdownMenuItem(value: 0, child: Text("PERSONAL")));
       clientType
           .add(const CustDropdownMenuItem(value: 1, child: Text("CORPORATE")));
-      filter.add(const CustDropdownMenuItem(value: 0, child: Text("ALL")));
-      filter.add(const CustDropdownMenuItem(value: 1, child: Text("HOLD")));
-      filter
-          .add(const CustDropdownMenuItem(value: 2, child: Text("ON PROCESS")));
-      filter.add(const CustDropdownMenuItem(value: 3, child: Text("APPROVE")));
-    });
-  }
-
-  void filterSearchResults(String query) {
-    setState(() {
-      dataFilterSearch = data
-          .where((item) =>
-              item.clientName!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-      dataFilter = dataFilterSearch;
     });
   }
 
@@ -94,6 +77,16 @@ class _ApplicationListMobileScreenState
       } else {
         return DateFormat('yyyy-MM-dd').format(pickedDate).toString();
       }
+    });
+  }
+
+  void filterSearchResults(String query) {
+    setState(() {
+      dataFilterSearch = data
+          .where((item) =>
+              item.clientName!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      dataFilter = dataFilterSearch;
     });
   }
 
@@ -508,6 +501,9 @@ class _ApplicationListMobileScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.black, //change your color here
+        ),
         title: const Text(
           'Application List',
           style: TextStyle(
@@ -530,82 +526,38 @@ class _ApplicationListMobileScreenState
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding:
                 const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Material(
-                  elevation: 6,
-                  shadowColor: Colors.grey.withOpacity(0.4),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: const BorderSide(
-                          width: 1.0, color: Color(0xFFEAEAEA))),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.48,
-                    height: 45,
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {
-                        filterSearchResults(value);
-                      },
-                      decoration: InputDecoration(
-                          hintText: 'search record',
-                          isDense: true,
-                          hintStyle: TextStyle(
-                              color: Colors.grey.withOpacity(0.5),
-                              fontSize: 15),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          )),
-                    ),
-                  ),
+            child: Material(
+              elevation: 6,
+              shadowColor: Colors.grey.withOpacity(0.4),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(width: 1.0, color: Color(0xFFEAEAEA))),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.78,
+                height: 45,
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  onChanged: (value) {
+                    filterSearchResults(value);
+                  },
+                  decoration: InputDecoration(
+                      hintText: 'search record',
+                      isDense: true,
+                      hintStyle: TextStyle(
+                          color: Colors.grey.withOpacity(0.5), fontSize: 15),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      )),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.40,
-                  height: 45,
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(-6, 4), // Shadow position
-                        ),
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFFE1E1E1))),
-                  child: CustDropDown(
-                    maxListHeight: 300,
-                    items: filter,
-                    hintText: "Select Filter",
-                    borderRadius: 5,
-                    defaultSelectedIndex: 0,
-                    onChanged: (val) {
-                      setState(() {
-                        filterSelect = filterValue[val];
-                        if (filterValue[val] == 'ALL') {
-                          dataFilter = data;
-                        } else {
-                          dataFilterSearch = data
-                              .where((item) => item.applicationStatus!
-                                  .toLowerCase()
-                                  .contains(filterValue[val].toLowerCase()))
-                              .toList();
-                          dataFilter = dataFilterSearch;
-                        }
-                      });
-                    },
-                  ),
-                )
-              ],
+              ),
             ),
           ),
           BlocListener(
@@ -614,17 +566,16 @@ class _ApplicationListMobileScreenState
                 if (state is AppListLoading) {}
                 if (state is AppListLoaded) {
                   setState(() {
-                    if (filterSelect == 'ALL' || filterSelect == '') {
-                      dataFilter = state.appListResponseModel.data!;
-                    } else {
-                      dataFilter = state.appListResponseModel.data!
-                          .where((element) => element.applicationStatus!
-                              .toUpperCase()
-                              .contains(filterSelect.toUpperCase()))
-                          .toList();
-                    }
-
-                    data.addAll(state.appListResponseModel.data!);
+                    dataFilter = state.appListResponseModel.data!
+                        .where((element) => element.applicationStatus!
+                            .toUpperCase()
+                            .contains(widget.status.toUpperCase()))
+                        .toList();
+                    data.addAll(state.appListResponseModel.data!
+                        .where((element) => element.applicationStatus!
+                            .toUpperCase()
+                            .contains(widget.status.toUpperCase()))
+                        .toList());
                   });
                 }
                 if (state is AppListError) {}

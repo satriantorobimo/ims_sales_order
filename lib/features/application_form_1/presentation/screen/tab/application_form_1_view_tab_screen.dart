@@ -448,8 +448,7 @@ class _ApplicationForm1ViewTabScreenState
                                   null) {
                                 gender = state.clientDetailResponseModel
                                     .data![0].clientGenderType!
-                                    .toLowerCase()
-                                    .capitalizeOnlyFirstLater();
+                                    .toUpperCase();
                               }
                               if (state.clientDetailResponseModel.data![0]
                                       .clientMaritalStatusType !=
@@ -624,7 +623,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlIdNo,
                                                 readOnly: true,
@@ -695,7 +694,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlFullName,
                                                 readOnly: true,
@@ -761,7 +760,7 @@ class _ApplicationForm1ViewTabScreenState
                                             children: [
                                               Container(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
@@ -840,7 +839,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 readOnly: true,
                                                 controller: ctrlPob,
@@ -913,7 +912,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlDate,
                                                 keyboardType:
@@ -1086,7 +1085,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlMotherName,
                                                 readOnly: true,
@@ -1160,7 +1159,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlEmail,
                                                 readOnly: true,
@@ -1242,7 +1241,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 90,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlPhoneCode,
                                                       readOnly: true,
@@ -1297,7 +1296,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 180,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       readOnly: true,
                                                       controller:
@@ -1385,7 +1384,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlSpouseName,
                                                 readOnly: true,
@@ -1436,7 +1435,7 @@ class _ApplicationForm1ViewTabScreenState
                                                 CrossAxisAlignment.start,
                                             children: const [
                                               Text(
-                                                '11. Spouse ID',
+                                                '11. Spouse ID No',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18,
@@ -1466,7 +1465,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlSpouseId,
                                                 readOnly: true,
@@ -1475,7 +1474,7 @@ class _ApplicationForm1ViewTabScreenState
                                                 style: const TextStyle(
                                                     color: Color(0xFF6E6E6E)),
                                                 decoration: InputDecoration(
-                                                    hintText: 'Spouse ID',
+                                                    hintText: 'Spouse ID No',
                                                     isDense: true,
                                                     contentPadding:
                                                         const EdgeInsets
@@ -1532,7 +1531,7 @@ class _ApplicationForm1ViewTabScreenState
                                             children: [
                                               Container(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
@@ -1604,7 +1603,7 @@ class _ApplicationForm1ViewTabScreenState
                                             children: [
                                               Container(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
@@ -1676,7 +1675,7 @@ class _ApplicationForm1ViewTabScreenState
                                             children: [
                                               Container(
                                                 width: 280,
-                                                height: 50,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
@@ -1755,7 +1754,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlSubDistrict,
                                                 readOnly: true,
@@ -1836,7 +1835,7 @@ class _ApplicationForm1ViewTabScreenState
                                                     color: Color(0xFFEAEAEA))),
                                             child: SizedBox(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               child: TextFormField(
                                                 controller: ctrlSubVillage,
                                                 readOnly: true,
@@ -1992,7 +1991,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 130,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlRt,
                                                       readOnly: true,
@@ -2047,7 +2046,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 130,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlRw,
                                                       readOnly: true,

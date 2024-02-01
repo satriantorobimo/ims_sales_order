@@ -70,7 +70,7 @@ class CancelWidget {
                         Navigator.pop(context);
                       },
                       child: Container(
-                        width: 200,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         height: 45,
                         decoration: BoxDecoration(
                           color: secondaryColor,
@@ -145,7 +145,8 @@ class CancelWidget {
                                       .add(CancelClientAttempt(applicationNo));
                                 },
                                 child: Container(
-                                  width: 200,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   height: 45,
                                   decoration: BoxDecoration(
                                     color: thirdColor,

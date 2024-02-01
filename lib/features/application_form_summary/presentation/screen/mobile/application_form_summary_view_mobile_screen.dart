@@ -16,20 +16,20 @@ import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:signature/signature.dart';
 
-class ApplicationFormSummaryMobileScreen extends StatefulWidget {
-  const ApplicationFormSummaryMobileScreen(
+class ApplicationFormSummaryViewMobileScreen extends StatefulWidget {
+  const ApplicationFormSummaryViewMobileScreen(
       {super.key, required this.applicationNo});
   final String applicationNo;
 
   @override
-  State<ApplicationFormSummaryMobileScreen> createState() =>
-      _ApplicationFormSummaryMobileScreenState();
+  State<ApplicationFormSummaryViewMobileScreen> createState() =>
+      _ApplicationFormSummaryViewMobileScreenState();
 }
 
-class _ApplicationFormSummaryMobileScreenState
-    extends State<ApplicationFormSummaryMobileScreen> {
-  bool check1 = false;
-  bool check2 = false;
+class _ApplicationFormSummaryViewMobileScreenState
+    extends State<ApplicationFormSummaryViewMobileScreen> {
+  bool check1 = true;
+  bool check2 = true;
   bool isDisableTtd = false;
   bool isDisableTtdSpouse = false;
   bool isMarried = true;
@@ -456,9 +456,9 @@ class _ApplicationFormSummaryMobileScreenState
                                   activeColor: primaryColor,
                                   value: check1,
                                   onChanged: (newValue) {
-                                    setState(() {
-                                      check1 = newValue!;
-                                    });
+                                    // setState(() {
+                                    //   check1 = newValue!;
+                                    // });
                                   },
                                 ),
                               ),
@@ -489,9 +489,9 @@ class _ApplicationFormSummaryMobileScreenState
                                   activeColor: primaryColor,
                                   value: check2,
                                   onChanged: (newValue) {
-                                    setState(() {
-                                      check2 = newValue!;
-                                    });
+                                    // setState(() {
+                                    //   check2 = newValue!;
+                                    // });
                                   },
                                 ),
                               ),
@@ -539,47 +539,6 @@ class _ApplicationFormSummaryMobileScreenState
                                       ),
                                     ),
                                   ),
-                                  Positioned(
-                                    right: 8,
-                                    bottom: 8,
-                                    child: Row(
-                                      children: [
-                                        isDisableTtd
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    isDisableTtd = false;
-                                                  });
-                                                },
-                                                child: const Icon(
-                                                  Icons.check_rounded,
-                                                  color: primaryColor,
-                                                ),
-                                              )
-                                            : Container(),
-                                        const SizedBox(width: 16),
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (isDisableTtd) {
-                                              _controller.clear();
-                                            } else {
-                                              setState(() {
-                                                isDisableTtd = true;
-                                              });
-                                            }
-                                          },
-                                          child: Icon(
-                                            !isDisableTtd
-                                                ? Icons.edit_rounded
-                                                : Icons.delete_outline_rounded,
-                                            color: !isDisableTtd
-                                                ? Colors.black
-                                                : Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
                             ],
@@ -614,47 +573,6 @@ class _ApplicationFormSummaryMobileScreenState
                                       ),
                                     ),
                                   ),
-                                  Positioned(
-                                    right: 8,
-                                    bottom: 8,
-                                    child: Row(
-                                      children: [
-                                        isDisableTtdSpouse
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    isDisableTtdSpouse = false;
-                                                  });
-                                                },
-                                                child: const Icon(
-                                                  Icons.check_rounded,
-                                                  color: primaryColor,
-                                                ),
-                                              )
-                                            : Container(),
-                                        const SizedBox(width: 16),
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (isDisableTtdSpouse) {
-                                              _controllerSpouse.clear();
-                                            } else {
-                                              setState(() {
-                                                isDisableTtdSpouse = true;
-                                              });
-                                            }
-                                          },
-                                          child: Icon(
-                                            !isDisableTtdSpouse
-                                                ? Icons.edit_rounded
-                                                : Icons.delete_outline_rounded,
-                                            color: !isDisableTtdSpouse
-                                                ? Colors.black
-                                                : Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
                             ],
@@ -688,137 +606,29 @@ class _ApplicationFormSummaryMobileScreenState
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                BlocListener(
-                                    bloc: submitSummaryBloc,
-                                    listener:
-                                        (_, SubmitSummaryState state) async {
-                                      if (state is SubmitSummaryLoading) {}
-                                      if (state is SubmitSummaryLoaded) {
-                                        _successDialog();
-                                      }
-                                      if (state is SubmitSummaryError) {
-                                        GeneralUtil().showSnackBar(
-                                            context, state.error!);
-                                      }
-                                      if (state is SubmitSummaryException) {}
-                                    },
-                                    child: BlocBuilder(
-                                        bloc: submitSummaryBloc,
-                                        builder: (_, SubmitSummaryState state) {
-                                          if (state is SubmitSummaryLoading) {
-                                            return SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.45,
-                                              height: 45,
-                                              child: const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                            );
-                                          }
-                                          if (state is SubmitSummaryLoaded) {
-                                            return InkWell(
-                                              onTap: check1 == true &&
-                                                      check2 == true &&
-                                                      _controller.isNotEmpty &&
-                                                      _controllerSpouse
-                                                          .isNotEmpty
-                                                  ? () {
-                                                      submitSummaryBloc.add(
-                                                          SubmitSummaryAttempt(
-                                                              widget
-                                                                  .applicationNo));
-                                                    }
-                                                  : null,
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.45,
-                                                height: 45,
-                                                decoration: BoxDecoration(
-                                                  color: check1 == true &&
-                                                          check2 == true &&
-                                                          _controller
-                                                              .isNotEmpty &&
-                                                          _controllerSpouse
-                                                              .isNotEmpty
-                                                      ? thirdColor
-                                                      : const Color(0xFFE1E1E1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Center(
-                                                    child: Text('SUBMIT',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color: check1 ==
-                                                                        true &&
-                                                                    check2 ==
-                                                                        true &&
-                                                                    _controller
-                                                                        .isNotEmpty &&
-                                                                    _controllerSpouse
-                                                                        .isNotEmpty
-                                                                ? Colors.black
-                                                                : Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                              ),
-                                            );
-                                          }
-                                          return InkWell(
-                                            onTap: check1 == true &&
-                                                    check2 == true &&
-                                                    _controller.isNotEmpty &&
-                                                    _controllerSpouse.isNotEmpty
-                                                ? () {
-                                                    submitSummaryBloc.add(
-                                                        SubmitSummaryAttempt(
-                                                            widget
-                                                                .applicationNo));
-                                                  }
-                                                : null,
-                                            child: Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.45,
-                                              height: 45,
-                                              decoration: BoxDecoration(
-                                                color: check1 == true &&
-                                                        check2 == true &&
-                                                        _controller
-                                                            .isNotEmpty &&
-                                                        _controllerSpouse
-                                                            .isNotEmpty
-                                                    ? thirdColor
-                                                    : const Color(0xFFE1E1E1),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Center(
-                                                  child: Text('SUBMIT',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: check1 ==
-                                                                      true &&
-                                                                  check2 ==
-                                                                      true &&
-                                                                  _controller
-                                                                      .isNotEmpty &&
-                                                                  _controllerSpouse
-                                                                      .isNotEmpty
-                                                              ? Colors.black
-                                                              : Colors.white,
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                            ),
-                                          );
-                                        }))
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        StringRouterUtil.tabScreenMobileRoute,
+                                        (route) => false);
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                        child: Text('CLOSE',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600))),
+                                  ),
+                                )
                               ],
                             ),
                           ),

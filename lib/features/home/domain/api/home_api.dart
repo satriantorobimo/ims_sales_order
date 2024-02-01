@@ -13,13 +13,13 @@ class HomeApi {
       DataPeriodeResponseModel();
   UrlUtil urlUtil = UrlUtil();
 
-  Future<AppStatusResponseModel> attemptGetAppStatus() async {
+  Future<AppStatusResponseModel> attemptGetAppStatus(String uid) async {
     List a = [];
     final String? token = await SharedPrefUtil.getSharedString('token');
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
     final Map mapData = {};
-    mapData['default'] = "";
+    mapData['p_marketing_code'] = uid;
     a.add(mapData);
 
     final json = jsonEncode(a);
@@ -45,13 +45,13 @@ class HomeApi {
     }
   }
 
-  Future<AppListResponseModel> attemptGetAppList() async {
+  Future<AppListResponseModel> attemptGetAppList(String uid) async {
     List a = [];
     final String? token = await SharedPrefUtil.getSharedString('token');
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
     final Map mapData = {};
-    mapData['default'] = "";
+    mapData['p_marketing_code'] = uid;
     a.add(mapData);
 
     final json = jsonEncode(a);
@@ -77,13 +77,13 @@ class HomeApi {
     }
   }
 
-  Future<DataPeriodeResponseModel> attemptPeriodeList() async {
+  Future<DataPeriodeResponseModel> attemptPeriodeList(String uid) async {
     List a = [];
     final String? token = await SharedPrefUtil.getSharedString('token');
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
     final Map mapData = {};
-    mapData['default'] = "";
+    mapData['p_marketing_code'] = uid;
     a.add(mapData);
 
     final json = jsonEncode(a);

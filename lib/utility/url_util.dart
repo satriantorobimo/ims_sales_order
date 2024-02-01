@@ -49,14 +49,16 @@ class UrlUtil {
     return baseUrl + getUrlLogin2;
   }
 
-  static String urlAppStatus() => 'api/mobso_api/api/Home/GetListAppStatus';
+  static String urlAppStatus() =>
+      'api/mobso_api/api/Home/GetListAppStatusByUser';
 
   String getUrlAppStatus() {
     final String getUrlLoginAppStatus2 = urlAppStatus();
     return baseUrl + getUrlLoginAppStatus2;
   }
 
-  static String urlAppList() => 'api/mobso_api/api/Application/GetListApp';
+  static String urlAppList() =>
+      'api/mobso_api/api/Application/GetListAppByUser';
 
   String getUrlAppList() {
     final String getUrlLoginAppList2 = urlAppList();
@@ -64,7 +66,7 @@ class UrlUtil {
   }
 
   static String urlDataPeriode() =>
-      'api/mobso_api/api/Home/GetCountApprovedByPeriod';
+      'api/mobso_api/api/Home/GetCountApprovedByPeriodByUser';
 
   String getUrlDataPeriode() {
     final String getUrlDataPeriode2 = urlDataPeriode();

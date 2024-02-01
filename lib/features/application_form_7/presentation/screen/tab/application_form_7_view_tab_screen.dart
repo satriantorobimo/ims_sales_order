@@ -495,7 +495,7 @@ class _ApplicationForm7ViewTabScreenState
                                               const SizedBox(height: 8),
                                               Container(
                                                 width: 410,
-                                                height: 50,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(12),
@@ -578,7 +578,7 @@ class _ApplicationForm7ViewTabScreenState
                                                               }
                                                             },
                                                   child: Container(
-                                                    height: 50,
+                                                    height: 55,
                                                     padding:
                                                         const EdgeInsets.all(
                                                             8.0),
@@ -623,8 +623,8 @@ class _ApplicationForm7ViewTabScreenState
                                                     ),
                                                     const SizedBox(height: 8),
                                                     Container(
-                                                      width: 130,
-                                                      height: 50,
+                                                      width: 150,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -681,8 +681,8 @@ class _ApplicationForm7ViewTabScreenState
                                                     ),
                                                     const SizedBox(height: 8),
                                                     Container(
-                                                      width: 130,
-                                                      height: 50,
+                                                      width: 150,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -739,8 +739,8 @@ class _ApplicationForm7ViewTabScreenState
                                               ),
                                               const SizedBox(height: 8),
                                               Container(
-                                                width: 130,
-                                                height: 50,
+                                                width: 150,
+                                                height: 55,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(12),

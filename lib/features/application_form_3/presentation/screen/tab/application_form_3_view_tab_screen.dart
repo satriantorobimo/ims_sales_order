@@ -451,7 +451,7 @@ class _ApplicationForm3ViewTabScreenState
                                                                 .size
                                                                 .width *
                                                             0.38,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -534,7 +534,7 @@ class _ApplicationForm3ViewTabScreenState
                                                                 .size
                                                                 .width *
                                                             0.38,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(

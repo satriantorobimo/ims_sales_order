@@ -498,7 +498,7 @@ class _ApplicationForm2ViewTabScreenState
                                           children: [
                                             Container(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
@@ -572,7 +572,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlBankNo,
                                               readOnly: true,
@@ -643,7 +643,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlBankName,
                                               readOnly: true,
@@ -720,7 +720,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlIdNo,
                                               readOnly: true,
@@ -791,7 +791,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlFullName,
                                               readOnly: true,
@@ -855,7 +855,7 @@ class _ApplicationForm2ViewTabScreenState
                                           children: [
                                             Container(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
@@ -887,13 +887,6 @@ class _ApplicationForm2ViewTabScreenState
                                                 ),
                                               ),
                                             ),
-                                            const Positioned(
-                                              right: 16,
-                                              child: Icon(
-                                                Icons.search_rounded,
-                                                color: Color(0xFF3D3D3D),
-                                              ),
-                                            )
                                           ],
                                         ),
                                       ],
@@ -1030,7 +1023,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlCompanyName,
                                               readOnly: true,
@@ -1094,7 +1087,7 @@ class _ApplicationForm2ViewTabScreenState
                                           children: [
                                             Container(
                                               width: 280,
-                                              height: 50,
+                                              height: 55,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
@@ -1175,7 +1168,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlDepartment,
                                               readOnly: true,
@@ -1246,7 +1239,7 @@ class _ApplicationForm2ViewTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlWorkPosition,
                                               readOnly: true,
@@ -1295,7 +1288,7 @@ class _ApplicationForm2ViewTabScreenState
                                               CrossAxisAlignment.start,
                                           children: const [
                                             Text(
-                                              '12. Start Date',
+                                              '12. Work Start Date',
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 18,
@@ -1322,23 +1315,19 @@ class _ApplicationForm2ViewTabScreenState
                                                   width: 1.0,
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
-                                            width: 190,
-                                            height: 50,
+                                            width: 200,
+                                            height: 55,
                                             child: TextFormField(
                                               readOnly: true,
+                                              textAlign: TextAlign.left,
                                               controller: ctrlStart,
-                                              keyboardType: TextInputType.text,
+                                              textAlignVertical:
+                                                  TextAlignVertical.center,
                                               style: const TextStyle(
                                                   color: Color(0xFF6E6E6E)),
                                               decoration: InputDecoration(
                                                   hintText: 'Start Date',
                                                   isDense: true,
-                                                  contentPadding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          16.0,
-                                                          20.0,
-                                                          20.0,
-                                                          16.0),
                                                   hintStyle: TextStyle(
                                                       color: Colors.grey
                                                           .withOpacity(0.5)),
@@ -1366,7 +1355,7 @@ class _ApplicationForm2ViewTabScreenState
                                               CrossAxisAlignment.start,
                                           children: const [
                                             Text(
-                                              '13. End Date',
+                                              '13. Work End Date',
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 18,
@@ -1396,31 +1385,25 @@ class _ApplicationForm2ViewTabScreenState
                                                       color:
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
-                                                width: 190,
-                                                height: 50,
+                                                width: 200,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlEnd,
                                                   readOnly: true,
                                                   keyboardType:
                                                       TextInputType.text,
+                                                  textAlign: TextAlign.left,
+                                                  textAlignVertical:
+                                                      TextAlignVertical.center,
                                                   style: const TextStyle(
                                                       color: Color(0xFF6E6E6E)),
                                                   decoration: InputDecoration(
                                                       hintText: 'End Date',
                                                       isDense: true,
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                                  .fromLTRB(
-                                                              16.0,
-                                                              20.0,
-                                                              20.0,
-                                                              16.0),
                                                       hintStyle: TextStyle(
-                                                          color:
-                                                              Colors
-                                                                  .grey
-                                                                  .withOpacity(
-                                                                      0.5)),
+                                                          color: Colors.grey
+                                                              .withOpacity(
+                                                                  0.5)),
                                                       filled: true,
                                                       fillColor: const Color(
                                                           0xFFFAF9F9),

@@ -9,6 +9,7 @@ import 'package:sales_order/features/application_list/presentation/widget/detail
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:sales_order/features/home/domain/repo/home_repo.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/database_helper.dart';
 import 'package:sales_order/utility/drop_down_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
@@ -42,8 +43,13 @@ class _ApplicationListFilterTabScreenState
   @override
   void initState() {
     getMenu();
-    appListBloc.add(const AppListAttempt());
+    getData();
     super.initState();
+  }
+
+  getData() async {
+    final data = await DatabaseHelper.getUserData();
+    appListBloc.add(AppListAttempt(data[0]['uid']));
   }
 
   void filterSearchResults(String query) {
@@ -810,7 +816,10 @@ class _ApplicationListFilterTabScreenState
                                 child: Center(
                                   child: RefreshIndicator(
                                     onRefresh: () async {
-                                      appListBloc.add(const AppListAttempt());
+                                      final data =
+                                          await DatabaseHelper.getUserData();
+                                      appListBloc
+                                          .add(AppListAttempt(data[0]['uid']));
                                     },
                                     child: GridView.count(
                                       crossAxisCount: 4,

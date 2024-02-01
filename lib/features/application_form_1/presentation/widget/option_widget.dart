@@ -68,13 +68,20 @@ class OptionWidget {
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            StringRouterUtil.tabScreenTabRoute,
-                            (route) => false);
+                        if (GeneralUtil().deviceType() == 'tablet') {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              StringRouterUtil.tabScreenTabRoute,
+                              (route) => false);
+                        } else {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              StringRouterUtil.tabScreenMobileRoute,
+                              (route) => false);
+                        }
                       },
                       child: Container(
-                        width: 200,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         height: 45,
                         decoration: BoxDecoration(
                           color: secondaryColor,
@@ -112,10 +119,11 @@ class OptionWidget {
                             bloc: cancelClientBloc,
                             builder: (_, CancelClientState state) {
                               if (state is CancelClientLoading) {
-                                return const SizedBox(
-                                  width: 200,
+                                return SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   height: 45,
-                                  child: Center(
+                                  child: const Center(
                                     child: CircularProgressIndicator(),
                                   ),
                                 );
@@ -131,7 +139,8 @@ class OptionWidget {
                                                   applicationNo));
                                         },
                                   child: Container(
-                                    width: 200,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: !isUsed
@@ -158,7 +167,8 @@ class OptionWidget {
                                             CancelClientAttempt(applicationNo));
                                       },
                                 child: Container(
-                                  width: 200,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   height: 45,
                                   decoration: BoxDecoration(
                                     color: !isUsed

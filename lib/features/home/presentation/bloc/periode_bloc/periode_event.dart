@@ -5,8 +5,8 @@ abstract class PeriodeEvent extends Equatable {
 }
 
 class PeriodeAttempt extends PeriodeEvent {
-  const PeriodeAttempt();
-
+  const PeriodeAttempt(this.uid);
+  final String uid;
   @override
   List<Object> get props => [];
 }

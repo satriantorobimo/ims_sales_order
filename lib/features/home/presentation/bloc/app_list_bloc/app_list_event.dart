@@ -5,8 +5,8 @@ abstract class AppListEvent extends Equatable {
 }
 
 class AppListAttempt extends AppListEvent {
-  const AppListAttempt();
-
+  const AppListAttempt(this.uid);
+  final String uid;
   @override
   List<Object> get props => [];
 }

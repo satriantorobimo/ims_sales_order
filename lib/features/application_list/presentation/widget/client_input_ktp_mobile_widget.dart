@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sales_order/utility/color_util.dart';
+import 'package:flutter/services.dart';
 
-class ClientInputMobileWidget extends StatelessWidget {
+class ClientInputKtpMobileWidget extends StatelessWidget {
   final String title;
   final String content;
   final TextEditingController ctrl;
 
-  const ClientInputMobileWidget(
+  const ClientInputKtpMobileWidget(
       {super.key,
       required this.title,
       required this.content,
@@ -15,6 +15,7 @@ class ClientInputMobileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      width: double.infinity,
       height: 75,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +36,11 @@ class ClientInputMobileWidget extends StatelessWidget {
               width: double.infinity,
               height: 45,
               child: TextFormField(
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(16),
+                ],
                 controller: ctrl,
                 decoration: InputDecoration(
                     isDense: true,

@@ -53,6 +53,7 @@ class Data {
   double? installmentAmount;
   String? insurancePackageCode;
   String? insurancePackageDesc;
+  String? isEditable;
 
   Data(
       {this.assetValue,
@@ -64,7 +65,8 @@ class Data {
       this.interestFlatRate,
       this.installmentAmount,
       this.insurancePackageCode,
-      this.insurancePackageDesc});
+      this.insurancePackageDesc,
+      this.isEditable});
 
   Data.fromJson(Map<String, dynamic> json) {
     assetValue = json['asset_value'];
@@ -77,6 +79,7 @@ class Data {
     installmentAmount = json['installment_amount'];
     insurancePackageCode = json['insurance_package_code'];
     insurancePackageDesc = json['insurance_package_desc'];
+    isEditable = json['is_editable'];
   }
 
   Map<String, dynamic> toJson() {
@@ -91,6 +94,7 @@ class Data {
     data['installment_amount'] = installmentAmount;
     data['insurance_package_code'] = insurancePackageCode;
     data['insurance_package_desc'] = insurancePackageDesc;
+    data['is_editable'] = isEditable;
     return data;
   }
 }

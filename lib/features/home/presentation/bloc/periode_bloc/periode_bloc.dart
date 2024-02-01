@@ -10,7 +10,8 @@ class PeriodeBloc extends Bloc<PeriodeEvent, PeriodeState> {
       if (event is PeriodeAttempt) {
         try {
           emit(PeriodeLoading());
-          final dataPeriodeResponseModel = await homeRepo.attemptPeriodeList();
+          final dataPeriodeResponseModel =
+              await homeRepo.attemptPeriodeList(event.uid);
           if (dataPeriodeResponseModel!.result == 1) {
             emit(PeriodeLoaded(
                 dataPeriodeResponseModel: dataPeriodeResponseModel));

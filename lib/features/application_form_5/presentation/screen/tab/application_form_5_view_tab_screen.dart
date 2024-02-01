@@ -510,7 +510,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -579,7 +579,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -638,7 +638,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -712,7 +712,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -776,7 +776,7 @@ class _ApplicationForm5ViewTabScreenState
                                                   const SizedBox(height: 8),
                                                   Container(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -866,7 +866,7 @@ class _ApplicationForm5ViewTabScreenState
                                                     children: [
                                                       Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -983,7 +983,7 @@ class _ApplicationForm5ViewTabScreenState
                                                       const SizedBox(height: 8),
                                                       Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:

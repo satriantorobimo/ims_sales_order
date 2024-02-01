@@ -9,6 +9,7 @@ import 'package:sales_order/features/application_list/presentation/widget/detail
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
 import 'package:sales_order/features/home/domain/repo/home_repo.dart';
 import 'package:sales_order/utility/color_util.dart';
+import 'package:sales_order/utility/database_helper.dart';
 import 'package:sales_order/utility/drop_down_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
@@ -38,12 +39,18 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
   late List<CustDropdownMenuItem> clientType = [];
   late List<CustDropdownMenuItem> filter = [];
   late List<String> filterValue = ['ALL', 'HOLD', 'ON PROCESS', 'APPROVE'];
+  late String filterSelect = '';
   TextEditingController ctrlDate = TextEditingController();
   @override
   void initState() {
     getMenu();
-    appListBloc.add(const AppListAttempt());
+    getData();
     super.initState();
+  }
+
+  getData() async {
+    final data = await DatabaseHelper.getUserData();
+    appListBloc.add(AppListAttempt(data[0]['uid']));
   }
 
   void filterSearchResults(String query) {
@@ -627,7 +634,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 150,
+                          width: 180,
                           height: 45,
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
@@ -650,10 +657,10 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                             borderRadius: 5,
                             defaultSelectedIndex: 0,
                             onChanged: (val) {
-                              log(val.toString());
-                              log(filterValue[val]);
                               setState(() {
+                                filterSelect = filterValue[val];
                                 if (filterValue[val] == 'ALL') {
+                                  dataFilterSearch = [];
                                   dataFilter = data;
                                 } else {
                                   dataFilterSearch = data
@@ -687,19 +694,37 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                       if (state is AppListLoading) {}
                       if (state is AppListLoaded) {
                         setState(() {
-                          pagination =
-                              (state.appListResponseModel.data!.length / 12)
-                                  .ceil();
-                          length = state.appListResponseModel.data!.length;
-                          if (pagination == 1) {
-                            dataFilter = state.appListResponseModel.data!;
+                          if (filterSelect == 'ALL' || filterSelect == '') {
+                            pagination =
+                                (state.appListResponseModel.data!.length / 12)
+                                    .ceil();
+                            length = state.appListResponseModel.data!.length;
+                            if (pagination == 1) {
+                              dataFilter = state.appListResponseModel.data!;
+                            } else {
+                              dataFilter = state.appListResponseModel.data!
+                                  .sublist(
+                                      (selectedPageNumber * _perPage),
+                                      ((selectedPageNumber * _perPage) +
+                                          _perPage));
+                            }
                           } else {
-                            dataFilter = state.appListResponseModel.data!
-                                .sublist(
-                                    (selectedPageNumber * _perPage),
-                                    ((selectedPageNumber * _perPage) +
-                                        _perPage));
+                            List<Data> dataFilterTemp = [];
+                            dataFilterTemp = state.appListResponseModel.data!
+                                .where((element) => element.applicationStatus!
+                                    .toUpperCase()
+                                    .contains(filterSelect.toUpperCase()))
+                                .toList();
+                            pagination = (dataFilterTemp.length / 12).ceil();
+                            if (pagination == 1) {
+                              dataFilter = dataFilterTemp;
+                            } else {
+                              dataFilter = dataFilterTemp.sublist(
+                                  (selectedPageNumber * _perPage),
+                                  ((selectedPageNumber * _perPage) + _perPage));
+                            }
                           }
+
                           data.addAll(state.appListResponseModel.data!);
                         });
                       }
@@ -871,7 +896,10 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                 child: Center(
                                   child: RefreshIndicator(
                                     onRefresh: () async {
-                                      appListBloc.add(const AppListAttempt());
+                                      final data =
+                                          await DatabaseHelper.getUserData();
+                                      appListBloc
+                                          .add(AppListAttempt(data[0]['uid']));
                                     },
                                     child: GridView.count(
                                       crossAxisCount: 4,

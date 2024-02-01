@@ -63,8 +63,7 @@ class _ApplicationForm4ViewTabScreenState
                 padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
-                    OptionWidget(isUsed: false).showBottomOption(context,
-                        '');
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
                   child: const Icon(
                     Icons.more_vert_rounded,
@@ -520,7 +519,7 @@ class _ApplicationForm4ViewTabScreenState
                                                   children: [
                                                     Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -600,7 +599,7 @@ class _ApplicationForm4ViewTabScreenState
                                                   children: [
                                                     Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -680,7 +679,7 @@ class _ApplicationForm4ViewTabScreenState
                                                   children: [
                                                     Container(
                                                       width: 280,
-                                                      height: 50,
+                                                      height: 55,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -768,7 +767,7 @@ class _ApplicationForm4ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlAmount,
                                                       keyboardType:
@@ -966,7 +965,7 @@ class _ApplicationForm4ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlColor,
                                                       readOnly: true,
@@ -1052,7 +1051,7 @@ class _ApplicationForm4ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 190,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlYear,
                                                       readOnly: true,
@@ -1113,8 +1112,8 @@ class _ApplicationForm4ViewTabScreenState
                                                 Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
-                                                  children: const [
-                                                    Text(
+                                                  children: [
+                                                    const Text(
                                                       '7. Chasis No',
                                                       style: TextStyle(
                                                           color: Colors.black,
@@ -1122,14 +1121,18 @@ class _ApplicationForm4ViewTabScreenState
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Text(
-                                                      ' *',
-                                                      style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
+                                                    condition == 'New'
+                                                        ? Container()
+                                                        : const Text(
+                                                            ' *',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8),
@@ -1147,7 +1150,7 @@ class _ApplicationForm4ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlChasisNo,
                                                       readOnly: true,
@@ -1199,8 +1202,8 @@ class _ApplicationForm4ViewTabScreenState
                                                 Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
-                                                  children: const [
-                                                    Text(
+                                                  children: [
+                                                    const Text(
                                                       '8. Engine No',
                                                       style: TextStyle(
                                                           color: Colors.black,
@@ -1208,14 +1211,18 @@ class _ApplicationForm4ViewTabScreenState
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Text(
-                                                      ' *',
-                                                      style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
+                                                    condition == 'New'
+                                                        ? Container()
+                                                        : const Text(
+                                                            ' *',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8),
@@ -1233,7 +1240,7 @@ class _ApplicationForm4ViewTabScreenState
                                                               0xFFEAEAEA))),
                                                   child: SizedBox(
                                                     width: 280,
-                                                    height: 50,
+                                                    height: 55,
                                                     child: TextFormField(
                                                       controller: ctrlEngineNo,
                                                       readOnly: true,
@@ -1285,8 +1292,8 @@ class _ApplicationForm4ViewTabScreenState
                                                 Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
-                                                  children: const [
-                                                    Text(
+                                                  children: [
+                                                    const Text(
                                                       '9. Plat no',
                                                       style: TextStyle(
                                                           color: Colors.black,
@@ -1294,14 +1301,18 @@ class _ApplicationForm4ViewTabScreenState
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    Text(
-                                                      ' *',
-                                                      style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
+                                                    condition == 'New'
+                                                        ? Container()
+                                                        : const Text(
+                                                            ' *',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                                   ],
                                                 ),
                                                 const SizedBox(height: 8),
@@ -1327,7 +1338,7 @@ class _ApplicationForm4ViewTabScreenState
                                                                     0xFFEAEAEA))),
                                                         child: SizedBox(
                                                           width: 62,
-                                                          height: 50,
+                                                          height: 55,
                                                           child: TextFormField(
                                                             controller:
                                                                 ctrlPlatNo1,
@@ -1387,7 +1398,7 @@ class _ApplicationForm4ViewTabScreenState
                                                                     0xFFEAEAEA))),
                                                         child: SizedBox(
                                                           width: 120,
-                                                          height: 50,
+                                                          height: 55,
                                                           child: TextFormField(
                                                             controller:
                                                                 ctrlPlatNo2,
@@ -1447,7 +1458,7 @@ class _ApplicationForm4ViewTabScreenState
                                                                     0xFFEAEAEA))),
                                                         child: SizedBox(
                                                           width: 68,
-                                                          height: 50,
+                                                          height: 55,
                                                           child: TextFormField(
                                                             controller:
                                                                 ctrlPlatNo3,

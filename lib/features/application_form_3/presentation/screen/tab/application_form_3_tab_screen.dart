@@ -772,7 +772,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                           .size
                                                                           .width *
                                                                       0.38,
-                                                                  height: 50,
+                                                                  height: 55,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -844,7 +844,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                       .size
                                                                       .width *
                                                                   0.38,
-                                                              height: 50,
+                                                              height: 55,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 borderRadius:
@@ -985,7 +985,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                           .size
                                                                           .width *
                                                                       0.38,
-                                                                  height: 50,
+                                                                  height: 55,
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     borderRadius:
@@ -1046,7 +1046,7 @@ class _ApplicationForm3TabScreenState extends State<ApplicationForm3TabScreen> {
                                                                       .size
                                                                       .width *
                                                                   0.38,
-                                                              height: 50,
+                                                              height: 55,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 borderRadius:

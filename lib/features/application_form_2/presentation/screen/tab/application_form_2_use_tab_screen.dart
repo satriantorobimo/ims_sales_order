@@ -936,7 +936,7 @@ class _ApplicationForm2UseTabScreenState
                                                           },
                                                           child: Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -997,7 +997,7 @@ class _ApplicationForm2UseTabScreenState
                                                       }
                                                       return Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -1092,7 +1092,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlBankNo,
                                               keyboardType:
@@ -1165,7 +1165,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlBankName,
                                               keyboardType: TextInputType.text,
@@ -1238,7 +1238,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlIdNo,
                                               keyboardType:
@@ -1313,7 +1313,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlFullName,
                                               keyboardType: TextInputType.text,
@@ -1400,7 +1400,7 @@ class _ApplicationForm2UseTabScreenState
                                                           },
                                                           child: Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -1462,7 +1462,7 @@ class _ApplicationForm2UseTabScreenState
                                                       }
                                                       return Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -1659,7 +1659,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlCompanyName,
                                               keyboardType: TextInputType.text,
@@ -1745,7 +1745,7 @@ class _ApplicationForm2UseTabScreenState
                                                           },
                                                           child: Container(
                                                             width: 280,
-                                                            height: 50,
+                                                            height: 55,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
@@ -1807,7 +1807,7 @@ class _ApplicationForm2UseTabScreenState
                                                       }
                                                       return Container(
                                                         width: 280,
-                                                        height: 50,
+                                                        height: 55,
                                                         decoration:
                                                             BoxDecoration(
                                                           borderRadius:
@@ -1902,7 +1902,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlDepartment,
                                               keyboardType: TextInputType.text,
@@ -1969,7 +1969,7 @@ class _ApplicationForm2UseTabScreenState
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
                                             width: 280,
-                                            height: 50,
+                                            height: 55,
                                             child: TextFormField(
                                               controller: ctrlWorkPosition,
                                               keyboardType: TextInputType.text,
@@ -2041,8 +2041,8 @@ class _ApplicationForm2UseTabScreenState
                                                   width: 1.0,
                                                   color: Color(0xFFEAEAEA))),
                                           child: SizedBox(
-                                            width: 190,
-                                            height: 50,
+                                            width: 200,
+                                            height: 55,
                                             child: TextFormField(
                                               readOnly: true,
                                               textAlign: TextAlign.left,
@@ -2110,8 +2110,8 @@ class _ApplicationForm2UseTabScreenState
                                                       color:
                                                           Color(0xFFEAEAEA))),
                                               child: SizedBox(
-                                                width: 190,
-                                                height: 50,
+                                                width: 200,
+                                                height: 55,
                                                 child: TextFormField(
                                                   controller: ctrlEnd,
                                                   readOnly: true,
@@ -2297,7 +2297,7 @@ class _ApplicationForm2UseTabScreenState
                                         pFamilyIdNo: ctrlIdNo.text,
                                         pFamilyTypeCode: selectFamilyCode,
                                         pFamilyGenderCode:
-                                            gender == 'Male' ? 'M' : 'F',
+                                            gender == 'MALE' ? 'M' : 'F',
                                         pWorkCompanyName: ctrlCompanyName.text,
                                         pWorkTypeCode: selectWorkTypeCode,
                                         pWorkDepartmentName:
@@ -2407,7 +2407,7 @@ class _ApplicationForm2UseTabScreenState
                                       pFamilyIdNo: ctrlIdNo.text,
                                       pFamilyTypeCode: selectFamilyCode,
                                       pFamilyGenderCode:
-                                          gender == 'Male' ? 'M' : 'F',
+                                          gender == 'MALE' ? 'M' : 'F',
                                       pWorkCompanyName: ctrlCompanyName.text,
                                       pWorkTypeCode: selectWorkTypeCode,
                                       pWorkDepartmentName: ctrlDepartment.text,

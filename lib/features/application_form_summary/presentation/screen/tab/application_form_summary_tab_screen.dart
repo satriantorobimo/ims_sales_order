@@ -345,7 +345,7 @@ class _ApplicationFormSummaryTabScreenState
                                       const SizedBox(height: 8),
                                       Container(
                                         width: 300,
-                                        height: 50,
+                                        height: 55,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -393,7 +393,7 @@ class _ApplicationFormSummaryTabScreenState
                                       const SizedBox(height: 8),
                                       Container(
                                         width: 300,
-                                        height: 50,
+                                        height: 55,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -441,7 +441,7 @@ class _ApplicationFormSummaryTabScreenState
                                       const SizedBox(height: 8),
                                       Container(
                                         width: 300,
-                                        height: 50,
+                                        height: 55,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -477,7 +477,7 @@ class _ApplicationFormSummaryTabScreenState
                                 ],
                               ),
                               const SizedBox(
-                                height: 40,
+                                height: 35,
                               ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,7 +542,7 @@ class _ApplicationFormSummaryTabScreenState
                                 ],
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 25,
                               ),
                               Row(
                                 mainAxisAlignment:

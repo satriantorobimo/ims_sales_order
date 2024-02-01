@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_order/features/application_list/presentation/screen/mobile/application_list_mobile_screen.dart';
-import 'package:sales_order/features/history/presentation/screen/mobile/history_mobile_screen.dart';
 import 'package:sales_order/features/home/presentation/screen/mobile/home_mobile_screen.dart';
-import 'package:sales_order/features/profile/presentation/screen/mobile/profile_mobile_screen.dart';
-import 'package:sales_order/features/announcement/presentation/screen/mobile/search_mobile_screen.dart';
+import 'package:sales_order/features/announcement/presentation/screen/mobile/announcement_mobile_screen.dart';
 import 'package:sales_order/features/tab/provider/tab_provider.dart';
 import 'package:sales_order/utility/color_util.dart';
 
@@ -25,13 +23,7 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
       return const ApplicationListMobileScreen();
     }
     if (index == 2) {
-      return const SearchMobileScreen();
-    }
-    if (index == 3) {
-      return const HistoryMobileScreen();
-    }
-    if (index == 4) {
-      return const ProfileMobileScreen();
+      return const AnnouncementMobileScreen();
     }
 
     return const HomeMobileScreen();
@@ -110,37 +102,7 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
                 height: 24,
                 width: 24,
               ),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icon/history.svg',
-                color: const Color(0xFF484C52),
-                height: 24,
-                width: 24,
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icon/history.svg',
-                color: primaryColor,
-                height: 24,
-                width: 24,
-              ),
-              label: 'History',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icon/profile.svg',
-                color: const Color(0xFF484C52),
-                height: 24,
-                width: 24,
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icon/profile.svg',
-                color: primaryColor,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Profile',
+              label: 'Announcement',
             ),
           ],
         ),

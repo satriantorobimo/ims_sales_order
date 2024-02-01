@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sales_order/utility/color_util.dart';
 import 'package:sales_order/utility/database_helper.dart';
+import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 
@@ -32,6 +33,12 @@ class _HeaderTabWidgetState extends State<HeaderTabWidget> {
   }
 
   Future<void> _showBottomLogout() {
+    bool isTablet;
+    if (GeneralUtil().deviceType() == 'tablet') {
+      isTablet = true;
+    } else {
+      isTablet = false;
+    }
     return showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -81,56 +88,66 @@ class _HeaderTabWidgetState extends State<HeaderTabWidget> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: secondaryColor,
-                          borderRadius: BorderRadius.circular(10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: secondaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                              child: Text('TIDAK',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600))),
                         ),
-                        child: const Center(
-                            child: Text('TIDAK',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600))),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    InkWell(
-                      onTap: () async {
-                        SharedPrefUtil.deleteSharedPref('token');
-                        await DatabaseHelper.deleteUser();
-
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            StringRouterUtil.loginScreenTabRoute,
-                            (route) => false);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: thirdColor,
-                          borderRadius: BorderRadius.circular(10),
+                      const SizedBox(width: 16),
+                      InkWell(
+                        onTap: () async {
+                          SharedPrefUtil.deleteSharedPref('token');
+                          await DatabaseHelper.deleteUser();
+                          if (isTablet) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                StringRouterUtil.loginScreenTabRoute,
+                                (route) => false);
+                          } else {
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                StringRouterUtil.loginScreenMobileRoute,
+                                (route) => false);
+                          }
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: thirdColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                              child: Text('YA',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600))),
                         ),
-                        child: const Center(
-                            child: Text('YA',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600))),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 32),
               ],

@@ -10,7 +10,8 @@ class AppStatusBloc extends Bloc<AppStatusEvent, AppStatusState> {
       if (event is AppStatusAttempt) {
         try {
           emit(AppStatusLoading());
-          final appStatusResponseModel = await homeRepo.attemptGetAppStatus();
+          final appStatusResponseModel =
+              await homeRepo.attemptGetAppStatus(event.uid);
           if (appStatusResponseModel!.result == 1) {
             emit(AppStatusLoaded(
                 appStatusResponseModel: appStatusResponseModel));

@@ -5,8 +5,8 @@ abstract class AppStatusEvent extends Equatable {
 }
 
 class AppStatusAttempt extends AppStatusEvent {
-  const AppStatusAttempt();
-
+  const AppStatusAttempt(this.uid);
+  final String uid;
   @override
   List<Object> get props => [];
 }

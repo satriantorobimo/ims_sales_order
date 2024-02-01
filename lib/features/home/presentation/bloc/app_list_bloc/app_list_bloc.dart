@@ -10,7 +10,8 @@ class AppListBloc extends Bloc<AppListEvent, AppListState> {
       if (event is AppListAttempt) {
         try {
           emit(AppListLoading());
-          final appListResponseModel = await homeRepo.attemptGetAppList();
+          final appListResponseModel =
+              await homeRepo.attemptGetAppList(event.uid);
           if (appListResponseModel!.result == 1) {
             emit(AppListLoaded(appListResponseModel: appListResponseModel));
           } else if (appListResponseModel.result == 0) {
