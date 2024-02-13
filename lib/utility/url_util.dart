@@ -330,4 +330,18 @@ class UrlUtil {
     final String getUrlSubmitSummary2 = urlSubmitSummary();
     return baseUrl + getUrlSubmitSummary2;
   }
+
+  static String urlCalcSimulation() => 'api/mobso_api/api/Simulation/Calculate';
+
+  String getUrlCalcSimulation() {
+    final String getUrlCalcSimulation2 = urlCalcSimulation();
+    return baseUrl + getUrlCalcSimulation2;
+  }
+
+  static String urlSendPdf() => 'api/mobso_api/api/Simulation/SendPDF';
+
+  String getUrlSendPdf() {
+    final String getUrlSendPdf2 = urlSendPdf();
+    return baseUrl + getUrlSendPdf2;
+  }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AnnouncementTabScreen extends StatelessWidget {
-  const AnnouncementTabScreen({super.key});
+class SimulationMobileScreen extends StatelessWidget {
+  const SimulationMobileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
         child: Text(
-          'Announcement',
+          'Announcement Mobile Screen',
           style: TextStyle(color: Colors.black),
         ),
       ),

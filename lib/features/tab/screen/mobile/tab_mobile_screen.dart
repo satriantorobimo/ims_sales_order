@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_order/features/application_list/presentation/screen/mobile/application_list_mobile_screen.dart';
 import 'package:sales_order/features/home/presentation/screen/mobile/home_mobile_screen.dart';
-import 'package:sales_order/features/announcement/presentation/screen/mobile/announcement_mobile_screen.dart';
+import 'package:sales_order/features/simulation/presentation/screen/mobile/simulation_mobile_screen.dart';
 import 'package:sales_order/features/tab/provider/tab_provider.dart';
 import 'package:sales_order/utility/color_util.dart';
 
@@ -23,7 +23,7 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
       return const ApplicationListMobileScreen();
     }
     if (index == 2) {
-      return const AnnouncementMobileScreen();
+      return const SimulationMobileScreen();
     }
 
     return const HomeMobileScreen();
@@ -91,18 +91,18 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icon/search.svg',
+                'assets/icon/cal.svg',
                 color: const Color(0xFF484C52),
                 height: 24,
                 width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                'assets/icon/search.svg',
+                'assets/icon/cal.svg',
                 color: primaryColor,
                 height: 24,
                 width: 24,
               ),
-              label: 'Announcement',
+              label: 'Simulation',
             ),
           ],
         ),

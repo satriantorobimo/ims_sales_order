@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sales_order/features/application_list/presentation/screen/tab/application_list_tab_screen.dart';
-import 'package:sales_order/features/history/presentation/screen/tab/history_tab_screen.dart';
 import 'package:sales_order/features/home/presentation/screen/tab/home_tab_screen.dart';
-import 'package:sales_order/features/profile/presentation/screen/tab/profile_tab_screen.dart';
-import 'package:sales_order/features/announcement/presentation/screen/tab/announcement_tab_screen.dart';
+import 'package:sales_order/features/simulation/presentation/screen/tab/simulation_tab_screen.dart';
 import 'package:sales_order/features/tab/provider/tab_provider.dart';
 import 'package:sales_order/utility/color_util.dart';
 
@@ -25,7 +23,7 @@ class _TabTabScreenState extends State<TabTabScreen> {
       return const ApplicationListTabScreen();
     }
     if (index == 2) {
-      return const AnnouncementTabScreen();
+      return const SimulationTabScreen();
     }
 
     return const HomeTabScreen();
@@ -92,18 +90,18 @@ class _TabTabScreenState extends State<TabTabScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icon/search.svg',
+                'assets/icon/calc.svg',
                 color: const Color(0xFF484C52),
                 height: 24,
                 width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                'assets/icon/search.svg',
+                'assets/icon/calc.svg',
                 color: primaryColor,
                 height: 24,
                 width: 24,
               ),
-              label: 'Announcement',
+              label: 'Simulation',
             ),
           ],
         ),
