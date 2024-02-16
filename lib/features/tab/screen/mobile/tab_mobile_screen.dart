@@ -91,13 +91,13 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icon/cal.svg',
+                'assets/icon/calc.svg',
                 color: const Color(0xFF484C52),
                 height: 24,
                 width: 24,
               ),
               activeIcon: SvgPicture.asset(
-                'assets/icon/cal.svg',
+                'assets/icon/calc.svg',
                 color: primaryColor,
                 height: 24,
                 width: 24,
