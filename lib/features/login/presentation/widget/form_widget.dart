@@ -280,7 +280,7 @@ class _FormWidgetState extends State<FormWidget> {
             controller: _emailController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-                hintText: 'Email',
+                hintText: 'Username',
                 isDense: true,
                 contentPadding: const EdgeInsets.all(24),
                 hintStyle: TextStyle(color: Colors.grey.withOpacity(0.5)),

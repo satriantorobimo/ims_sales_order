@@ -927,7 +927,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                             Row(
                               children: const [
                                 Text(
-                                  'Flat Rate (%)',
+                                  'Rate (%)',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -961,7 +961,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                     LengthLimitingTextInputFormatter(16),
                                   ],
                                   decoration: InputDecoration(
-                                      hintText: 'Flat Rate (%) ',
+                                      hintText: 'Rate (%) ',
                                       isDense: true,
                                       hintStyle: TextStyle(
                                           fontSize: 14,
@@ -980,12 +980,23 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Insurance Package',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                            Row(
+                              children: const [
+                                Text(
+                                  'Insurance Package',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  ' *',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 8),
                             Stack(
@@ -1427,7 +1438,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                       if (state is SendPdfLoaded) {
                                         return InkWell(
                                           onTap: () async {
-if (ctrlFullName.text.isEmpty ||
+                                            if (ctrlFullName.text.isEmpty ||
                                                 ctrlFullName.text == '' ||
                                                 ctrlPhoneCode.text.isEmpty ||
                                                 ctrlPhoneCode.text == '' ||
@@ -1445,7 +1456,7 @@ if (ctrlFullName.text.isEmpty ||
                                                 firstPaymentType == '') {
                                               EmptyWidget()
                                                   .showBottomEmpty(context);
-                                            } else{
+                                            } else {
                                               final data = await DatabaseHelper
                                                   .getUserData();
                                               sendPdfBloc.add(SendPdfAttempt(SendPdfRequestModel(
@@ -1479,8 +1490,6 @@ if (ctrlFullName.text.isEmpty ||
                                                   pVehicleName:
                                                       ctrlVehicleName.text)));
                                             }
-
-                                           
                                           },
                                           child: Container(
                                             width: MediaQuery.of(context)
@@ -1505,7 +1514,7 @@ if (ctrlFullName.text.isEmpty ||
                                       }
                                       return InkWell(
                                         onTap: () async {
-                                         if (ctrlFullName.text.isEmpty ||
+                                          if (ctrlFullName.text.isEmpty ||
                                               ctrlFullName.text == '' ||
                                               ctrlPhoneCode.text.isEmpty ||
                                               ctrlPhoneCode.text == '' ||

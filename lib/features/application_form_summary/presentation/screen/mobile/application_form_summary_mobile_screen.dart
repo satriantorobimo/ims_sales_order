@@ -466,41 +466,8 @@ class _ApplicationFormSummaryMobileScreenState
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.83,
                                 child: const Text(
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                                  textAlign: TextAlign.justify,
-                                  style: TextStyle(
-                                      color: Color(0xFF222222),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: Checkbox(
-                                  activeColor: primaryColor,
-                                  value: check2,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      check2 = newValue!;
-                                    });
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.83,
-                                child: const Text(
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                                  textAlign: TextAlign.justify,
+                                  'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
+                                  textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Color(0xFF222222),
                                       fontSize: 18,

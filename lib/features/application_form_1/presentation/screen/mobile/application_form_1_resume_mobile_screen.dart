@@ -519,8 +519,8 @@ class _ApplicationForm1ResumeMobileScreenState
                                 children: [
                                   Text(
                                     tempList.isNotEmpty
-                                        ? '${tempList[index].postalCode!} - ${tempList[index].village!}'
-                                        : '${zipCodeResponseModel.data![index].postalCode!} - ${zipCodeResponseModel.data![index].village!}',
+                                        ? '${tempList[index].postalCode!} - ${tempList[index].subDistrict!} - ${tempList[index].village!}'
+                                        : '${zipCodeResponseModel.data![index].postalCode!} - ${zipCodeResponseModel.data![index].subDistrict!} - ${zipCodeResponseModel.data![index].village!}',
                                     style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 16,

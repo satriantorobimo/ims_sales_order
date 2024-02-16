@@ -30,20 +30,12 @@ class LoginMobileScreen extends StatelessWidget {
                 children: [
                   RichText(
                     text: const TextSpan(
-                        text: 'Login\n',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: 'to get started',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w300),
-                          )
-                        ]),
+                      text: 'Login\n',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   const FormWidget()
@@ -53,7 +45,7 @@ class LoginMobileScreen extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).size.height * 0.08),
             const Center(
               child: Text(
-                'copyright',
+                '© 2024, PT. Inovasi Mitra Sejati',
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 15,

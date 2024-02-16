@@ -25,25 +25,17 @@ class MainContentRelogin extends StatelessWidget {
               children: [
                 RichText(
                   text: const TextSpan(
-                      text: 'Login\n',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 35,
-                          fontWeight: FontWeight.w500),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'to get started',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 25,
-                              fontWeight: FontWeight.w300),
-                        )
-                      ]),
+                    text: 'Login\n',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500),
+                  ),
                 ),
                 const FormReloginWidget(),
                 const Center(
                   child: Text(
-                    'copyright',
+                    '© 2024, PT. Inovasi Mitra Sejati',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 15,
