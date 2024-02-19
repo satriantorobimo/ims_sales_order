@@ -1051,37 +1051,87 @@ class _ApplicationForm5ViewTabScreenState
                                                                     .bold),
                                                       ),
                                                       const SizedBox(height: 8),
-                                                      SizedBox(
-                                                        height: 52,
-                                                        child: Container(
-                                                          height: 40,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: primaryColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                          child: Center(
-                                                              child: Text(
-                                                                  state
-                                                                      .applicationFeeDetailModel
-                                                                      .data![0]
-                                                                      .feePaymentType!,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600))),
+                                                      // SizedBox(
+                                                      //   height: 52,
+                                                      //   child: Container(
+                                                      //     height: 40,
+                                                      //     padding:
+                                                      //         const EdgeInsets
+                                                      //             .all(8.0),
+                                                      //     decoration:
+                                                      //         BoxDecoration(
+                                                      //       color: const Color(
+                                                      //               0xFF6E6E6E),
+                                                      //       borderRadius:
+                                                      //           BorderRadius
+                                                      //               .circular(
+                                                      //                   10),
+                                                      //     ),
+                                                      //     child: Center(
+                                                      //         child: Text(
+                                                      //             state
+                                                      //                 .applicationFeeDetailModel
+                                                      //                 .data![0]
+                                                      //                 .feePaymentType!,
+                                                      //             style: const TextStyle(
+                                                      //                 fontSize:
+                                                      //                     15,
+                                                      //                 color: Colors
+                                                      //                     .white,
+                                                      //                 fontWeight:
+                                                      //                     FontWeight
+                                                      //                         .w600))),
+                                                      //   ),
+                                                      // ),
+                                                      Container(
+                                                        width: 280,
+                                                        height: 55,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.1)),
+                                                          color: const Color(
+                                                              0xFFFAF9F9),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              blurRadius: 6,
+                                                              offset: const Offset(
+                                                                  -6,
+                                                                  4), // Shadow position
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 16.0,
+                                                                right: 16.0),
+                                                        child: Align(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: Text(
+                                                            state
+                                                                .applicationFeeDetailModel
+                                                                .data![0]
+                                                                .feePaymentType!,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF6E6E6E),
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ),
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
                                                 ],

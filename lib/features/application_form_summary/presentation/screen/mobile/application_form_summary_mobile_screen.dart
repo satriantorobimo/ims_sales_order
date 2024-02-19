@@ -29,7 +29,6 @@ class ApplicationFormSummaryMobileScreen extends StatefulWidget {
 class _ApplicationFormSummaryMobileScreenState
     extends State<ApplicationFormSummaryMobileScreen> {
   bool check1 = false;
-  bool check2 = false;
   bool isDisableTtd = false;
   bool isDisableTtdSpouse = false;
   bool isMarried = true;
@@ -288,8 +287,8 @@ class _ApplicationFormSummaryMobileScreenState
                           .toString();
                       installmentAmount = state.detailSummaryResponseModel
                           .data![0].installmentAmount!;
-                      tdpAmount = state.detailSummaryResponseModel.data![0]
-                          .installmentAmount!;
+                      tdpAmount =
+                          state.detailSummaryResponseModel.data![0].tdpAmount!;
                       isLoading = false;
                     });
                   }
@@ -465,13 +464,20 @@ class _ApplicationFormSummaryMobileScreenState
                               const SizedBox(width: 16),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.83,
-                                child: const Text(
-                                  'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      color: Color(0xFF222222),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      check1 = check1 ? false : true;
+                                    });
+                                  },
+                                  child: const Text(
+                                    'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(
+                                        color: Color(0xFF222222),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
                               ),
                             ],
@@ -687,11 +693,15 @@ class _ApplicationFormSummaryMobileScreenState
                                           }
                                           if (state is SubmitSummaryLoaded) {
                                             return InkWell(
-                                              onTap: check1 == true &&
-                                                      check2 == true &&
-                                                      _controller.isNotEmpty &&
-                                                      _controllerSpouse
-                                                          .isNotEmpty
+                                              onTap: (isMarried
+                                                      ? (check1 == true &&
+                                                          _controller
+                                                              .isNotEmpty &&
+                                                          _controllerSpouse
+                                                              .isNotEmpty)
+                                                      : (check1 == true &&
+                                                          _controller
+                                                              .isNotEmpty))
                                                   ? () {
                                                       submitSummaryBloc.add(
                                                           SubmitSummaryAttempt(
@@ -706,12 +716,15 @@ class _ApplicationFormSummaryMobileScreenState
                                                     0.45,
                                                 height: 45,
                                                 decoration: BoxDecoration(
-                                                  color: check1 == true &&
-                                                          check2 == true &&
-                                                          _controller
-                                                              .isNotEmpty &&
-                                                          _controllerSpouse
-                                                              .isNotEmpty
+                                                  color: (isMarried
+                                                          ? (check1 == true &&
+                                                              _controller
+                                                                  .isNotEmpty &&
+                                                              _controllerSpouse
+                                                                  .isNotEmpty)
+                                                          : (check1 == true &&
+                                                              _controller
+                                                                  .isNotEmpty))
                                                       ? thirdColor
                                                       : const Color(0xFFE1E1E1),
                                                   borderRadius:
@@ -721,14 +734,17 @@ class _ApplicationFormSummaryMobileScreenState
                                                     child: Text('SUBMIT',
                                                         style: TextStyle(
                                                             fontSize: 15,
-                                                            color: check1 ==
-                                                                        true &&
-                                                                    check2 ==
-                                                                        true &&
-                                                                    _controller
-                                                                        .isNotEmpty &&
-                                                                    _controllerSpouse
-                                                                        .isNotEmpty
+                                                            color: (isMarried
+                                                                    ? (check1 ==
+                                                                            true &&
+                                                                        _controller
+                                                                            .isNotEmpty &&
+                                                                        _controllerSpouse
+                                                                            .isNotEmpty)
+                                                                    : (check1 ==
+                                                                            true &&
+                                                                        _controller
+                                                                            .isNotEmpty))
                                                                 ? Colors.black
                                                                 : Colors.white,
                                                             fontWeight:
@@ -738,10 +754,14 @@ class _ApplicationFormSummaryMobileScreenState
                                             );
                                           }
                                           return InkWell(
-                                            onTap: check1 == true &&
-                                                    check2 == true &&
-                                                    _controller.isNotEmpty &&
-                                                    _controllerSpouse.isNotEmpty
+                                            onTap: (isMarried
+                                                    ? (check1 == true &&
+                                                        _controller
+                                                            .isNotEmpty &&
+                                                        _controllerSpouse
+                                                            .isNotEmpty)
+                                                    : (check1 == true &&
+                                                        _controller.isNotEmpty))
                                                 ? () {
                                                     submitSummaryBloc.add(
                                                         SubmitSummaryAttempt(
@@ -757,7 +777,6 @@ class _ApplicationFormSummaryMobileScreenState
                                               height: 45,
                                               decoration: BoxDecoration(
                                                 color: check1 == true &&
-                                                        check2 == true &&
                                                         _controller
                                                             .isNotEmpty &&
                                                         _controllerSpouse
@@ -771,14 +790,17 @@ class _ApplicationFormSummaryMobileScreenState
                                                   child: Text('SUBMIT',
                                                       style: TextStyle(
                                                           fontSize: 15,
-                                                          color: check1 ==
-                                                                      true &&
-                                                                  check2 ==
-                                                                      true &&
-                                                                  _controller
-                                                                      .isNotEmpty &&
-                                                                  _controllerSpouse
-                                                                      .isNotEmpty
+                                                          color: (isMarried
+                                                                  ? (check1 ==
+                                                                          true &&
+                                                                      _controller
+                                                                          .isNotEmpty &&
+                                                                      _controllerSpouse
+                                                                          .isNotEmpty)
+                                                                  : (check1 ==
+                                                                          true &&
+                                                                      _controller
+                                                                          .isNotEmpty))
                                                               ? Colors.black
                                                               : Colors.white,
                                                           fontWeight: FontWeight

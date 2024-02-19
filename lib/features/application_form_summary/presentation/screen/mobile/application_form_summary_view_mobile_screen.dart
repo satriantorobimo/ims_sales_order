@@ -288,8 +288,8 @@ class _ApplicationFormSummaryViewMobileScreenState
                           .toString();
                       installmentAmount = state.detailSummaryResponseModel
                           .data![0].installmentAmount!;
-                      tdpAmount = state.detailSummaryResponseModel.data![0]
-                          .installmentAmount!;
+                      tdpAmount =
+                          state.detailSummaryResponseModel.data![0].tdpAmount!;
                       isLoading = false;
                     });
                   }
@@ -467,7 +467,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                                 width: MediaQuery.of(context).size.width * 0.83,
                                 child: const Text(
                                   'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
-                                  textAlign: TextAlign.left,
+                                  textAlign: TextAlign.justify,
                                   style: TextStyle(
                                       color: Color(0xFF222222),
                                       fontSize: 18,

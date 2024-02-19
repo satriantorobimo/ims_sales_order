@@ -30,7 +30,6 @@ class ApplicationFormSummaryTabScreen extends StatefulWidget {
 class _ApplicationFormSummaryTabScreenState
     extends State<ApplicationFormSummaryTabScreen> {
   bool check1 = false;
-  bool check2 = false;
   bool isDisableTtd = false;
   bool isDisableTtdSpouse = false;
   bool isMarried = true;
@@ -314,7 +313,7 @@ class _ApplicationFormSummaryTabScreenState
                                         .data![0]
                                         .installmentAmount!;
                                     tdpAmount = state.detailSummaryResponseModel
-                                        .data![0].installmentAmount!;
+                                        .data![0].tdpAmount!;
                                   });
                                 }
                                 if (state is DetailSummaryError) {
@@ -480,11 +479,11 @@ class _ApplicationFormSummaryTabScreenState
                                 height: 35,
                               ),
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   SizedBox(
                                     width: 20,
-                                    height: 20,
+                                    height: 45,
                                     child: Checkbox(
                                       activeColor: primaryColor,
                                       value: check1,
@@ -496,13 +495,20 @@ class _ApplicationFormSummaryTabScreenState
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  const Text(
-                                    'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color(0xFF222222),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        check1 = check1 ? false : true;
+                                      });
+                                    },
+                                    child: const Text(
+                                      'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk \ndiproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
+                                      textAlign: TextAlign.justify,
+                                      style: TextStyle(
+                                          color: Color(0xFF222222),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -753,10 +759,12 @@ class _ApplicationFormSummaryTabScreenState
                                 );
                               }
                               return InkWell(
-                                onTap: check1 == true &&
-                                        check2 == true &&
-                                        _controller.isNotEmpty &&
-                                        _controllerSpouse.isNotEmpty
+                                onTap: (isMarried
+                                        ? (check1 == true &&
+                                            _controller.isNotEmpty &&
+                                            _controllerSpouse.isNotEmpty)
+                                        : (check1 == true &&
+                                            _controller.isNotEmpty))
                                     ? () {
                                         submitSummaryBloc.add(
                                             SubmitSummaryAttempt(
@@ -767,10 +775,12 @@ class _ApplicationFormSummaryTabScreenState
                                   width: 200,
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: check1 == true &&
-                                            check2 == true &&
-                                            _controller.isNotEmpty &&
-                                            _controllerSpouse.isNotEmpty
+                                    color: (isMarried
+                                            ? (check1 == true &&
+                                                _controller.isNotEmpty &&
+                                                _controllerSpouse.isNotEmpty)
+                                            : (check1 == true &&
+                                                _controller.isNotEmpty))
                                         ? thirdColor
                                         : const Color(0xFFE1E1E1),
                                     borderRadius: BorderRadius.circular(10),
@@ -779,11 +789,15 @@ class _ApplicationFormSummaryTabScreenState
                                       child: Text('SUBMIT',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              color: check1 == true &&
-                                                      check2 == true &&
-                                                      _controller.isNotEmpty &&
-                                                      _controllerSpouse
-                                                          .isNotEmpty
+                                              color: (isMarried
+                                                      ? (check1 == true &&
+                                                          _controller
+                                                              .isNotEmpty &&
+                                                          _controllerSpouse
+                                                              .isNotEmpty)
+                                                      : (check1 == true &&
+                                                          _controller
+                                                              .isNotEmpty))
                                                   ? Colors.black
                                                   : Colors.white,
                                               fontWeight: FontWeight.w600))),
