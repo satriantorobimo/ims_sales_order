@@ -368,17 +368,17 @@ class _ApplicationForm4ViewMobileScreenState
                                   height: 45,
                                   child: TextFormField(
                                     controller: ctrlAmount,
-                                    keyboardType: TextInputType.number,
+                                    // keyboardType: TextInputType.number,
                                     readOnly: true,
                                     style: const TextStyle(
                                         color: Color(0xFF6E6E6E)),
                                     decoration: InputDecoration(
-                                        prefix: Padding(
-                                          padding: const EdgeInsets.only(
+                                        prefix: const Padding(
+                                          padding: EdgeInsets.only(
                                               right:
                                                   4.0), // Adjust the padding as needed
-                                          child: Text(GeneralUtil
-                                              .currency), // Your prefix text here
+                                          // child: Text(GeneralUtil
+                                          //     .currency), // Your prefix text here
                                         ),
                                         hintText: 'Asset Amount',
                                         isDense: true,

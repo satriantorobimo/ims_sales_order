@@ -467,12 +467,23 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Email',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                      Row(
+                        children: const [
+                          Text(
+                            'Email',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            ' *',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       Material(
@@ -1669,6 +1680,8 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                         ctrlPhoneCode.text == '' ||
                         ctrlPhoneNumber.text.isEmpty ||
                         ctrlPhoneNumber.text == '' ||
+                        ctrlEmail.text.isEmpty ||
+                        ctrlEmail.text == '' ||
                         ctrlVehicleName.text.isEmpty ||
                         ctrlVehicleName.text == '' ||
                         ctrlOtr.text.isEmpty ||
@@ -1763,6 +1776,8 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                                     ctrlPhoneCode.text == '' ||
                                     ctrlPhoneNumber.text.isEmpty ||
                                     ctrlPhoneNumber.text == '' ||
+                                    ctrlEmail.text.isEmpty ||
+                                    ctrlEmail.text == '' ||
                                     ctrlVehicleName.text.isEmpty ||
                                     ctrlVehicleName.text == '' ||
                                     ctrlOtr.text.isEmpty ||
@@ -1825,6 +1840,8 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                                   ctrlPhoneCode.text == '' ||
                                   ctrlPhoneNumber.text.isEmpty ||
                                   ctrlPhoneNumber.text == '' ||
+                                  ctrlEmail.text.isEmpty ||
+                                  ctrlEmail.text == '' ||
                                   ctrlVehicleName.text.isEmpty ||
                                   ctrlVehicleName.text == '' ||
                                   ctrlOtr.text.isEmpty ||

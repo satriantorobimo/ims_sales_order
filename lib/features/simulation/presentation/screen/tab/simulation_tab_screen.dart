@@ -473,12 +473,23 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Email',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                            Row(
+                              children: const [
+                                Text(
+                                  'Email',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  ' *',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 8),
                             Material(
@@ -1340,6 +1351,8 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                     ctrlPhoneCode.text == '' ||
                                     ctrlPhoneNumber.text.isEmpty ||
                                     ctrlPhoneNumber.text == '' ||
+                                    ctrlEmail.text.isEmpty ||
+                                    ctrlEmail.text == '' ||
                                     ctrlVehicleName.text.isEmpty ||
                                     ctrlVehicleName.text == '' ||
                                     ctrlOtr.text.isEmpty ||
@@ -1444,6 +1457,8 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                                 ctrlPhoneCode.text == '' ||
                                                 ctrlPhoneNumber.text.isEmpty ||
                                                 ctrlPhoneNumber.text == '' ||
+                                                ctrlEmail.text.isEmpty ||
+                                                ctrlEmail.text == '' ||
                                                 ctrlVehicleName.text.isEmpty ||
                                                 ctrlVehicleName.text == '' ||
                                                 ctrlOtr.text.isEmpty ||
@@ -1520,6 +1535,8 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                               ctrlPhoneCode.text == '' ||
                                               ctrlPhoneNumber.text.isEmpty ||
                                               ctrlPhoneNumber.text == '' ||
+                                              ctrlEmail.text.isEmpty ||
+                                              ctrlEmail.text == '' ||
                                               ctrlVehicleName.text.isEmpty ||
                                               ctrlVehicleName.text == '' ||
                                               ctrlOtr.text.isEmpty ||
@@ -1641,7 +1658,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                               0.05,
                                           height: 25,
                                           padding:
-                                              const EdgeInsets.only(left: 16.0),
+                                              const EdgeInsets.only(left: 8.0),
                                           child: const Text(
                                             'Tenor',
                                             style: TextStyle(

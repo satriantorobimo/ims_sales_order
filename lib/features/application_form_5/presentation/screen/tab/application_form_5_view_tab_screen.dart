@@ -410,7 +410,7 @@ class _ApplicationForm5ViewTabScreenState
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   const Text(
-                                                    'Payment Type',
+                                                    'First Payment Type',
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 18,

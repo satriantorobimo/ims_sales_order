@@ -338,7 +338,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                                 padding: const EdgeInsets.only(
                                     left: 16.0, right: 16.0),
                                 child: Align(
-                                  alignment: Alignment.centerRight,
+                                  alignment: Alignment.centerLeft,
                                   child: Text(
                                     GeneralUtil.convertToIdr(tdpAmount, 2),
                                     style: const TextStyle(
@@ -384,7 +384,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                                 padding: const EdgeInsets.only(
                                     left: 16.0, right: 16.0),
                                 child: Align(
-                                  alignment: Alignment.centerRight,
+                                  alignment: Alignment.centerLeft,
                                   child: Text(
                                     GeneralUtil.convertToIdr(
                                         installmentAmount, 2),
@@ -431,7 +431,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                                 padding: const EdgeInsets.only(
                                     left: 16.0, right: 16.0),
                                 child: Align(
-                                  alignment: Alignment.centerRight,
+                                  alignment: Alignment.centerLeft,
                                   child: Text(
                                     dueDate,
                                     style: const TextStyle(
@@ -447,7 +447,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                             height: 24,
                           ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               SizedBox(
                                 width: 20,
@@ -471,7 +471,7 @@ class _ApplicationFormSummaryViewMobileScreenState
                                   style: TextStyle(
                                       color: Color(0xFF222222),
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w400),
                                 ),
                               ),
                             ],

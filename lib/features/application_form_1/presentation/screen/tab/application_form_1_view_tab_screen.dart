@@ -995,7 +995,7 @@ class _ApplicationForm1ViewTabScreenState
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     decoration: BoxDecoration(
-                                                      color: gender == 'Male'
+                                                      color: gender == 'MALE'
                                                           ? primaryColor
                                                           : const Color(
                                                               0xFFE1E1E1),
@@ -1004,7 +1004,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               10),
                                                     ),
                                                     child: const Center(
-                                                        child: Text('Male',
+                                                        child: Text('MALE',
                                                             style: TextStyle(
                                                                 fontSize: 15,
                                                                 color: Colors
@@ -1023,7 +1023,7 @@ class _ApplicationForm1ViewTabScreenState
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     decoration: BoxDecoration(
-                                                      color: gender == 'Female'
+                                                      color: gender == 'FEMALE'
                                                           ? primaryColor
                                                           : const Color(
                                                               0xFFE1E1E1),
@@ -1032,7 +1032,7 @@ class _ApplicationForm1ViewTabScreenState
                                                               10),
                                                     ),
                                                     child: const Center(
-                                                        child: Text('Female',
+                                                        child: Text('FEMALE',
                                                             style: TextStyle(
                                                                 fontSize: 15,
                                                                 color: Colors
@@ -1556,7 +1556,7 @@ class _ApplicationForm1ViewTabScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectProvCode,
+                                                    selectProv,
                                                     style: const TextStyle(
                                                         color:
                                                             Color(0xFF6E6E6E),

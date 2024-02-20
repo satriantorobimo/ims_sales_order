@@ -189,7 +189,7 @@ class _ApplicationForm5ViewMobileScreenState
                                     padding: const EdgeInsets.only(
                                         left: 16.0, right: 16.0),
                                     child: Align(
-                                      alignment: Alignment.centerRight,
+                                      alignment: Alignment.centerLeft,
                                       child: Text(
                                         GeneralUtil.convertToIdr(
                                             data[index].feeAmount, 2),
@@ -294,7 +294,7 @@ class _ApplicationForm5ViewMobileScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Payment Type',
+                              'First Payment Type',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -384,7 +384,7 @@ class _ApplicationForm5ViewMobileScreenState
                               padding: const EdgeInsets.only(
                                   left: 16.0, right: 16.0),
                               child: Align(
-                                alignment: Alignment.centerRight,
+                                alignment: Alignment.centerLeft,
                                 child: Text(
                                   '${state.tncDataDetailResponseModel.data![0].interestFlatRate}',
                                   style: const TextStyle(
@@ -428,7 +428,7 @@ class _ApplicationForm5ViewMobileScreenState
                               padding: const EdgeInsets.only(
                                   left: 16.0, right: 16.0),
                               child: Align(
-                                alignment: Alignment.centerRight,
+                                alignment: Alignment.centerLeft,
                                 child: Text(
                                   '${state.tncDataDetailResponseModel.data![0].dpPct}',
                                   style: const TextStyle(
@@ -472,7 +472,7 @@ class _ApplicationForm5ViewMobileScreenState
                               padding: const EdgeInsets.only(
                                   left: 16.0, right: 16.0),
                               child: Align(
-                                alignment: Alignment.centerRight,
+                                alignment: Alignment.centerLeft,
                                 child: Text(
                                   GeneralUtil.convertToIdr(
                                       state.tncDataDetailResponseModel.data![0]

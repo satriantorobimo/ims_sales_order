@@ -461,7 +461,7 @@ class _ApplicationFormSummaryTabScreenState
                                         padding: const EdgeInsets.only(
                                             left: 16.0, right: 16.0),
                                         child: Align(
-                                          alignment: Alignment.centerRight,
+                                          alignment: Alignment.centerLeft,
                                           child: Text(
                                             dueDate,
                                             style: const TextStyle(

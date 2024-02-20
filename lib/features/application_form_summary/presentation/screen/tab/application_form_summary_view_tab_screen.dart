@@ -208,6 +208,11 @@ class _ApplicationFormSummaryViewTabScreenState
                                       isMarried = false;
                                       isLoading = false;
                                     });
+                                  } else {
+                                    setState(() {
+                                      isMarried = true;
+                                      isLoading = false;
+                                    });
                                   }
                                 }
                                 if (state is GetClientError) {
@@ -385,8 +390,7 @@ class _ApplicationFormSummaryViewTabScreenState
                                               padding: const EdgeInsets.only(
                                                   left: 16.0, right: 16.0),
                                               child: Align(
-                                                alignment:
-                                                    Alignment.centerRight,
+                                                alignment: Alignment.centerLeft,
                                                 child: Text(
                                                   dueDate,
                                                   style: const TextStyle(
@@ -406,11 +410,11 @@ class _ApplicationFormSummaryViewTabScreenState
                                     ),
                                     Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(
                                           width: 20,
-                                          height: 20,
+                                          height: 45,
                                           child: Checkbox(
                                             activeColor: primaryColor,
                                             value: check1,
@@ -423,17 +427,17 @@ class _ApplicationFormSummaryViewTabScreenState
                                         ),
                                         const SizedBox(width: 16),
                                         const Text(
-                                          'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk diproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
+                                          'Saya menyetujui untuk mengajukan permohonan kredit serta memperbolehkan data saya untuk \ndiproses lebih lanjut sebagai syarat proses pengajuan kredit di IMS Finance.',
                                           textAlign: TextAlign.justify,
                                           style: TextStyle(
                                               color: Color(0xFF222222),
                                               fontSize: 18,
-                                              fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w400),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(
-                                      height: 16,
+                                      height: 25,
                                     ),
                                     Row(
                                       mainAxisAlignment:
