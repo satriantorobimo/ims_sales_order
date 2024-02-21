@@ -42,14 +42,14 @@ class _ApplicationForm3ViewMobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: false).showBottomOption(context, '');
                 },
                 child: const Icon(
                   Icons.more_vert_rounded,
-                  size: 28,
+                  size: 24,
                 ),
               ))
         ],
@@ -289,7 +289,7 @@ class _ApplicationForm3ViewMobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: secondaryColor,
@@ -314,7 +314,7 @@ class _ApplicationForm3ViewMobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: thirdColor,

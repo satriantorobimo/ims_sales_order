@@ -655,14 +655,14 @@ class _ApplicationForm1ResumeMobileScreenState
         appBar: AppBar(
           actions: [
             Padding(
-                padding: const EdgeInsets.only(right: 8, top: 16, bottom: 8),
+                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
                 child: InkWell(
                   onTap: () {
                     OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
                   child: const Icon(
                     Icons.more_vert_rounded,
-                    size: 28,
+                    size: 24,
                   ),
                 ))
           ],
@@ -1399,7 +1399,7 @@ class _ApplicationForm1ResumeMobileScreenState
                                         controller: ctrlEmail,
                                         inputFormatters: <TextInputFormatter>[
                                           FilteringTextInputFormatter.allow(
-                                              RegExp("[0-9@a-zA-Z.]")),
+                                              RegExp("[0-9@a-zA-Z.-]")),
                                         ],
                                         keyboardType:
                                             TextInputType.emailAddress,
@@ -1557,21 +1557,23 @@ class _ApplicationForm1ResumeMobileScreenState
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     '10. Spouse Name',
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    ' *',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -1621,21 +1623,23 @@ class _ApplicationForm1ResumeMobileScreenState
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     '11. Spouse ID No',
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    ' *',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -2548,7 +2552,7 @@ class _ApplicationForm1ResumeMobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: secondaryColor,
@@ -2679,10 +2683,10 @@ class _ApplicationForm1ResumeMobileScreenState
                                                       selectPostalCode;
                                                   clientDetailResponseModel
                                                           .addressZipCodeCode =
-                                                      selectPostalCode;
+                                                      selectPostal;
                                                   clientDetailResponseModel
                                                           .addressZipName =
-                                                      selectPostal;
+                                                      selectPostalName;
                                                   clientDetailResponseModel
                                                           .addressSubDistrict =
                                                       ctrlSubDistrict.text;
@@ -2811,10 +2815,10 @@ class _ApplicationForm1ResumeMobileScreenState
                                                       selectPostalCode;
                                                   clientDetailResponseModel
                                                           .addressZipCodeCode =
-                                                      selectPostalCode;
+                                                      selectPostal;
                                                   clientDetailResponseModel
                                                           .addressZipName =
-                                                      selectPostal;
+                                                      selectPostalName;
                                                   clientDetailResponseModel
                                                           .addressSubDistrict =
                                                       ctrlSubDistrict.text;
@@ -2848,7 +2852,7 @@ class _ApplicationForm1ResumeMobileScreenState
                                         },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: ctrlStatus.text.isEmpty ||

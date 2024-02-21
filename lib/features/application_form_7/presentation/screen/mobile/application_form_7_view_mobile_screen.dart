@@ -59,6 +59,19 @@ class _ApplicationForm7ViewMobileScreenState
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 24,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -102,7 +115,7 @@ class _ApplicationForm7ViewMobileScreenState
                       child: Container(
                         width: double.infinity,
                         height: 8,
-                        color: Colors.grey.withOpacity(0.05),
+                        color: Colors.grey.withOpacity(0.1),
                       ),
                     );
                   },
@@ -260,86 +273,6 @@ class _ApplicationForm7ViewMobileScreenState
                                   ),
                                 ),
                               )
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'File',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              InkWell(
-                                onTap: dataFilter[index].paths == ""
-                                    ? null
-                                    : () async {
-                                        if (dataFilter[index].isNew!) {
-                                          if (ext == '.pdf') {
-                                            await OpenFile.open(
-                                                "${dataFilter[index].paths}");
-                                          } else {
-                                            Navigator.pushNamed(
-                                                context,
-                                                StringRouterUtil
-                                                    .applicationForm7PreviewAssetScreenTabRoute,
-                                                arguments:
-                                                    dataFilter[index].paths);
-                                          }
-                                        } else {
-                                          if (ext == '.PDF') {
-                                            Navigator.pushNamed(
-                                                context,
-                                                StringRouterUtil
-                                                    .applicationForm7PreviewPdfScreenTabRoute,
-                                                arguments:
-                                                    DocumentPreviewRequestModel(
-                                                        pFileName:
-                                                            dataFilter[index]
-                                                                .filename,
-                                                        pFilePaths:
-                                                            dataFilter[index]
-                                                                .paths));
-                                          } else {
-                                            Navigator.pushNamed(
-                                                context,
-                                                StringRouterUtil
-                                                    .applicationForm7PreviewScreenTabRoute,
-                                                arguments:
-                                                    DocumentPreviewRequestModel(
-                                                        pFileName:
-                                                            dataFilter[index]
-                                                                .filename,
-                                                        pFilePaths:
-                                                            dataFilter[index]
-                                                                .paths));
-                                          }
-                                        }
-                                      },
-                                child: Container(
-                                  height: 35,
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    color: dataFilter[index].paths == ""
-                                        ? const Color(0xFFE1E1E1)
-                                        : primaryColor,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Center(
-                                      child: Text(
-                                          dataFilter[index].paths == ""
-                                              ? 'CHOOSE FILE'
-                                              : 'VIEW FILE',
-                                          style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600))),
-                                ),
-                              ),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -501,6 +434,86 @@ class _ApplicationForm7ViewMobileScreenState
                                       ),
                                     )
                                   ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'File',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              InkWell(
+                                onTap: dataFilter[index].paths == ""
+                                    ? null
+                                    : () async {
+                                        if (dataFilter[index].isNew!) {
+                                          if (ext == '.pdf') {
+                                            await OpenFile.open(
+                                                "${dataFilter[index].paths}");
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context,
+                                                StringRouterUtil
+                                                    .applicationForm7PreviewAssetScreenTabRoute,
+                                                arguments:
+                                                    dataFilter[index].paths);
+                                          }
+                                        } else {
+                                          if (ext == '.PDF') {
+                                            Navigator.pushNamed(
+                                                context,
+                                                StringRouterUtil
+                                                    .applicationForm7PreviewPdfScreenTabRoute,
+                                                arguments:
+                                                    DocumentPreviewRequestModel(
+                                                        pFileName:
+                                                            dataFilter[index]
+                                                                .filename,
+                                                        pFilePaths:
+                                                            dataFilter[index]
+                                                                .paths));
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context,
+                                                StringRouterUtil
+                                                    .applicationForm7PreviewScreenTabRoute,
+                                                arguments:
+                                                    DocumentPreviewRequestModel(
+                                                        pFileName:
+                                                            dataFilter[index]
+                                                                .filename,
+                                                        pFilePaths:
+                                                            dataFilter[index]
+                                                                .paths));
+                                          }
+                                        }
+                                      },
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: dataFilter[index].paths == ""
+                                        ? const Color(0xFFE1E1E1)
+                                        : primaryColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                      child: Text(
+                                          dataFilter[index].paths == ""
+                                              ? 'CHOOSE FILE'
+                                              : 'VIEW FILE',
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600))),
                                 ),
                               ),
                             ],

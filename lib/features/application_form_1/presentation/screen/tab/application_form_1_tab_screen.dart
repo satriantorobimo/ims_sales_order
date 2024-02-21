@@ -1731,21 +1731,23 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
+                                    children:  [
+                                      const Text(
                                         '10. Spouse Name',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -1807,21 +1809,23 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
+                                    children:  [
+                                      const Text(
                                         '11. Spouse ID No',
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                     ],
                                   ),
                                   const SizedBox(height: 8),

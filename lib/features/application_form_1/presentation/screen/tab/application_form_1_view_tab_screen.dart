@@ -21,7 +21,7 @@ class ApplicationForm1ViewTabScreen extends StatefulWidget {
 
 class _ApplicationForm1ViewTabScreenState
     extends State<ApplicationForm1ViewTabScreen> {
-  String gender = 'Male';
+  String gender = 'MALE';
   String selectMaritalStatus = '';
   int selectIndexMaritalStatus = 0;
   String selectProv = '';
@@ -1352,8 +1352,8 @@ class _ApplicationForm1ViewTabScreenState
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: const [
-                                              Text(
+                                            children: [
+                                              const Text(
                                                 '10. Spouse Name',
                                                 style: TextStyle(
                                                     color: Colors.black,
@@ -1361,14 +1361,16 @@ class _ApplicationForm1ViewTabScreenState
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              Text(
-                                                ' *',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                              selectMaritalStatus == 'MARRIED'
+                                                  ? const Text(
+                                                      ' *',
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  : Container(),
                                             ],
                                           ),
                                           const SizedBox(height: 8),
@@ -1433,8 +1435,8 @@ class _ApplicationForm1ViewTabScreenState
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: const [
-                                              Text(
+                                            children:  [
+                                              const Text(
                                                 '11. Spouse ID No',
                                                 style: TextStyle(
                                                     color: Colors.black,
@@ -1442,14 +1444,15 @@ class _ApplicationForm1ViewTabScreenState
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              Text(
-                                                ' *',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                              selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                             ],
                                           ),
                                           const SizedBox(height: 8),

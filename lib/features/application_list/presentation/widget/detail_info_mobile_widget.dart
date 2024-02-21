@@ -30,7 +30,7 @@ class DetailInfoMobileWidget extends StatelessWidget {
                   width: 87,
                   height: 45,
                   decoration: BoxDecoration(
-                      color: secondaryColor,
+                      color: thirdColor,
                       borderRadius: BorderRadius.circular(6)),
                   child: Center(
                     child: Text(

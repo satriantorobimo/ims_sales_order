@@ -93,14 +93,14 @@ class _ApplicationForm1ViewMobileScreenState
         appBar: AppBar(
           actions: [
             Padding(
-                padding: const EdgeInsets.only(right: 8, top: 16, bottom: 8),
+                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
                 child: InkWell(
                   onTap: () {
                     OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
                   child: const Icon(
                     Icons.more_vert_rounded,
-                    size: 28,
+                    size: 24,
                   ),
                 ))
           ],
@@ -167,9 +167,11 @@ class _ApplicationForm1ViewMobileScreenState
                               .clientGenderType !=
                           null) {
                         gender = state.clientDetailResponseModel.data![0]
-                            .clientGenderType!
-                            .toUpperCase()
-                            .capitalizeOnlyFirstLater();
+                                    .clientGenderType!
+                                    .toUpperCase() ==
+                                'M'
+                            ? 'MALE'
+                            : 'FEMALE';
                       }
                       if (state.clientDetailResponseModel.data![0]
                               .clientMaritalStatusType !=
@@ -878,21 +880,23 @@ class _ApplicationForm1ViewMobileScreenState
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     '10. Spouse Name',
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    ' *',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -936,21 +940,23 @@ class _ApplicationForm1ViewMobileScreenState
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     '11. Spouse ID No',
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    ' *',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  selectMaritalStatus == 'MARRIED'
+                                      ? const Text(
+                                          ' *',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -1037,7 +1043,7 @@ class _ApplicationForm1ViewMobileScreenState
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    selectProvCode,
+                                    selectProv,
                                     style: const TextStyle(
                                         color: Color(0xFF6E6E6E),
                                         fontSize: 15,
@@ -1454,7 +1460,7 @@ class _ApplicationForm1ViewMobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: secondaryColor,
@@ -1479,7 +1485,7 @@ class _ApplicationForm1ViewMobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: thirdColor,

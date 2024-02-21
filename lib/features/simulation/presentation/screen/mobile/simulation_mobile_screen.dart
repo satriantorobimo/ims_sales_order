@@ -39,7 +39,6 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
   TextEditingController ctrlOtr = TextEditingController();
   TextEditingController ctrlDp = TextEditingController();
   TextEditingController ctrlFullName = TextEditingController();
-  TextEditingController ctrlPhoneCode = TextEditingController();
   TextEditingController ctrlPhoneNumber = TextEditingController();
   TextEditingController ctrlEmail = TextEditingController();
   TextEditingController ctrlVehicleName = TextEditingController();
@@ -389,76 +388,38 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Material(
-                              elevation: 6,
-                              shadowColor: Colors.grey.withOpacity(0.4),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: const BorderSide(
-                                      width: 1.0, color: Color(0xFFEAEAEA))),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                height: 50,
-                                child: TextFormField(
-                                  controller: ctrlPhoneCode,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(4),
-                                  ],
-                                  decoration: InputDecoration(
-                                      hintText: 'Code',
-                                      isDense: true,
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          16.0, 20.0, 20.0, 16.0),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey.withOpacity(0.5)),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide.none,
-                                      )),
-                                ),
-                              ),
+                        child: Material(
+                          elevation: 6,
+                          shadowColor: Colors.grey.withOpacity(0.4),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(
+                                  width: 1.0, color: Color(0xFFEAEAEA))),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            height: 50,
+                            child: TextFormField(
+                              controller: ctrlPhoneNumber,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(15),
+                              ],
+                              decoration: InputDecoration(
+                                  hintText: 'Phone Number',
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.fromLTRB(
+                                      16.0, 20.0, 20.0, 16.0),
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey.withOpacity(0.5)),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  )),
                             ),
-                            Material(
-                              elevation: 6,
-                              shadowColor: Colors.grey.withOpacity(0.4),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: const BorderSide(
-                                      width: 1.0, color: Color(0xFFEAEAEA))),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                height: 50,
-                                child: TextFormField(
-                                  controller: ctrlPhoneNumber,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(15),
-                                  ],
-                                  decoration: InputDecoration(
-                                      hintText: 'Phone Number',
-                                      isDense: true,
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          16.0, 20.0, 20.0, 16.0),
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey.withOpacity(0.5)),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide.none,
-                                      )),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ],
@@ -500,7 +461,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                             controller: ctrlEmail,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9@a-zA-Z.]")),
+                                  RegExp("[0-9@a-zA-Z.-]")),
                             ],
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.done,
@@ -1556,9 +1517,12 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        const Text(
-                                                          'Others',
-                                                          style: TextStyle(
+                                                        Text(
+                                                          firstPaymentType ==
+                                                                  'ARREAR'
+                                                              ? 'Others'
+                                                              : 'Others + First Installment',
+                                                          style: const TextStyle(
                                                               color: Color(
                                                                   0xFF222222),
                                                               fontSize: 14,
@@ -1676,8 +1640,6 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                   onTap: () async {
                     if (ctrlFullName.text.isEmpty ||
                         ctrlFullName.text == '' ||
-                        ctrlPhoneCode.text.isEmpty ||
-                        ctrlPhoneCode.text == '' ||
                         ctrlPhoneNumber.text.isEmpty ||
                         ctrlPhoneNumber.text == '' ||
                         ctrlEmail.text.isEmpty ||
@@ -1772,8 +1734,6 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                               onTap: () async {
                                 if (ctrlFullName.text.isEmpty ||
                                     ctrlFullName.text == '' ||
-                                    ctrlPhoneCode.text.isEmpty ||
-                                    ctrlPhoneCode.text == '' ||
                                     ctrlPhoneNumber.text.isEmpty ||
                                     ctrlPhoneNumber.text == '' ||
                                     ctrlEmail.text.isEmpty ||
@@ -1797,8 +1757,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                                           pAdminFee: int.parse(adminValue),
                                           pClientEmail: ctrlEmail.text,
                                           pClientName: ctrlFullName.text,
-                                          pClientPhoneNo:
-                                              '${ctrlPhoneCode.text}${ctrlPhoneNumber.text}',
+                                          pClientPhoneNo: ctrlPhoneNumber.text,
                                           pDpAmount: dpAmount.toInt(),
                                           pDpPct: int.parse(ctrlDp.text),
                                           pFinancingAmount:
@@ -1836,8 +1795,6 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                             onTap: () async {
                               if (ctrlFullName.text.isEmpty ||
                                   ctrlFullName.text == '' ||
-                                  ctrlPhoneCode.text.isEmpty ||
-                                  ctrlPhoneCode.text == '' ||
                                   ctrlPhoneNumber.text.isEmpty ||
                                   ctrlPhoneNumber.text == '' ||
                                   ctrlEmail.text.isEmpty ||
@@ -1855,24 +1812,26 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                                 EmptyWidget().showBottomEmpty(context);
                               } else {
                                 final data = await DatabaseHelper.getUserData();
-                                sendPdfBloc.add(SendPdfAttempt(SendPdfRequestModel(
-                                    pAdminFee: int.parse(adminValue),
-                                    pClientEmail: ctrlEmail.text,
-                                    pClientName: ctrlFullName.text,
-                                    pClientPhoneNo:
-                                        '${ctrlPhoneCode.text}${ctrlPhoneNumber.text}',
-                                    pDpAmount: dpAmount.toInt(),
-                                    pDpPct: int.parse(ctrlDp.text),
-                                    pFinancingAmount: financingAmount.toInt(),
-                                    pFirstPaymentType: firstPaymentType,
-                                    pFlatRate: int.parse(ctrlFr.text),
-                                    pInsurancePackageCode: selectInsuranceCode,
-                                    pInsurancePackageName: selectInsurance,
-                                    pMarketingCode: data[0]['uid'],
-                                    pOthersFee: int.parse(othersValue),
-                                    pOtr: int.parse(otrValue),
-                                    pProvisiFee: int.parse(provisiValue),
-                                    pVehicleName: ctrlVehicleName.text)));
+                                sendPdfBloc.add(SendPdfAttempt(
+                                    SendPdfRequestModel(
+                                        pAdminFee: int.parse(adminValue),
+                                        pClientEmail: ctrlEmail.text,
+                                        pClientName: ctrlFullName.text,
+                                        pClientPhoneNo: ctrlPhoneNumber.text,
+                                        pDpAmount: dpAmount.toInt(),
+                                        pDpPct: int.parse(ctrlDp.text),
+                                        pFinancingAmount:
+                                            financingAmount.toInt(),
+                                        pFirstPaymentType: firstPaymentType,
+                                        pFlatRate: int.parse(ctrlFr.text),
+                                        pInsurancePackageCode:
+                                            selectInsuranceCode,
+                                        pInsurancePackageName: selectInsurance,
+                                        pMarketingCode: data[0]['uid'],
+                                        pOthersFee: int.parse(othersValue),
+                                        pOtr: int.parse(otrValue),
+                                        pProvisiFee: int.parse(provisiValue),
+                                        pVehicleName: ctrlVehicleName.text)));
                               }
                             },
                             child: Container(

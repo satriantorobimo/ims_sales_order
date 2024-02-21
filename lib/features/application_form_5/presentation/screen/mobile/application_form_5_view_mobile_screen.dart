@@ -68,14 +68,14 @@ class _ApplicationForm5ViewMobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: false).showBottomOption(context, '');
                 },
                 child: const Icon(
                   Icons.more_vert_rounded,
-                  size: 28,
+                  size: 24,
                 ),
               ))
         ],
@@ -141,115 +141,128 @@ class _ApplicationForm5ViewMobileScreenState
                 return _loading();
               }
               if (state is FeeDataLoaded) {
-                return ListView.separated(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: data.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(width: 16);
-                    },
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, top: 0.0, bottom: 16.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${index + 1}. Biaya Admin',
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.9,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.1)),
-                                      color: const Color(0xFFFAF9F9),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          blurRadius: 6,
-                                          offset: const Offset(
-                                              -6, 4), // Shadow position
-                                        ),
-                                      ],
+                return Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      // physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 24, bottom: 16),
+                          child: Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: Colors.grey.withOpacity(0.2),
+                          ),
+                        );
+                      },
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
+                      itemBuilder: (BuildContext context, int index) {
+                        return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data[index]
+                                          .feeDesc!
+                                          .capitalizeOnlyFirstLater(),
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16.0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        GeneralUtil.convertToIdr(
-                                            data[index].feeAmount, 2),
-                                        style: const TextStyle(
-                                            color: Color(0xFF6E6E6E),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color:
+                                                Colors.grey.withOpacity(0.1)),
+                                        color: const Color(0xFFFAF9F9),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            blurRadius: 6,
+                                            offset: const Offset(
+                                                -6, 4), // Shadow position
+                                          ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.only(
+                                          left: 16.0, right: 16.0),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          GeneralUtil.convertToIdr(
+                                              data[index].feeAmount, 2),
+                                          style: const TextStyle(
+                                              color: Color(0xFF6E6E6E),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Payment Type',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      height: 45,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color:
+                                                Colors.grey.withOpacity(0.1)),
+                                        color: const Color(0xFFFAF9F9),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            blurRadius: 6,
+                                            offset: const Offset(
+                                                -6, 4), // Shadow position
+                                          ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.only(
+                                          left: 16.0, right: 16.0),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          data[index].feePaymentType!,
+                                          style: const TextStyle(
+                                              color: Color(0xFF6E6E6E),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
+                                        ),
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Payment Type',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    height: 55,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.9,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.1)),
-                                      color: const Color(0xFFFAF9F9),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          blurRadius: 6,
-                                          offset: const Offset(
-                                              -6, 4), // Shadow position
-                                        ),
-                                      ],
-                                    ),
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16.0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        data[index].feePaymentType!,
-                                        style: const TextStyle(
-                                            color: Color(0xFF6E6E6E),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ));
-                    });
+                                  ],
+                                ),
+                              ],
+                            ));
+                      }),
+                );
               }
               return _loading();
             }));
@@ -261,18 +274,20 @@ class _ApplicationForm5ViewMobileScreenState
         listener: (_, TncDataState state) {
           if (state is TncDataLoading) {}
           if (state is TncDataLoaded) {
-            condition =
-                state.tncDataDetailResponseModel.data![0].firstPaymentTypeDesc!;
-            tenor = state.tncDataDetailResponseModel.data![0].tenor!;
+            setState(() {
+              condition = state
+                  .tncDataDetailResponseModel.data![0].firstPaymentTypeDesc!;
+              tenor = state.tncDataDetailResponseModel.data![0].tenor!;
 
-            if (state
-                    .tncDataDetailResponseModel.data![0].insurancePackageCode !=
-                null) {
+              // if (state
+              //         .tncDataDetailResponseModel.data![0].insurancePackageCode !=
+              //     null) {
               selectInsuranceCode = state
                   .tncDataDetailResponseModel.data![0].insurancePackageCode!;
               selectInsurance = state
                   .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
-            }
+              // }
+            });
           }
           if (state is TncDataError) {}
           if (state is TncDataException) {}
@@ -287,7 +302,7 @@ class _ApplicationForm5ViewMobileScreenState
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, top: 0.0, bottom: 16.0),
+                        left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
                     child: Column(
                       children: [
                         Column(
@@ -312,8 +327,12 @@ class _ApplicationForm5ViewMobileScreenState
                                       height: 35,
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: BoxDecoration(
-                                        color: condition == 'ARREAR'
-                                            ? primaryColor
+                                        color: state
+                                                    .tncDataDetailResponseModel
+                                                    .data![0]
+                                                    .firstPaymentTypeDesc ==
+                                                'ARREAR'
+                                            ? primaryColor.withOpacity(0.5)
                                             : const Color(0xFFE1E1E1),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -333,8 +352,12 @@ class _ApplicationForm5ViewMobileScreenState
                                       height: 35,
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: BoxDecoration(
-                                        color: condition == 'ADVANCE'
-                                            ? primaryColor
+                                        color: state
+                                                    .tncDataDetailResponseModel
+                                                    .data![0]
+                                                    .firstPaymentTypeDesc ==
+                                                'ADVANCE'
+                                            ? primaryColor.withOpacity(0.5)
                                             : const Color(0xFFE1E1E1),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -624,7 +647,7 @@ class _ApplicationForm5ViewMobileScreenState
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  selectInsurance,
+                                  '${state.tncDataDetailResponseModel.data![0].insurancePackageDesc}',
                                   style: const TextStyle(
                                       color: Color(0xFF6E6E6E),
                                       fontSize: 15,
@@ -646,7 +669,7 @@ class _ApplicationForm5ViewMobileScreenState
                                 },
                                 child: Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                      MediaQuery.of(context).size.width * 0.44,
                                   height: 45,
                                   decoration: BoxDecoration(
                                     color: secondaryColor,
@@ -671,7 +694,7 @@ class _ApplicationForm5ViewMobileScreenState
                                 },
                                 child: Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                      MediaQuery.of(context).size.width * 0.44,
                                   height: 45,
                                   decoration: BoxDecoration(
                                     color: thirdColor,

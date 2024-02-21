@@ -209,81 +209,72 @@ class _ApplicationForm5MobileScreenState
         });
   }
 
-  Future<void> _showBottomType(int indexes) {
+  Future<void> _showBottomFeeType(int indexes) {
     return showModalBottomSheet(
         context: context,
-        isScrollControlled: true,
         builder: (context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setStates) {
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Container(
-                constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.6),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16.0, left: 8, right: 8),
-                      child: Text(
-                        'Insurance',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(16.0),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, bottom: 16),
-                          itemCount: feeType.length,
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 4, bottom: 4),
-                              child: Divider(),
-                            );
-                          },
-                          itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              onTap: () {
-                                setState(() {
-                                  data[indexes].feePaymentType = feeType[index];
-                                });
-                                Navigator.pop(context);
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    feeType[index],
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  data[indexes].feePaymentType == feeType[index]
-                                      ? const Icon(Icons.check_rounded,
-                                          color: primaryColor)
-                                      : Container()
-                                ],
-                              ),
-                            );
-                          }),
-                    ),
-                  ],
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'Fee Type',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            );
-          });
+                const Padding(
+                  padding: EdgeInsets.all(24.0),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(
+                          left: 24, right: 24, bottom: 24),
+                      itemCount: feeType.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4, bottom: 4),
+                          child: Divider(),
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              data[indexes].feePaymentType = feeType[index];
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                feeType[index],
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              data[indexes].feePaymentType == feeType[index]
+                                  ? const Icon(Icons.check_rounded,
+                                      color: primaryColor)
+                                  : Container()
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
         });
   }
 
@@ -295,7 +286,7 @@ class _ApplicationForm5MobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: true).showBottomOption(
@@ -303,7 +294,7 @@ class _ApplicationForm5MobileScreenState
                 },
                 child: const Icon(
                   Icons.more_vert_rounded,
-                  size: 28,
+                  size: 24,
                 ),
               ))
         ],
@@ -377,148 +368,162 @@ class _ApplicationForm5MobileScreenState
                 return _loading();
               }
               if (state is FeeDataLoaded) {
-                return ListView.separated(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: data.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(width: 16);
-                    },
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, top: 0.0, bottom: 16.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${index + 1}. Biaya Admin',
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.9,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.1)),
-                                      color: const Color(0xFFFAF9F9),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          blurRadius: 6,
-                                          offset: const Offset(
-                                              -6, 4), // Shadow position
-                                        ),
-                                      ],
+                return Expanded(
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      // physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 24, bottom: 16),
+                          child: Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: Colors.grey.withOpacity(0.1),
+                          ),
+                        );
+                      },
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
+                      itemBuilder: (BuildContext context, int index) {
+                        return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data[index]
+                                          .feeDesc!
+                                          .capitalizeOnlyFirstLater(),
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16.0),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        GeneralUtil.convertToIdr(
-                                            data[index].feeAmount, 2),
-                                        style: const TextStyle(
-                                            color: Color(0xFF6E6E6E),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Payment Type',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Stack(
-                                    children: [
-                                      InkWell(
-                                        onTap: data[index].isCalculated == '1'
-                                            ? null
-                                            : () {
-                                                _showBottomType(index);
-                                              },
-                                        child: Container(
-                                          height: 55,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.9,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1)),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
                                             color:
-                                                data[index].isCalculated == '1'
-                                                    ? const Color(0xFFFAF9F9)
-                                                    : Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 6,
-                                                offset: const Offset(
-                                                    -6, 4), // Shadow position
-                                              ),
-                                            ],
+                                                Colors.grey.withOpacity(0.1)),
+                                        color: const Color(0xFFFAF9F9),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            blurRadius: 6,
+                                            offset: const Offset(
+                                                -6, 4), // Shadow position
                                           ),
-                                          padding: const EdgeInsets.only(
-                                              left: 16.0, right: 16.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              data[index].feePaymentType!,
-                                              style: TextStyle(
-                                                  color: data[index]
-                                                              .isCalculated ==
-                                                          '1'
-                                                      ? const Color(0xFF6E6E6E)
-                                                      : Colors.black,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.only(
+                                          left: 16.0, right: 16.0),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          GeneralUtil.convertToIdr(
+                                              data[index].feeAmount, 2),
+                                          style: const TextStyle(
+                                              color: Color(0xFF6E6E6E),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Payment Type',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Stack(
+                                      children: [
+                                        InkWell(
+                                          onTap: data[index].isCalculated == '1'
+                                              ? null
+                                              : () {
+                                                  _showBottomFeeType(index);
+                                                },
+                                          child: Container(
+                                            height: 55,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1)),
+                                              color: data[index].isCalculated ==
+                                                      '1'
+                                                  ? const Color(0xFFFAF9F9)
+                                                  : Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(
+                                                      -6, 4), // Shadow position
+                                                ),
+                                              ],
+                                            ),
+                                            padding: const EdgeInsets.only(
+                                                left: 16.0, right: 16.0),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                data[index].feePaymentType!,
+                                                style: TextStyle(
+                                                    color: data[index]
+                                                                .isCalculated ==
+                                                            '1'
+                                                        ? const Color(
+                                                            0xFF6E6E6E)
+                                                        : Colors.black,
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Positioned(
-                                        right: 16,
-                                        top: 14,
-                                        child: data[index].isCalculated == '1'
-                                            ? Container()
-                                            : const Icon(
-                                                Icons.search_rounded,
-                                                color: Color(0xFF3D3D3D),
-                                              ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ));
-                    });
+                                        Positioned(
+                                          right: 16,
+                                          top: 14,
+                                          child: data[index].isCalculated == '1'
+                                              ? Container()
+                                              : const Icon(
+                                                  Icons.search_rounded,
+                                                  color: Color(0xFF3D3D3D),
+                                                ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ));
+                      }),
+                );
               }
               return _loading();
             }));
@@ -533,10 +538,12 @@ class _ApplicationForm5MobileScreenState
             if (state
                     .tncDataDetailResponseModel.data![0].insurancePackageCode !=
                 null) {
-              selectInsuranceCode = state
-                  .tncDataDetailResponseModel.data![0].insurancePackageCode!;
-              selectInsurance = state
-                  .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
+              setState(() {
+                selectInsuranceCode = state
+                    .tncDataDetailResponseModel.data![0].insurancePackageCode!;
+                selectInsurance = state
+                    .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
+              });
             }
           }
           if (state is TncDataError) {}
@@ -552,7 +559,7 @@ class _ApplicationForm5MobileScreenState
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, top: 0.0, bottom: 16.0),
+                        left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
                     child: Column(
                       children: [
                         Column(
@@ -585,7 +592,11 @@ class _ApplicationForm5MobileScreenState
                                       height: 35,
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: BoxDecoration(
-                                        color: condition == 'ARREAR'
+                                        color: state
+                                                    .tncDataDetailResponseModel
+                                                    .data![0]
+                                                    .firstPaymentTypeDesc ==
+                                                'ARREAR'
                                             ? primaryColor
                                             : const Color(0xFFE1E1E1),
                                         borderRadius: BorderRadius.circular(10),
@@ -614,7 +625,11 @@ class _ApplicationForm5MobileScreenState
                                       height: 35,
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: BoxDecoration(
-                                        color: condition == 'ADVANCE'
+                                        color: state
+                                                    .tncDataDetailResponseModel
+                                                    .data![0]
+                                                    .firstPaymentTypeDesc ==
+                                                'ADVANCE'
                                             ? primaryColor
                                             : const Color(0xFFE1E1E1),
                                         borderRadius: BorderRadius.circular(10),
@@ -888,20 +903,20 @@ class _ApplicationForm5MobileScreenState
                               children: [
                                 BlocListener(
                                     bloc: insuranceBloc,
-                                    listener: (_, InsuranceState state) {
-                                      if (state is InsuranceLoading) {}
-                                      if (state is InsuranceLoaded) {}
-                                      if (state is InsuranceError) {}
-                                      if (state is InsuranceException) {}
+                                    listener: (_, InsuranceState state2) {
+                                      if (state2 is InsuranceLoading) {}
+                                      if (state2 is InsuranceLoaded) {}
+                                      if (state2 is InsuranceError) {}
+                                      if (state2 is InsuranceException) {}
                                     },
                                     child: BlocBuilder(
                                         bloc: insuranceBloc,
-                                        builder: (_, InsuranceState state) {
-                                          if (state is InsuranceLoading) {}
-                                          if (state is InsuranceLoaded) {
+                                        builder: (_, InsuranceState state2) {
+                                          if (state2 is InsuranceLoading) {}
+                                          if (state2 is InsuranceLoaded) {
                                             return InkWell(
                                               onTap: () {
-                                                _showBottomInsurance(state
+                                                _showBottomInsurance(state2
                                                     .lookUpInsurancePackageModel);
                                               },
                                               child: Container(
@@ -930,12 +945,22 @@ class _ApplicationForm5MobileScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    selectInsurance == ''
+                                                    state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .insurancePackageDesc ==
+                                                            null
                                                         ? 'Select Insurance'
-                                                        : selectInsurance,
+                                                        : state
+                                                            .tncDataDetailResponseModel
+                                                            .data![0]
+                                                            .insurancePackageDesc!,
                                                     style: TextStyle(
-                                                        color: selectInsurance ==
-                                                                ''
+                                                        color: state
+                                                                    .tncDataDetailResponseModel
+                                                                    .data![0]
+                                                                    .insurancePackageDesc ==
+                                                                null
                                                             ? Colors.grey
                                                                 .withOpacity(
                                                                     0.5)
@@ -1007,7 +1032,7 @@ class _ApplicationForm5MobileScreenState
                                 },
                                 child: Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                      MediaQuery.of(context).size.width * 0.44,
                                   height: 45,
                                   decoration: BoxDecoration(
                                     color: secondaryColor,
@@ -1080,7 +1105,7 @@ class _ApplicationForm5MobileScreenState
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.45,
+                                              0.44,
                                           height: 45,
                                           child: const Center(
                                             child: CircularProgressIndicator(),
@@ -1143,7 +1168,7 @@ class _ApplicationForm5MobileScreenState
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.45,
+                                                0.44,
                                             height: 45,
                                             decoration: BoxDecoration(
                                               color: thirdColor,

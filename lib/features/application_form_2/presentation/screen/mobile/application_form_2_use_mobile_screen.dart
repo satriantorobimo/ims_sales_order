@@ -555,14 +555,14 @@ class _ApplicationForm2UseMobileScreenState
         appBar: AppBar(
           actions: [
             Padding(
-                padding: const EdgeInsets.only(right: 8, top: 16, bottom: 8),
+                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
                 child: InkWell(
                   onTap: () {
                     OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
                   child: const Icon(
                     Icons.more_vert_rounded,
-                    size: 28,
+                    size: 24,
                   ),
                 ))
           ],
@@ -1716,7 +1716,7 @@ class _ApplicationForm2UseMobileScreenState
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
+                              width: MediaQuery.of(context).size.width * 0.44,
                               height: 45,
                               decoration: BoxDecoration(
                                 color: secondaryColor,
@@ -1764,7 +1764,7 @@ class _ApplicationForm2UseMobileScreenState
                                       return SizedBox(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.45,
+                                                0.44,
                                         height: 45,
                                         child: const Center(
                                           child: CircularProgressIndicator(),
@@ -1775,7 +1775,7 @@ class _ApplicationForm2UseMobileScreenState
                                       return SizedBox(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.45,
+                                                0.44,
                                         height: 45,
                                         child: const Center(
                                           child: CircularProgressIndicator(),
@@ -1889,7 +1889,7 @@ class _ApplicationForm2UseMobileScreenState
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.45,
+                                              0.44,
                                           height: 45,
                                           decoration: BoxDecoration(
                                             color: thirdColor,
@@ -2008,7 +2008,7 @@ class _ApplicationForm2UseMobileScreenState
                                       child: Container(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.45,
+                                                0.44,
                                         height: 45,
                                         decoration: BoxDecoration(
                                           color: thirdColor,

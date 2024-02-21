@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
+import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
 import 'package:sales_order/features/application_form_7/data/document_delete_request_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_list_response_model.dart';
 import 'package:sales_order/features/application_form_7/data/document_preview_request_model.dart';
@@ -415,6 +416,19 @@ class _ApplicationForm7MobileScreenState
         key: _scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
+          actions: [
+            Padding(
+                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
+                child: InkWell(
+                  onTap: () {
+                    OptionWidget(isUsed: false).showBottomOption(context, '');
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 24,
+                  ),
+                ))
+          ],
           iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
@@ -614,9 +628,11 @@ class _ApplicationForm7MobileScreenState
                               InkWell(
                                 onTap: () {
                                   Navigator.pushNamed(
-                                      context,
-                                      StringRouterUtil
-                                          .applicationFormSummaryScreenMobileRoute);
+                                    context,
+                                    StringRouterUtil
+                                        .applicationFormSummaryScreenMobileRoute,
+                                    arguments: widget.applicationNo,
+                                  );
                                 },
                                 child: Container(
                                   width:

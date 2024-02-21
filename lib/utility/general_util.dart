@@ -99,8 +99,18 @@ class GeneralUtil {
 
 extension StringExtension on String {
   String capitalizeOnlyFirstLater() {
-    if (trim().isEmpty) return "";
+    // if (trim().isEmpty) return "";
 
-    return "${this[0].toUpperCase()}${substring(1)}";
+    // return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+    final words = split(' ');
+    final capitalizedWords = words.map((word) {
+      if (word.isNotEmpty) {
+        final firstLetter = word[0].toUpperCase();
+        final restOfWord = word.substring(1).toLowerCase();
+        return '$firstLetter$restOfWord';
+      }
+      return word; // Handle empty words (e.g., multiple spaces)
+    });
+    return capitalizedWords.join(' ');
   }
 }

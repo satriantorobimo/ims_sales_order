@@ -499,7 +499,7 @@ class _ApplicationForm4MobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: true).showBottomOption(
@@ -507,7 +507,7 @@ class _ApplicationForm4MobileScreenState
                 },
                 child: const Icon(
                   Icons.more_vert_rounded,
-                  size: 28,
+                  size: 24,
                 ),
               ))
         ],
@@ -1472,6 +1472,7 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo1,
                                           keyboardType: TextInputType.text,
+                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(2)],
                                           decoration: InputDecoration(
                                               hintText: 'B',
                                               isDense: true,
@@ -1506,6 +1507,7 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo2,
                                           keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(4)],
                                           decoration: InputDecoration(
                                               hintText: '1234',
                                               isDense: true,
@@ -1537,6 +1539,7 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo3,
                                           keyboardType: TextInputType.text,
+                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(3)],
                                           decoration: InputDecoration(
                                               hintText: 'XXX',
                                               isDense: true,
@@ -1704,7 +1707,7 @@ class _ApplicationForm4MobileScreenState
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.45,
+                                        0.44,
                                     height: 45,
                                     decoration: BoxDecoration(
                                       color: secondaryColor,
@@ -1748,7 +1751,7 @@ class _ApplicationForm4MobileScreenState
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.45,
+                                                  0.44,
                                               height: 45,
                                               child: const Center(
                                                 child:
@@ -1890,7 +1893,7 @@ class _ApplicationForm4MobileScreenState
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.45,
+                                                    0.44,
                                                 height: 45,
                                                 decoration: BoxDecoration(
                                                   color: ctrlStatus
@@ -2042,7 +2045,7 @@ class _ApplicationForm4MobileScreenState
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.45,
+                                                  0.44,
                                               height: 45,
                                               decoration: BoxDecoration(
                                                 color: ctrlStatus

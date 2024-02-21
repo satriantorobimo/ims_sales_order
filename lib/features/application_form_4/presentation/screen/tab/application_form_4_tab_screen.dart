@@ -2092,6 +2092,11 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                           keyboardType:
                                                               TextInputType
                                                                   .text,
+                                                          inputFormatters: <
+                                                              TextInputFormatter>[
+                                                            LengthLimitingTextInputFormatter(
+                                                                2)
+                                                          ],
                                                           decoration:
                                                               InputDecoration(
                                                                   hintText: 'B',
@@ -2145,6 +2150,11 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                           keyboardType:
                                                               TextInputType
                                                                   .number,
+                                                          inputFormatters: <
+                                                              TextInputFormatter>[
+                                                            LengthLimitingTextInputFormatter(
+                                                                3)
+                                                          ],
                                                           decoration:
                                                               InputDecoration(
                                                                   hintText:
@@ -2199,6 +2209,11 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                           keyboardType:
                                                               TextInputType
                                                                   .text,
+                                                          inputFormatters: <
+                                                              TextInputFormatter>[
+                                                            LengthLimitingTextInputFormatter(
+                                                                3)
+                                                          ],
                                                           decoration:
                                                               InputDecoration(
                                                                   hintText:

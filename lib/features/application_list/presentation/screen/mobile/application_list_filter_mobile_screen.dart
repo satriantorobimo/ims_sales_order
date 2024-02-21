@@ -304,7 +304,7 @@ class _ApplicationListFilterMobileScreenState
                                             pPlaceOfBirth: ctrlPob.text));
                                   },
                             child: Container(
-                              width: 180,
+                              width: MediaQuery.of(context).size.width * 0.42,
                               height: 35,
                               decoration: BoxDecoration(
                                 color:
@@ -341,7 +341,7 @@ class _ApplicationListFilterMobileScreenState
                                           fontWeight: FontWeight.w600))),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 8),
                           InkWell(
                             onTap: () {
                               setStates(() {
@@ -359,7 +359,7 @@ class _ApplicationListFilterMobileScreenState
                               });
                             },
                             child: Container(
-                              width: 180,
+                              width: MediaQuery.of(context).size.width * 0.42,
                               height: 35,
                               decoration: BoxDecoration(
                                 color: secondaryColor,
@@ -788,30 +788,30 @@ class _ApplicationListFilterMobileScreenState
                                                         ),
                                                       ],
                                                     ),
-                                                    Container(
-                                                      width: 75,
-                                                      height: 30,
-                                                      decoration: BoxDecoration(
-                                                          color: secondaryColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(6)),
-                                                      child: Center(
-                                                        child: Text(
-                                                          dataFilter[index]
-                                                                  .facilityDesc ??
-                                                              '-',
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 10,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300,
-                                                                  color: Colors
-                                                                      .black),
-                                                        ),
-                                                      ),
-                                                    ),
+                                                    // Container(
+                                                    //   width: 75,
+                                                    //   height: 30,
+                                                    //   decoration: BoxDecoration(
+                                                    //       color: secondaryColor,
+                                                    //       borderRadius:
+                                                    //           BorderRadius
+                                                    //               .circular(6)),
+                                                    //   child: Center(
+                                                    //     child: Text(
+                                                    //       dataFilter[index]
+                                                    //               .facilityDesc ??
+                                                    //           '-',
+                                                    //       style:
+                                                    //           const TextStyle(
+                                                    //               fontSize: 10,
+                                                    //               fontWeight:
+                                                    //                   FontWeight
+                                                    //                       .w300,
+                                                    //               color: Colors
+                                                    //                   .black),
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                   ],
                                                 ),
                                               ],
