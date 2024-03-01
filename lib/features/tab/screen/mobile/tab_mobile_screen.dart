@@ -87,7 +87,7 @@ class _TabMobileScreenState extends State<TabMobileScreen> {
                 height: 24,
                 width: 24,
               ),
-              label: 'Aplication List',
+              label: 'Application List',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(

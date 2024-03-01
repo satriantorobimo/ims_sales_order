@@ -1764,7 +1764,7 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                                 16.0,
                                                                 20.0,
                                                                 20.0,
-                                                                16.0),
+                                                                8.0),
                                                         hintStyle: TextStyle(
                                                             color: Colors.grey
                                                                 .withOpacity(
@@ -1934,7 +1934,7 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                                 16.0,
                                                                 20.0,
                                                                 20.0,
-                                                                16.0),
+                                                                8.0),
                                                         hintStyle: TextStyle(
                                                             color: Colors.grey
                                                                 .withOpacity(
@@ -2013,7 +2013,7 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                                 16.0,
                                                                 20.0,
                                                                 20.0,
-                                                                16.0),
+                                                                8.0),
                                                         hintStyle: TextStyle(
                                                             color: Colors.grey
                                                                 .withOpacity(
@@ -2153,7 +2153,7 @@ class _ApplicationForm4TabScreenState extends State<ApplicationForm4TabScreen> {
                                                           inputFormatters: <
                                                               TextInputFormatter>[
                                                             LengthLimitingTextInputFormatter(
-                                                                3)
+                                                                4)
                                                           ],
                                                           decoration:
                                                               InputDecoration(

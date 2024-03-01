@@ -972,7 +972,8 @@ class _ApplicationForm5ViewTabScreenState
                                                         state
                                                             .applicationFeeDetailModel
                                                             .data![index]
-                                                            .feeDesc!,
+                                                            .feeDesc!
+                                                            .capitalizeOnlyFirstLater(),
                                                         style: const TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 18,

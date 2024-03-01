@@ -65,6 +65,14 @@ class UrlUtil {
     return baseUrl + getUrlLoginAppList2;
   }
 
+  static String urlUploadOCRKTP() =>
+      'api/v5_ifinrmd_api/api/IdentityOCR/VerificationOCR';
+
+  String getUrlUploadOCRKTP() {
+    final String getUrlUploadOCRKTP2 = urlUploadOCRKTP();
+    return baseUrl + getUrlUploadOCRKTP2;
+  }
+
   static String urlDataPeriode() =>
       'api/mobso_api/api/Home/GetCountApprovedByPeriodByUser';
 

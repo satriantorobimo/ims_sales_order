@@ -1,9 +1,21 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:sales_order/features/application_list/data/document_upload_ocr_request_model.dart';
+import 'package:sales_order/features/application_list/data/document_upload_ocr_response_model.dart';
+import 'package:sales_order/features/application_list/domain/repo/application_list_repo.dart';
+import 'package:sales_order/features/application_list/presentation/screen/bloc/doc_upload_ocr_bloc/doc_upload_ocr_bloc.dart';
+import 'package:sales_order/features/application_list/presentation/screen/bloc/doc_upload_ocr_bloc/doc_upload_ocr_event.dart';
+import 'package:sales_order/features/application_list/presentation/screen/bloc/doc_upload_ocr_bloc/doc_upload_ocr_state.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_display_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_ktp_widget.dart';
+import 'package:sales_order/features/application_list/presentation/widget/client_input_npwp_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/detail_info_widget.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
@@ -14,6 +26,7 @@ import 'package:sales_order/utility/drop_down_util.dart';
 import 'package:sales_order/utility/general_util.dart';
 import 'package:sales_order/utility/string_router_util.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:path/path.dart' as path;
 
 import '../../../../home/data/app_list_response_model.dart';
 import '../../../../home/presentation/bloc/app_list_bloc/bloc.dart';
@@ -26,23 +39,40 @@ class ApplicationListTabScreen extends StatefulWidget {
       _ApplicationListTabScreenState();
 }
 
-class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
+class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
+    with TickerProviderStateMixin {
   AppListBloc appListBloc = AppListBloc(homeRepo: HomeRepo());
+  AnimationController? animationController;
   var selectedPageNumber = 0;
   var pagination = 0;
   var length = 0;
   var selectedClientType = 0;
+  var selectedEntryType = 0;
   final int _perPage = 12;
   late List<Data> data = [];
   late List<Data> dataFilter = [];
   late List<Data> dataFilterSearch = [];
+  late List<DataOCRResponseModel> dataOCR = [];
   late List<CustDropdownMenuItem> clientType = [];
+  late List<CustDropdownMenuItem> entryType = [];
   late List<CustDropdownMenuItem> filter = [];
   late List<String> filterValue = ['ALL', 'HOLD', 'ON PROCESS', 'APPROVE'];
   late String filterSelect = '';
   TextEditingController ctrlDate = TextEditingController();
+  DocUploadOCRBloc docUploadOCRBloc =
+      DocUploadOCRBloc(applicationListRepo: ApplicationListRepo());
+
+  @override
+  void dispose() {
+    animationController!.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
+    animationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    animationController!.repeat();
     getMenu();
     getData();
     super.initState();
@@ -72,6 +102,10 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           .add(const CustDropdownMenuItem(value: 0, child: Text("PERSONAL")));
       clientType
           .add(const CustDropdownMenuItem(value: 1, child: Text("CORPORATE")));
+      entryType.add(
+          const CustDropdownMenuItem(value: 0, child: Text("Manual Entry")));
+      entryType
+          .add(const CustDropdownMenuItem(value: 1, child: Text("Upload KTP")));
       filter.add(const CustDropdownMenuItem(value: 0, child: Text("ALL")));
       filter.add(const CustDropdownMenuItem(value: 1, child: Text("HOLD")));
       filter
@@ -337,17 +371,17 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                       setStates(() {
                                         selectedClientType = val;
 
-                                        ctrlMotherMaiden.clear();
+                                        // ctrlMotherMaiden.clear();
 
-                                        ctrlKtpNo.clear();
+                                        // ctrlKtpNo.clear();
 
-                                        ctrlFullName.clear();
+                                        // ctrlFullName.clear();
 
-                                        ctrlPob.clear();
+                                        // ctrlPob.clear();
 
-                                        ctrlNpwp.clear();
+                                        // ctrlNpwp.clear();
 
-                                        dateSend = '';
+                                        // dateSend = '';
                                       });
                                     },
                                   ),
@@ -355,8 +389,79 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 16),
                           selectedClientType == 0
+                              ? Row(
+                                  children: [
+                                    const SizedBox(width: 16),
+                                    SizedBox(
+                                      width: 290,
+                                      height: 90,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Entry Type',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            width: 290,
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1)),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(
+                                                      -6, 4), // Shadow position
+                                                ),
+                                              ],
+                                            ),
+                                            padding: const EdgeInsets.only(
+                                                left: 16.0, right: 16.0),
+                                            child: CustDropDown(
+                                              items: entryType,
+                                              hintText: "Select Entry",
+                                              borderRadius: 5,
+                                              defaultSelectedIndex: 0,
+                                              onChanged: (val) {
+                                                setStates(() {
+                                                  selectedEntryType = val;
+
+                                                  // ctrlMotherMaiden.clear();
+
+                                                  // ctrlKtpNo.clear();
+
+                                                  // ctrlFullName.clear();
+
+                                                  // ctrlPob.clear();
+
+                                                  // ctrlNpwp.clear();
+
+                                                  // dateSend = '';
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(width: 0),
+                          const SizedBox(width: 16),
+                          selectedClientType == 0 && selectedEntryType == 0
                               ? Row(
                                   children: [
                                     ClientDisplayWidget(
@@ -372,21 +477,48 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                     ),
                                   ],
                                 )
-                              : Row(
-                                  children: [
-                                    ClientDisplayWidget(
-                                      title: 'Document Type',
-                                      content: 'NPWP',
-                                      onTap: () {},
+                              : selectedClientType == 1
+                                  ? Row(
+                                      children: [
+                                        ClientDisplayWidget(
+                                          title: 'Document Type',
+                                          content: 'NPWP',
+                                          onTap: () {},
+                                        ),
+                                        const SizedBox(width: 16),
+                                        ClientInputNpwpWidget(
+                                          title: 'NPWP No',
+                                          content: '',
+                                          ctrl: ctrlNpwp,
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        const SizedBox(width: 16),
+                                        InkWell(
+                                          onTap: () {
+                                            _showBottomAttachment();
+                                          },
+                                          child: Container(
+                                            width: 200,
+                                            height: 45,
+                                            decoration: BoxDecoration(
+                                              color: Colors.cyan,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: const Center(
+                                                child: Text('Upload',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600))),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                    const SizedBox(width: 16),
-                                    ClientInputWidget(
-                                      title: 'NPWP No',
-                                      content: '',
-                                      ctrl: ctrlNpwp,
-                                    ),
-                                  ],
-                                ),
                         ],
                       ),
                     ),
@@ -394,7 +526,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 32),
-                      child: selectedClientType == 0
+                      child: selectedClientType == 0 && selectedEntryType == 0
                           ? Row(
                               children: [
                                 ClientInputWidget(
@@ -426,18 +558,26 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                     }),
                               ],
                             )
-                          : Row(children: [
-                              ClientDisplayWidget(
-                                  title: 'Established Date',
-                                  content: '',
-                                  onTap: () {}),
-                              const SizedBox(width: 16),
-                              ClientInputWidget(
-                                title: 'Full Name',
-                                content: '',
-                                ctrl: ctrlFullName,
-                              ),
-                            ]),
+                          : selectedClientType == 1
+                              ? Row(children: [
+                                  ClientDisplayWidget(
+                                      title: 'Established Date',
+                                      content: dateSend,
+                                      onTap: () {
+                                        _presentDatePicker().then((value) {
+                                          setStates(() {
+                                            dateSend = value;
+                                          });
+                                        });
+                                      }),
+                                  const SizedBox(width: 16),
+                                  ClientInputWidget(
+                                    title: 'Full Name',
+                                    content: '',
+                                    ctrl: ctrlFullName,
+                                  ),
+                                ])
+                              : Row(),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -470,7 +610,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                       'NPWP'
                                                   ? ctrlNpwp.text
                                                   : ctrlKtpNo.text,
-                                          pEstDate: '',
+                                          pEstDate: ctrlDate.text,
                                           pFullName: ctrlFullName.text,
                                           pMotherMaidenName:
                                               ctrlMotherMaiden.text,
@@ -577,15 +717,26 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
           backgroundColor: Colors.white,
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 32.0),
+              padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
                 onTap: () {
                   _showBottomDialogClient();
                 },
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 28,
+                child: Row(
+                  children: const [
+                    SizedBox(width: 16),
+                    Text(
+                      'Add',
+                      style: TextStyle(color: Color(0xFF222222)),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.add_rounded,
+                      color: Colors.black,
+                      size: 28,
+                    ),
+                    SizedBox(width: 16),
+                  ],
                 ),
               ),
             )
@@ -1091,34 +1242,34 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
                                                                 ),
                                                               ],
                                                             ),
-                                                            Container(
-                                                              height: 25,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(6.0),
-                                                              decoration: BoxDecoration(
-                                                                  color:
-                                                                      secondaryColor,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              6)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  dataFilter[index]
-                                                                          .facilityDesc ??
-                                                                      '-',
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          10,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w300,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            // Container(
+                                                            //   height: 25,
+                                                            //   padding:
+                                                            //       const EdgeInsets
+                                                            //           .all(6.0),
+                                                            //   decoration: BoxDecoration(
+                                                            //       color:
+                                                            //           secondaryColor,
+                                                            //       borderRadius:
+                                                            //           BorderRadius
+                                                            //               .circular(
+                                                            //                   6)),
+                                                            //   child: Center(
+                                                            //     child: Text(
+                                                            //       dataFilter[index]
+                                                            //               .facilityDesc ??
+                                                            //           '-',
+                                                            //       style: const TextStyle(
+                                                            //           fontSize:
+                                                            //               10,
+                                                            //           fontWeight:
+                                                            //               FontWeight
+                                                            //                   .w300,
+                                                            //           color: Colors
+                                                            //               .black),
+                                                            //     ),
+                                                            //   ),
+                                                            // ),
                                                           ],
                                                         ),
                                                       ],
@@ -1367,5 +1518,220 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen> {
             ),
           ),
         ));
+  }
+
+  void _uploadAttempt(BuildContext context) {
+    showDialog(
+      useSafeArea: true,
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          actionsPadding:
+              const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          title: Container(),
+          titlePadding: const EdgeInsets.only(top: 20, left: 20),
+          contentPadding: const EdgeInsets.only(
+            top: 0,
+            bottom: 24,
+            left: 24,
+            right: 24,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: CircularProgressIndicator(
+                    valueColor: animationController!.drive(
+                        ColorTween(begin: thirdColor, end: secondaryColor)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Mohon menunggu sebentar',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF575551)),
+              ),
+            ],
+          ),
+          actions: const [],
+        );
+      },
+    );
+  }
+
+  Future<void> _showBottomAttachment() {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                  child: Text(
+                    'Select Recource File',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 24.0),
+                    child: InkWell(
+                      onTap: () {
+                        pickImage().then((value) {
+                          if (value[0] == 'big') {
+                            GeneralUtil()
+                                .showSnackBar(context, 'Size Maximal 5MB');
+                          }
+                          Navigator.pop(context);
+                          _uploadAttempt(context);
+                        });
+                      },
+                      child: Row(
+                        children: const [
+                          Icon(Icons.camera_alt_rounded, size: 18),
+                          SizedBox(width: 16),
+                          Text(
+                            'Camera',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    )),
+                Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 24.0),
+                    child: BlocListener(
+                      bloc: docUploadOCRBloc,
+                      listener: (_, DocUploadOCRState state) {
+                        if (state is DocUploadOCRLoading) {}
+                        if (state is DocUploadOCRLoaded) {
+                          Navigator.pop(context);
+                          GeneralUtil().showSnackBar(context, 'success upload');
+                        }
+                        if (state is DocUploadOCRError) {
+                          Navigator.pop(context);
+                          GeneralUtil().showSnackBar(context, state.error!);
+                        }
+                        if (state is DocUploadOCRException) {}
+                      },
+                      child: InkWell(
+                        onTap: () {
+                          pickFile().then((value) async {
+                            if (value[0] == 'big') {
+                              GeneralUtil()
+                                  .showSnackBar(context, 'Size Maximal 5MB');
+                            }
+                            Navigator.pop(context);
+                            _uploadAttempt(context);
+
+                            File imagefile = File(value[1]);
+                            Uint8List imagebytes =
+                                await imagefile.readAsBytes();
+                            String base64string = base64.encode(imagebytes);
+                            docUploadOCRBloc.add(DocUploadOCRAttempt(
+                                DocumentUploadOCRRequestModel(
+                                    pBase64: base64string,
+                                    pChild: "1",
+                                    pFileName: value[2],
+                                    pFilePath: 1,
+                                    pId: 1,
+                                    pHeader: "OCR_KTP",
+                                    pModule: "MOB_SO")));
+                          });
+                        },
+                        child: Row(
+                          children: const [
+                            Icon(Icons.folder_rounded, size: 18),
+                            SizedBox(width: 16),
+                            Text(
+                              'File',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<List> pickImage() async {
+    String? filePath;
+    String? basename;
+    try {
+      var maxFileSizeInBytes = 5 * 1048576;
+      ImagePicker imagePicker = ImagePicker();
+      XFile? pickedImage = await imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 90,
+      );
+      if (pickedImage == null) return ['notselect', filePath, basename];
+
+      var imagePath = await pickedImage.readAsBytes();
+      var fileSize = imagePath.length; // Get the file size in bytes
+      if (fileSize <= maxFileSizeInBytes) {
+        filePath = pickedImage.path;
+        basename = path.basename(pickedImage.path);
+      } else {
+        return ['big', filePath, basename];
+      }
+
+      return ['yes', filePath, basename];
+    } on PlatformException catch (e) {
+      log('Failed to pick image: $e');
+      return ['notselect', filePath, basename];
+    }
+  }
+
+  Future<List> pickFile() async {
+    var maxFileSizeInBytes = 5 * 1048576;
+    String? filePath;
+    String? basename;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
+    );
+
+    if (result != null) {
+      var fileSize = result.files.first.size;
+      if (fileSize <= maxFileSizeInBytes) {
+        filePath = result.files.single.path!;
+        basename = path.basename(filePath);
+      } else {
+        return ['big', filePath, basename];
+      }
+      return ['yes', filePath, basename];
+    } else {
+      return ['notselect', filePath, basename];
+    }
   }
 }

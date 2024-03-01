@@ -86,7 +86,7 @@ class _TabTabScreenState extends State<TabTabScreen> {
                 height: 24,
                 width: 24,
               ),
-              label: 'Aplication List',
+              label: 'Application List',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(

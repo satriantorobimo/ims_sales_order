@@ -1142,7 +1142,10 @@ class _ApplicationForm5MobileScreenState
                                                             .pApplicationNo;
                                                     updateTncRequestModel
                                                             .pInsurancePackageCode =
-                                                        selectInsuranceCode;
+                                                        state
+                                                            .tncDataDetailResponseModel
+                                                            .data![0]
+                                                            .insurancePackageCode!;
                                                     updateTncRequestModel
                                                             .pPaymentType =
                                                         state

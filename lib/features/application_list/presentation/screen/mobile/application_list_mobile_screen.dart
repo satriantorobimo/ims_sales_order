@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_display_mobile_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_ktp_mobile_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_mobile_widget.dart';
+import 'package:sales_order/features/application_list/presentation/widget/client_input_npwp_mobile_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/client_input_widget.dart';
 import 'package:sales_order/features/application_list/presentation/widget/detail_info_mobile_widget.dart';
 import 'package:sales_order/features/client_list/data/client_matching_mode.dart';
@@ -214,7 +215,7 @@ class _ApplicationListMobileScreenState
                                   onTap: () {},
                                 ),
                                 const SizedBox(height: 4),
-                                ClientInputMobileWidget(
+                                ClientInputNpwpMobileWidget(
                                   title: 'NPWP No',
                                   content: '',
                                   ctrl: ctrlNpwp,

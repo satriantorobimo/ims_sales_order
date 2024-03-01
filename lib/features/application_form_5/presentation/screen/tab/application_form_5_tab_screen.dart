@@ -1168,7 +1168,7 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                                           left:
                                                                               16.0,
                                                                           right:
-                                                                              16.0),
+                                                                              32.0),
                                                                       child:
                                                                           Align(
                                                                         alignment:
@@ -1301,7 +1301,9 @@ class _ApplicationForm5TabScreenState extends State<ApplicationForm5TabScreen> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        data[index].feeDesc!,
+                                                        data[index]
+                                                            .feeDesc!
+                                                            .capitalizeOnlyFirstLater(),
                                                         style: const TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 18,

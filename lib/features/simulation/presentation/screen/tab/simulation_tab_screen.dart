@@ -29,9 +29,9 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
   List<String> feeType = ['ADVANCE', 'ARREAR'];
   AnimationController? animationController;
   String otrValue = '';
-  String adminValue = '';
-  String provisiValue = '';
-  String othersValue = '';
+  String adminValue = '0';
+  String provisiValue = '0';
+  String othersValue = '0';
   double dpAmount = 0.00;
   double financingAmount = 0.00;
   int selectIndexInsurance = 10000;
@@ -45,9 +45,9 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
   TextEditingController ctrlEmail = TextEditingController();
   TextEditingController ctrlVehicleName = TextEditingController();
   TextEditingController ctrlFr = TextEditingController();
-  TextEditingController ctrlAdmin = TextEditingController();
-  TextEditingController ctrlProvisi = TextEditingController();
-  TextEditingController ctrlOthers = TextEditingController();
+  TextEditingController ctrlAdmin = TextEditingController(text: '0');
+  TextEditingController ctrlProvisi = TextEditingController(text: '0');
+  TextEditingController ctrlOthers = TextEditingController(text: '0');
 
   InsuranceBloc insuranceBloc = InsuranceBloc(form5repo: Form5Repo());
   SimulationBloc simulationBloc =
@@ -285,6 +285,54 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
         ),
         elevation: 0,
         backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: InkWell(
+              onTap: () {
+                // setState(() {
+                ctrlFullName.clear();
+                ctrlPhoneNumber.clear();
+                ctrlEmail.clear();
+                ctrlVehicleName.clear();
+                ctrlOtr.clear();
+                ctrlDp.clear();
+                ctrlFr.clear();
+                ctrlAdmin.text = '0';
+                adminValue = '0';
+                ctrlProvisi.text = '0';
+                provisiValue = '0';
+                ctrlOthers.text = '0';
+                othersValue = '0';
+                // });
+                setState(() {
+                  dpAmount = 0.00;
+                  financingAmount = 0.00;
+                  firstPaymentType = '';
+                  selectInsurance = '';
+                });
+              },
+              child: Row(
+                children: const [
+                  SizedBox(width: 16),
+                  Text(
+                    'Reset',
+                    style: TextStyle(
+                      color: Color(0xFF222222),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(
+                    Icons.refresh_rounded,
+                    color: Colors.black,
+                    size: 28,
+                  ),
+                  SizedBox(width: 16),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
           controller: _controller,
@@ -345,7 +393,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                       hintText: 'Full Name',
                                       isDense: true,
                                       contentPadding: const EdgeInsets.fromLTRB(
-                                          16.0, 20.0, 20.0, 16.0),
+                                          16.0, 20.0, 20.0, 8.0),
                                       hintStyle: TextStyle(
                                           color: Colors.grey.withOpacity(0.5)),
                                       filled: true,
@@ -406,7 +454,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                         isDense: true,
                                         contentPadding:
                                             const EdgeInsets.fromLTRB(
-                                                16.0, 20.0, 20.0, 16.0),
+                                                16.0, 20.0, 20.0, 8.0),
                                         hintStyle: TextStyle(
                                             color:
                                                 Colors.grey.withOpacity(0.5)),
@@ -467,7 +515,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                       hintText: 'Email',
                                       isDense: true,
                                       contentPadding: const EdgeInsets.fromLTRB(
-                                          16.0, 20.0, 20.0, 16.0),
+                                          16.0, 20.0, 20.0, 8.0),
                                       hintStyle: TextStyle(
                                           color: Colors.grey.withOpacity(0.5)),
                                       filled: true,
@@ -520,7 +568,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                       hintText: 'Vehicle Name',
                                       isDense: true,
                                       contentPadding: const EdgeInsets.fromLTRB(
-                                          16.0, 20.0, 20.0, 16.0),
+                                          16.0, 20.0, 20.0, 8.0),
                                       hintStyle: TextStyle(
                                           color: Colors.grey.withOpacity(0.5)),
                                       filled: true,
@@ -653,7 +701,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                             Row(
                               children: const [
                                 Text(
-                                  'DP(%)',
+                                  'DP (%)',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
@@ -685,6 +733,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(16),
+                                    LimitRangeTextInputFormatter(1, 100),
                                   ],
                                   onChanged: (string) {
                                     if (ctrlOtr.text == '' ||
@@ -923,6 +972,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(16),
+                                    LimitRangeTextInputFormatter(1, 100),
                                   ],
                                   decoration: InputDecoration(
                                       hintText: 'Rate (%) ',
@@ -1004,7 +1054,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                                   ],
                                                 ),
                                                 padding: const EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
+                                                    left: 16.0, right: 32.0),
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
@@ -1048,7 +1098,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                               ],
                                             ),
                                             padding: const EdgeInsets.only(
-                                                left: 16.0, right: 16.0),
+                                                left: 16.0, right: 32.0),
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
