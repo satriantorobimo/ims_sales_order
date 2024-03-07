@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -7,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
 import 'package:sales_order/features/application_form_1/presentation/bloc/get_client_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
+import 'package:sales_order/features/application_form_summary/data/detail_summary_request_model.dart';
 import 'package:sales_order/features/application_form_summary/domain/repo/summary_repo.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/detail_summary_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/submit_summary_bloc/bloc.dart';
@@ -702,11 +704,43 @@ class _ApplicationFormSummaryMobileScreenState
                                                       : (check1 == true &&
                                                           _controller
                                                               .isNotEmpty))
-                                                  ? () {
+                                                  ? () async {
+                                                      Uint8List?
+                                                          imagebytesClient =
+                                                          await _controller
+                                                              .toPngBytes();
+                                                      Uint8List?
+                                                          imagebytesSpouse =
+                                                          await _controllerSpouse
+                                                              .toPngBytes();
+                                                      String
+                                                          base64stringClient =
+                                                          imagebytesClient ==
+                                                                  null
+                                                              ? ''
+                                                              : base64.encode(
+                                                                  imagebytesClient);
+                                                      String
+                                                          base64stringSpouse =
+                                                          imagebytesSpouse ==
+                                                                  null
+                                                              ? ''
+                                                              : base64.encode(
+                                                                  imagebytesSpouse);
                                                       submitSummaryBloc.add(
                                                           SubmitSummaryAttempt(
-                                                              widget
-                                                                  .applicationNo));
+                                                              DetailSummaryRequestModel(
+                                                        pApplicationNo: widget
+                                                            .applicationNo,
+                                                        pFileNameClient:
+                                                            'client_${widget.applicationNo}_signature',
+                                                        pBase64Client:
+                                                            base64stringClient,
+                                                        pFileNameSpouse:
+                                                            'spouse_${widget.applicationNo}_signature',
+                                                        pBase64Spouse:
+                                                            base64stringSpouse,
+                                                      )));
                                                     }
                                                   : null,
                                               child: Container(
@@ -762,11 +796,39 @@ class _ApplicationFormSummaryMobileScreenState
                                                             .isNotEmpty)
                                                     : (check1 == true &&
                                                         _controller.isNotEmpty))
-                                                ? () {
+                                                ? () async {
+                                                    Uint8List?
+                                                        imagebytesClient =
+                                                        await _controller
+                                                            .toPngBytes();
+                                                    Uint8List?
+                                                        imagebytesSpouse =
+                                                        await _controllerSpouse
+                                                            .toPngBytes();
+                                                    String base64stringClient =
+                                                        imagebytesClient == null
+                                                            ? ''
+                                                            : base64.encode(
+                                                                imagebytesClient);
+                                                    String base64stringSpouse =
+                                                        imagebytesSpouse == null
+                                                            ? ''
+                                                            : base64.encode(
+                                                                imagebytesSpouse);
                                                     submitSummaryBloc.add(
                                                         SubmitSummaryAttempt(
-                                                            widget
-                                                                .applicationNo));
+                                                            DetailSummaryRequestModel(
+                                                      pApplicationNo:
+                                                          widget.applicationNo,
+                                                      pFileNameClient:
+                                                          'client_${widget.applicationNo}_signature',
+                                                      pBase64Client:
+                                                          base64stringClient,
+                                                      pFileNameSpouse:
+                                                          'spouse_${widget.applicationNo}_signature',
+                                                      pBase64Spouse:
+                                                          base64stringSpouse,
+                                                    )));
                                                   }
                                                 : null,
                                             child: Container(

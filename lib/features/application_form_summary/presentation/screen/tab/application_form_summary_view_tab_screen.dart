@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -40,6 +41,8 @@ class _ApplicationFormSummaryViewTabScreenState
   double tdpAmount = 0.0;
   double installmentAmount = 0.0;
   String dueDate = '';
+  String clientSignImg = '';
+  String clientSpouseSignImg = '';
 
   final SignatureController _controller = SignatureController(
     penStrokeWidth: 2,
@@ -237,6 +240,14 @@ class _ApplicationFormSummaryViewTabScreenState
                                         .installmentAmount!;
                                     tdpAmount = state.detailSummaryResponseModel
                                         .data![0].tdpAmount!;
+                                    clientSignImg = state
+                                        .detailSummaryResponseModel
+                                        .data![0]
+                                        .clientSignImg!;
+                                    clientSpouseSignImg = state
+                                        .detailSummaryResponseModel
+                                        .data![0]
+                                        .clientSpouseSignImg!;
                                   });
                                 }
                                 if (state is DetailSummaryError) {
@@ -461,26 +472,62 @@ class _ApplicationFormSummaryViewTabScreenState
                                                   elevation: 6,
                                                   shadowColor: Colors.grey
                                                       .withOpacity(0.4),
-                                                  child: AbsorbPointer(
-                                                    absorbing: true,
-                                                    child: Signature(
-                                                      key: const Key(
-                                                          'signature'),
-                                                      controller: _controller,
-                                                      height: 200,
-                                                      width: 500,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                    ),
+                                                  child: Image.memory(
+                                                    base64Decode(clientSignImg),
+                                                    height: 200,
+                                                    width: 500,
+                                                    // errorBuilder:
+                                                    //     (BuildContext context,
+                                                    //         Object exception,
+                                                    //         StackTrace?
+                                                    //             stackTrace) {
+                                                    //   print(
+                                                    //       'Error occurred, Exception: $exception');
+                                                    //   print(
+                                                    //       'Stack Trace: $stackTrace');
+                                                    //   // You can return an error widget here
+                                                    //   return const Center(
+                                                    //       child: Text(
+                                                    //           'Error loading image'));
+                                                    // },
                                                   ),
+
+                                                  // Image.memory(
+                                                  //   // bytesClient!,
+                                                  //   base64Decode(clientSignImg),
+                                                  //   // fit: BoxFit.fitWidth,
+                                                  //   height: 200,
+                                                  //   width: 200,
+                                                  // ),
+                                                  // child: AbsorbPointer(
+                                                  //   absorbing: true,
+                                                  //   child: Signature(
+                                                  //     key: const Key(
+                                                  //         'signature'),
+                                                  //     controller: _controller,
+                                                  //     height: 200,
+                                                  //     width: 500,
+                                                  //     backgroundColor:
+                                                  //         Colors.white,
+                                                  //   ),
+                                                  // ),
                                                 ),
-                                                Positioned(
-                                                  right: 8,
-                                                  bottom: 8,
-                                                  child: Row(
-                                                    children: const [],
-                                                  ),
-                                                )
+                                                // Positioned(
+                                                //   right: 8,
+                                                //   bottom: 8,
+                                                //   child: Row(
+                                                //     children: const [],
+                                                //   ),
+                                                // )
+                                                // Center(
+                                                //   child: Image.memory(
+                                                //     bytesClient,
+                                                //     // base64Decode(clientSignImg),
+                                                //     // fit: BoxFit.fitWidth,
+                                                //     height: 200,
+                                                //     width: 200,
+                                                //   ),
+                                                // )
                                               ],
                                             ),
                                           ],
@@ -507,27 +554,47 @@ class _ApplicationFormSummaryViewTabScreenState
                                                         elevation: 6,
                                                         shadowColor: Colors.grey
                                                             .withOpacity(0.4),
-                                                        child: AbsorbPointer(
-                                                          absorbing: true,
-                                                          child: Signature(
-                                                            key: const Key(
-                                                                'signature'),
-                                                            controller:
-                                                                _controllerSpouse,
-                                                            height: 200,
-                                                            width: 500,
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                          ),
+                                                        child: Image.memory(
+                                                          base64Decode(
+                                                              clientSpouseSignImg),
+                                                          height: 200,
+                                                          width: 500,
+                                                          // errorBuilder:
+                                                          //     (BuildContext context,
+                                                          //         Object exception,
+                                                          //         StackTrace?
+                                                          //             stackTrace) {
+                                                          //   print(
+                                                          //       'Error occurred, Exception: $exception');
+                                                          //   print(
+                                                          //       'Stack Trace: $stackTrace');
+                                                          //   // You can return an error widget here
+                                                          //   return const Center(
+                                                          //       child: Text(
+                                                          //           'Error loading image'));
+                                                          // },
                                                         ),
+                                                        // child: AbsorbPointer(
+                                                        //   absorbing: true,
+                                                        //   child: Signature(
+                                                        //     key: const Key(
+                                                        //         'signature'),
+                                                        //     controller:
+                                                        //         _controllerSpouse,
+                                                        //     height: 200,
+                                                        //     width: 500,
+                                                        //     backgroundColor:
+                                                        //         Colors.white,
+                                                        //   ),
+                                                        // ),
                                                       ),
-                                                      Positioned(
-                                                        right: 8,
-                                                        bottom: 8,
-                                                        child: Row(
-                                                          children: const [],
-                                                        ),
-                                                      )
+                                                      // Positioned(
+                                                      //   right: 8,
+                                                      //   bottom: 8,
+                                                      //   child: Row(
+                                                      //     children: const [],
+                                                      //   ),
+                                                      // )
                                                     ],
                                                   )
                                                 : Container(),

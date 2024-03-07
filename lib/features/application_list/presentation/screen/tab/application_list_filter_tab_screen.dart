@@ -575,15 +575,26 @@ class _ApplicationListFilterTabScreenState
             widget.status == 'APPROVE'
                 ? Container()
                 : Padding(
-                    padding: const EdgeInsets.only(right: 32.0),
+                    padding: const EdgeInsets.only(right: 16.0),
                     child: InkWell(
                       onTap: () {
                         _showBottomDialogClient();
                       },
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.black,
-                        size: 28,
+                      child: Row(
+                        children: const [
+                          SizedBox(width: 16),
+                          Text(
+                            'Add',
+                            style: TextStyle(color: Color(0xFF222222)),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.add_rounded,
+                            color: Colors.black,
+                            size: 28,
+                          ),
+                          SizedBox(width: 16),
+                        ],
                       ),
                     ),
                   )

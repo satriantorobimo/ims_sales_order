@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -6,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sales_order/features/application_form_1/domain/repo/form_1_repo.dart';
 import 'package:sales_order/features/application_form_1/presentation/widget/option_widget.dart';
+import 'package:sales_order/features/application_form_summary/data/detail_summary_request_model.dart';
 import 'package:sales_order/features/application_form_summary/domain/repo/summary_repo.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/detail_summary_bloc/bloc.dart';
 import 'package:sales_order/features/application_form_summary/presentation/bloc/submit_summary_bloc/bloc.dart';
@@ -35,6 +37,8 @@ class _ApplicationFormSummaryTabScreenState
   bool isMarried = true;
   double tdpAmount = 0.0;
   double installmentAmount = 0.0;
+  int clientSignId = 0;
+  int clientSpouseSignId = 0;
   String dueDate = '';
   DetailSummaryBloc detailSummaryBloc =
       DetailSummaryBloc(summaryRepo: SummaryRepo());
@@ -314,6 +318,14 @@ class _ApplicationFormSummaryTabScreenState
                                         .installmentAmount!;
                                     tdpAmount = state.detailSummaryResponseModel
                                         .data![0].tdpAmount!;
+                                    clientSignId = state
+                                        .detailSummaryResponseModel
+                                        .data![0]
+                                        .clientSignId!;
+                                    clientSpouseSignId = state
+                                        .detailSummaryResponseModel
+                                        .data![0]
+                                        .clientSpouseSignId!;
                                   });
                                 }
                                 if (state is DetailSummaryError) {
@@ -765,10 +777,36 @@ class _ApplicationFormSummaryTabScreenState
                                             _controllerSpouse.isNotEmpty)
                                         : (check1 == true &&
                                             _controller.isNotEmpty))
-                                    ? () {
+                                    ? () async {
+                                        Uint8List? imagebytesClient =
+                                            await _controller.toPngBytes();
+                                        Uint8List? imagebytesSpouse =
+                                            await _controllerSpouse
+                                                .toPngBytes();
+                                        String base64stringClient =
+                                            imagebytesClient == null
+                                                ? ''
+                                                : base64
+                                                    .encode(imagebytesClient);
+                                        String base64stringSpouse =
+                                            imagebytesSpouse == null
+                                                ? ''
+                                                : base64
+                                                    .encode(imagebytesSpouse);
                                         submitSummaryBloc.add(
                                             SubmitSummaryAttempt(
-                                                widget.applicationNo));
+                                                DetailSummaryRequestModel(
+                                          pApplicationNo: widget.applicationNo,
+                                          pClientSignId: clientSignId,
+                                          pFileNameClient:
+                                              'client_signature.png',
+                                          pBase64Client: base64stringClient,
+                                          pClientSpouseSignId:
+                                              clientSpouseSignId,
+                                          pFileNameSpouse:
+                                              'spouse_signature.png',
+                                          pBase64Spouse: base64stringSpouse,
+                                        )));
                                       }
                                     : null,
                                 child: Container(

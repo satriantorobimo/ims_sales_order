@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sales_order/features/application_form_2/data/add_client_response_model.dart';
+import 'package:sales_order/features/application_form_summary/data/detail_summary_request_model.dart';
 import 'package:sales_order/features/application_form_summary/data/detail_summary_response_model.dart';
 import 'package:sales_order/utility/shared_pref_util.dart';
 import 'package:sales_order/utility/url_util.dart';
@@ -44,14 +45,15 @@ class SummaryApi {
     }
   }
 
-  Future<AddClientResponseModel> attemptSubmitSummary(String code) async {
+  Future<AddClientResponseModel> attemptSubmitSummary(
+      DetailSummaryRequestModel detailSummaryRequestModel) async {
     List a = [];
     final String? token = await SharedPrefUtil.getSharedString('token');
 
     final Map<String, String> header = urlUtil.getHeaderTypeWithToken(token!);
-    final Map mapData = {};
-    mapData['p_application_no'] = code;
-    a.add(mapData);
+    // final Map mapData = {};
+    // mapData['p_application_no'] = code;
+    a.add(detailSummaryRequestModel.toJson());
 
     final json = jsonEncode(a);
 

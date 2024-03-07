@@ -11,8 +11,8 @@ class SubmitSummaryBloc extends Bloc<SubmitSummaryEvent, SubmitSummaryState> {
       if (event is SubmitSummaryAttempt) {
         try {
           emit(SubmitSummaryLoading());
-          final addClientResponseModel =
-              await summaryRepo.attemptSubmitSummary(event.code);
+          final addClientResponseModel = await summaryRepo
+              .attemptSubmitSummary(event.detailSummaryRequestModel);
           if (addClientResponseModel.result == 1) {
             emit(SubmitSummaryLoaded(
                 addClientResponseModel: addClientResponseModel));

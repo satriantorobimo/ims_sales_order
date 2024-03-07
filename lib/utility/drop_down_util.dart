@@ -14,8 +14,8 @@ class CustDropDown<T> extends StatefulWidget {
       {required this.items,
       required this.onChanged,
       this.hintText = "",
-      this.borderRadius = 0,
-      this.borderWidth = 1,
+      this.borderRadius = 20,
+      this.borderWidth = 20,
       this.maxListHeight = 100,
       this.defaultSelectedIndex = -1,
       Key? key,
@@ -117,14 +117,22 @@ class _CustDropDownState extends State<CustDropDown>
                               maxWidth: size.width),
                           decoration: BoxDecoration(
                               color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.4),
+                                  blurRadius: 6,
+                                  offset:
+                                      const Offset(-6, 4), // Shadow position
+                                ),
+                              ],
                               borderRadius: BorderRadius.circular(12)),
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(
                               Radius.circular(widget.borderRadius),
                             ),
                             child: Material(
-                              elevation: 0,
-                              shadowColor: Colors.grey,
+                              elevation: 10,
+                              shadowColor: Colors.black,
                               child: ListView(
                                 padding: EdgeInsets.zero,
                                 shrinkWrap: true,

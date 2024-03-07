@@ -46,13 +46,28 @@ class Data {
   double? tdpAmount;
   double? installmentAmount;
   int? dueDate;
+  int? clientSignId;
+  String? clientSignImg;
+  int? clientSpouseSignId;
+  String? clientSpouseSignImg;
 
-  Data({this.tdpAmount, this.installmentAmount, this.dueDate});
+  Data(
+      {this.tdpAmount,
+      this.installmentAmount,
+      this.dueDate,
+      this.clientSignId,
+      this.clientSignImg,
+      this.clientSpouseSignId,
+      this.clientSpouseSignImg});
 
   Data.fromJson(Map<String, dynamic> json) {
     tdpAmount = json['tdp_amount'];
     installmentAmount = json['installment_amount'];
     dueDate = json['due_date'];
+    clientSignId = json['client_sign_id'];
+    clientSignImg = json['client_sign_img'];
+    clientSpouseSignId = json['client_spouse_sign_id'];
+    clientSpouseSignImg = json['client_spouse_sign_img'];
   }
 
   Map<String, dynamic> toJson() {
@@ -60,6 +75,10 @@ class Data {
     data['tdp_amount'] = tdpAmount;
     data['installment_amount'] = installmentAmount;
     data['due_date'] = dueDate;
+    data['client_sign_id'] = clientSignId;
+    data['client_sign_img'] = clientSignImg ?? '';
+    data['client_spouse_sign_id'] = clientSpouseSignId;
+    data['client_spouse_sign_img'] = clientSpouseSignImg ?? '';
     return data;
   }
 }

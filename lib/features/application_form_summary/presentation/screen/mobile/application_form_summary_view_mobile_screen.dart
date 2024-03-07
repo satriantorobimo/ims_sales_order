@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -36,6 +37,8 @@ class _ApplicationFormSummaryViewMobileScreenState
   double tdpAmount = 0.0;
   double installmentAmount = 0.0;
   String dueDate = '';
+  String clientSignImg = '';
+  String clientSpouseSignImg = '';
   bool isLoading = true;
   DetailSummaryBloc detailSummaryBloc =
       DetailSummaryBloc(summaryRepo: SummaryRepo());
@@ -290,6 +293,10 @@ class _ApplicationFormSummaryViewMobileScreenState
                           .data![0].installmentAmount!;
                       tdpAmount =
                           state.detailSummaryResponseModel.data![0].tdpAmount!;
+                      clientSignImg = state
+                          .detailSummaryResponseModel.data![0].clientSignImg!;
+                      clientSpouseSignImg = state.detailSummaryResponseModel
+                          .data![0].clientSpouseSignImg!;
                       isLoading = false;
                     });
                   }
@@ -495,15 +502,10 @@ class _ApplicationFormSummaryViewMobileScreenState
                                   Material(
                                     elevation: 6,
                                     shadowColor: Colors.grey.withOpacity(0.4),
-                                    child: AbsorbPointer(
-                                      absorbing: !isDisableTtd,
-                                      child: Signature(
-                                        key: const Key('signature'),
-                                        controller: _controller,
-                                        height: 200,
-                                        width: double.infinity,
-                                        backgroundColor: Colors.white,
-                                      ),
+                                    child: Image.memory(
+                                      base64Decode(clientSignImg),
+                                      height: 200,
+                                      width: 500,
                                     ),
                                   ),
                                 ],
@@ -531,12 +533,10 @@ class _ApplicationFormSummaryViewMobileScreenState
                                     shadowColor: Colors.grey.withOpacity(0.4),
                                     child: AbsorbPointer(
                                       absorbing: !isDisableTtdSpouse,
-                                      child: Signature(
-                                        key: const Key('signature'),
-                                        controller: _controllerSpouse,
+                                      child: Image.memory(
+                                        base64Decode(clientSpouseSignImg),
                                         height: 200,
-                                        width: double.infinity,
-                                        backgroundColor: Colors.white,
+                                        width: 500,
                                       ),
                                     ),
                                   ),

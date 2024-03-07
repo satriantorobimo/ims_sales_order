@@ -504,7 +504,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                             width: 200,
                                             height: 45,
                                             decoration: BoxDecoration(
-                                              color: Colors.cyan,
+                                              color: primaryColor,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
@@ -512,7 +512,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                                 child: Text('Upload',
                                                     style: TextStyle(
                                                         fontSize: 15,
-                                                        color: Colors.black,
+                                                        color: Colors.white,
                                                         fontWeight:
                                                             FontWeight.w600))),
                                           ),
