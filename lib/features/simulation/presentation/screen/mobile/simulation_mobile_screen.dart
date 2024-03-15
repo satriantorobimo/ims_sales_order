@@ -27,9 +27,9 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
   AnimationController? animationController;
   List<String> feeType = ['ADVANCE', 'ARREAR'];
   String otrValue = '';
-  String adminValue = '';
-  String provisiValue = '';
-  String othersValue = '';
+  String adminValue = '0';
+  String provisiValue = '0';
+  String othersValue = '0';
   double dpAmount = 0.00;
   double financingAmount = 0.00;
   int selectIndexInsurance = 10000;
@@ -43,9 +43,9 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
   TextEditingController ctrlEmail = TextEditingController();
   TextEditingController ctrlVehicleName = TextEditingController();
   TextEditingController ctrlFr = TextEditingController();
-  TextEditingController ctrlAdmin = TextEditingController();
-  TextEditingController ctrlProvisi = TextEditingController();
-  TextEditingController ctrlOthers = TextEditingController();
+  TextEditingController ctrlAdmin = TextEditingController(text: '0');
+  TextEditingController ctrlProvisi = TextEditingController(text: '0');
+  TextEditingController ctrlOthers = TextEditingController(text: '0');
 
   InsuranceBloc insuranceBloc = InsuranceBloc(form5repo: Form5Repo());
   SimulationBloc simulationBloc =
@@ -284,6 +284,47 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
         ),
         elevation: 0,
         backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: InkWell(
+              onTap: () {
+                // setState(() {
+                ctrlFullName.clear();
+                ctrlPhoneNumber.clear();
+                ctrlEmail.clear();
+                ctrlVehicleName.clear();
+                ctrlOtr.clear();
+                ctrlDp.clear();
+                ctrlFr.clear();
+                ctrlAdmin.text = '0';
+                adminValue = '0';
+                ctrlProvisi.text = '0';
+                provisiValue = '0';
+                ctrlOthers.text = '0';
+                othersValue = '0';
+                // });
+                setState(() {
+                  dpAmount = 0.00;
+                  financingAmount = 0.00;
+                  firstPaymentType = '';
+                  selectInsurance = '';
+                });
+              },
+              child: Row(
+                children: const [
+                  SizedBox(width: 8),
+                  Icon(
+                    Icons.refresh_rounded,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                  SizedBox(width: 8),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         controller: _controller,
@@ -652,7 +693,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                       Row(
                         children: const [
                           Text(
-                            'DP(%)',
+                            'DP (%)',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -701,7 +742,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                               }
                             },
                             decoration: InputDecoration(
-                                hintText: 'DP(%)',
+                                hintText: 'DP (%)',
                                 isDense: true,
                                 hintStyle: TextStyle(
                                     fontSize: 14,
@@ -884,7 +925,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                       Row(
                         children: const [
                           Text(
-                            'Flat Rate (%)',
+                            'Rate (%)',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -918,7 +959,7 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                               LengthLimitingTextInputFormatter(16),
                             ],
                             decoration: InputDecoration(
-                                hintText: 'Flat Rate (%) ',
+                                hintText: 'Rate (%) ',
                                 isDense: true,
                                 hintStyle: TextStyle(
                                     fontSize: 14,

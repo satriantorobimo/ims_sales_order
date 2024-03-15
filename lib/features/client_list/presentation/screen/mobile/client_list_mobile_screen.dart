@@ -120,7 +120,7 @@ class _ClientListMobileScreenState extends State<ClientListMobileScreen> {
                                   .applicationForm1ScreenMobileRoute);
                         },
                         child: Container(
-                          width: 180,
+                          width: 155,
                           height: 35,
                           decoration: BoxDecoration(
                             color: primaryColor,
@@ -140,7 +140,7 @@ class _ClientListMobileScreenState extends State<ClientListMobileScreen> {
                           Navigator.of(context).pop();
                         },
                         child: Container(
-                          width: 180,
+                          width: 155,
                           height: 35,
                           decoration: BoxDecoration(
                             color: secondaryColor,

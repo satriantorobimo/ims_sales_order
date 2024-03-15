@@ -645,14 +645,20 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
         appBar: AppBar(
           actions: [
             Padding(
-                padding: const EdgeInsets.only(right: 24, top: 16, bottom: 8),
+                padding: const EdgeInsets.only(right: 16, top: 16, bottom: 8),
                 child: InkWell(
                   onTap: () {
                     OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
-                  child: const Icon(
-                    Icons.more_vert_rounded,
-                    size: 28,
+                  child: Row(
+                    children: const [
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.more_vert_rounded,
+                        size: 24,
+                      ),
+                      SizedBox(width: 8),
+                    ],
                   ),
                 ))
           ],

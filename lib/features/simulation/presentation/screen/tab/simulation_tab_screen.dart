@@ -1779,7 +1779,7 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                                               right: 16.0),
                                           child: const Text(
                                             'Installment',
-                                            textAlign: TextAlign.end,
+                                            textAlign: TextAlign.justify,
                                             style: TextStyle(
                                                 color: Color(0xFFB5B7C0),
                                                 fontSize: 18,

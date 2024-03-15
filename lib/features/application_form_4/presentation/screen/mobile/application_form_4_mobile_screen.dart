@@ -499,15 +499,21 @@ class _ApplicationForm4MobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
+              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: true).showBottomOption(
                       context, widget.assetRequestModel.pApplicationNo!);
                 },
-                child: const Icon(
-                  Icons.more_vert_rounded,
-                  size: 24,
+                child: Row(
+                  children: const [
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.more_vert_rounded,
+                      size: 24,
+                    ),
+                    SizedBox(width: 8),
+                  ],
                 ),
               ))
         ],
@@ -1472,7 +1478,9 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo1,
                                           keyboardType: TextInputType.text,
-                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(2)],
+                                          inputFormatters: <TextInputFormatter>[
+                                            LengthLimitingTextInputFormatter(2)
+                                          ],
                                           decoration: InputDecoration(
                                               hintText: 'B',
                                               isDense: true,
@@ -1507,7 +1515,9 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo2,
                                           keyboardType: TextInputType.number,
-                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(4)],
+                                          inputFormatters: <TextInputFormatter>[
+                                            LengthLimitingTextInputFormatter(4)
+                                          ],
                                           decoration: InputDecoration(
                                               hintText: '1234',
                                               isDense: true,
@@ -1539,7 +1549,9 @@ class _ApplicationForm4MobileScreenState
                                         child: TextFormField(
                                           controller: ctrlPlatNo3,
                                           keyboardType: TextInputType.text,
-                                          inputFormatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(3)],
+                                          inputFormatters: <TextInputFormatter>[
+                                            LengthLimitingTextInputFormatter(3)
+                                          ],
                                           decoration: InputDecoration(
                                               hintText: 'XXX',
                                               isDense: true,
@@ -1656,7 +1668,7 @@ class _ApplicationForm4MobileScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Status',
+                                'Validity Status',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,

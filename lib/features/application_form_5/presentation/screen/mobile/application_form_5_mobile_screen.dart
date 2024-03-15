@@ -286,15 +286,21 @@ class _ApplicationForm5MobileScreenState
       appBar: AppBar(
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
+              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               child: InkWell(
                 onTap: () {
                   OptionWidget(isUsed: true).showBottomOption(
                       context, widget.updateTncRequestModel.pApplicationNo!);
                 },
-                child: const Icon(
-                  Icons.more_vert_rounded,
-                  size: 24,
+                child: Row(
+                  children: const [
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.more_vert_rounded,
+                      size: 24,
+                    ),
+                    SizedBox(width: 8),
+                  ],
                 ),
               ))
         ],
@@ -535,15 +541,29 @@ class _ApplicationForm5MobileScreenState
         listener: (_, TncDataState state) {
           if (state is TncDataLoading) {}
           if (state is TncDataLoaded) {
+            condition =
+                state.tncDataDetailResponseModel.data![0].firstPaymentTypeDesc!;
+            tenor = state.tncDataDetailResponseModel.data![0].tenor!;
+            // setState(() {
+            updateTncRequestModel.pApplicationNo =
+                widget.updateTncRequestModel.pApplicationNo;
+            updateTncRequestModel.pInsurancePackageCode =
+                state.tncDataDetailResponseModel.data![0].insurancePackageCode!;
+            updateTncRequestModel.pPaymentType =
+                state.tncDataDetailResponseModel.data![0].firstPaymentTypeDesc!;
+
+            updateTncRequestModel.pTenor =
+                state.tncDataDetailResponseModel.data![0].tenor!;
+            // });
             if (state
                     .tncDataDetailResponseModel.data![0].insurancePackageCode !=
                 null) {
-              setState(() {
-                selectInsuranceCode = state
-                    .tncDataDetailResponseModel.data![0].insurancePackageCode!;
-                selectInsurance = state
-                    .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
-              });
+              // setState(() {
+              selectInsuranceCode = state
+                  .tncDataDetailResponseModel.data![0].insurancePackageCode!;
+              selectInsurance = state
+                  .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
+              // });
             }
           }
           if (state is TncDataError) {}
@@ -945,22 +965,28 @@ class _ApplicationForm5MobileScreenState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: Text(
-                                                    state
-                                                                .tncDataDetailResponseModel
-                                                                .data![0]
-                                                                .insurancePackageDesc ==
-                                                            null
-                                                        ? 'Select Insurance'
-                                                        : state
-                                                            .tncDataDetailResponseModel
-                                                            .data![0]
-                                                            .insurancePackageDesc!,
-                                                    style: TextStyle(
-                                                        color: state
+                                                    selectInsurance == '' &&
+                                                            state
                                                                     .tncDataDetailResponseModel
                                                                     .data![0]
-                                                                    .insurancePackageDesc ==
-                                                                null
+                                                                    .insurancePackageDesc! ==
+                                                                ''
+                                                        ? 'Select Insurance'
+                                                        : selectInsurance == ''
+                                                            ? state
+                                                                .tncDataDetailResponseModel
+                                                                .data![0]
+                                                                .insurancePackageDesc!
+                                                            : selectInsurance,
+                                                    style: TextStyle(
+                                                        color: selectInsurance ==
+                                                                    '' &&
+                                                                state
+                                                                        .tncDataDetailResponseModel
+                                                                        .data![
+                                                                            0]
+                                                                        .insurancePackageDesc! ==
+                                                                    ''
                                                             ? Colors.grey
                                                                 .withOpacity(
                                                                     0.5)
@@ -1084,7 +1110,14 @@ class _ApplicationForm5MobileScreenState
                                           if (state is UpdateFeeLoading) {}
                                           if (state is UpdateFeeLoaded) {
                                             updateTncBloc.add(UpdateTncAttempt(
-                                                updateTncRequestModel));
+                                                UpdateTncRequestModel(
+                                                    pApplicationNo: widget
+                                                        .updateTncRequestModel
+                                                        .pApplicationNo,
+                                                    pInsurancePackageCode:
+                                                        selectInsuranceCode,
+                                                    pPaymentType: condition,
+                                                    pTenor: tenor)));
                                           }
                                           if (state is UpdateFeeError) {
                                             setState(() {
@@ -1113,7 +1146,12 @@ class _ApplicationForm5MobileScreenState
                                         )
                                       : InkWell(
                                           onTap: () {
-                                            if (selectInsurance == '') {
+                                            if (selectInsurance == '' &&
+                                                state
+                                                        .tncDataDetailResponseModel
+                                                        .data![0]
+                                                        .insurancePackageDesc! ==
+                                                    '') {
                                               EmptyWidget()
                                                   .showBottomEmpty(context);
                                             } else {

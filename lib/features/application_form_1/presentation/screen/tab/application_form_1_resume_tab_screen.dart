@@ -3195,7 +3195,7 @@ class _ApplicationForm1ResumeTabScreenState
                                                 ),
                                               ),
                                               Text(
-                                                'Status',
+                                                'Scoring Status',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18,

@@ -831,14 +831,20 @@ class _ApplicationForm1UseMobileScreenState
         appBar: AppBar(
           actions: [
             Padding(
-                padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
+                padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
                 child: InkWell(
                   onTap: () {
                     OptionWidget(isUsed: false).showBottomOption(context, '');
                   },
-                  child: const Icon(
-                    Icons.more_vert_rounded,
-                    size: 24,
+                  child: Row(
+                    children: const [
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.more_vert_rounded,
+                        size: 24,
+                      ),
+                      SizedBox(width: 8),
+                    ],
                   ),
                 ))
           ],
@@ -2697,7 +2703,7 @@ class _ApplicationForm1UseMobileScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Status',
+                                'Scoring Status',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,

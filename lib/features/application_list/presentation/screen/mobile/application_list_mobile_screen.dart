@@ -521,10 +521,16 @@ class _ApplicationListMobileScreenState
             padding: const EdgeInsets.only(right: 8.0),
             child: InkWell(
               onTap: _showBottom,
-              child: const Icon(
-                Icons.add,
-                color: Colors.black,
-                size: 28,
+              child: Row(
+                children: const [
+                  SizedBox(width: 8),
+                  Icon(
+                    Icons.add,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                  SizedBox(width: 8),
+                ],
               ),
             ),
           )
