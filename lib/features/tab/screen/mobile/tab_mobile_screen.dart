@@ -15,97 +15,100 @@ class TabMobileScreen extends StatefulWidget {
 }
 
 class _TabMobileScreenState extends State<TabMobileScreen> {
-  Widget _getPage(int index) {
-    if (index == 0) {
-      return const HomeMobileScreen();
-    }
-    if (index == 1) {
-      return const ApplicationListMobileScreen();
-    }
-    if (index == 2) {
-      return const SimulationMobileScreen();
-    }
+  final PageController _controller = PageController();
+  List<Widget> listWidget = [
+    const HomeMobileScreen(),
+    const ApplicationListMobileScreen(),
+    const SimulationMobileScreen()
+  ];
 
-    return const HomeMobileScreen();
+  void onTap(int index) {
+    var bottomBarProvider = Provider.of<TabProvider>(context, listen: false);
+    if (bottomBarProvider.page != index) {
+      _controller.jumpToPage(index);
+      setState(() {
+        bottomBarProvider.setPage(index);
+        bottomBarProvider.setTab(0);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var bottomBarProvider = Provider.of<TabProvider>(context);
     return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: bottomBarProvider.page,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          onTap: (index) {
-            bottomBarProvider.setPage(index);
-            bottomBarProvider.setTab(0);
-          },
-          iconSize: 18,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          selectedLabelStyle: const TextStyle(
-              fontSize: 12,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: bottomBarProvider.page,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        onTap: onTap,
+        iconSize: 18,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        selectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            color: primaryColor,
+            height: 1.5,
+            fontWeight: FontWeight.w400),
+        elevation: 0,
+        selectedIconTheme: const IconThemeData(color: primaryColor),
+        selectedItemColor: primaryColor,
+        unselectedItemColor: const Color(0xFF575551),
+        unselectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            color: Color(0xFF575551),
+            height: 1.5,
+            fontWeight: FontWeight.w400),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/icon/home.svg',
+              color: const Color(0xFF484C52),
+              height: 24,
+              width: 24,
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/icon/home.svg',
               color: primaryColor,
-              height: 1.5,
-              fontWeight: FontWeight.w400),
-          elevation: 0,
-          selectedIconTheme: const IconThemeData(color: primaryColor),
-          selectedItemColor: primaryColor,
-          unselectedItemColor: const Color(0xFF575551),
-          unselectedLabelStyle: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF575551),
-              height: 1.5,
-              fontWeight: FontWeight.w400),
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icon/home.svg',
-                color: const Color(0xFF484C52),
-                height: 24,
-                width: 24,
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icon/home.svg',
-                color: primaryColor,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Home',
+              height: 24,
+              width: 24,
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icon/application.svg',
-                color: const Color(0xFF484C52),
-                height: 24,
-                width: 24,
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icon/application.svg',
-                color: primaryColor,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Application List',
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/icon/application.svg',
+              color: const Color(0xFF484C52),
+              height: 24,
+              width: 24,
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icon/calc.svg',
-                color: const Color(0xFF484C52),
-                height: 24,
-                width: 24,
-              ),
-              activeIcon: SvgPicture.asset(
-                'assets/icon/calc.svg',
-                color: primaryColor,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Simulation',
+            activeIcon: SvgPicture.asset(
+              'assets/icon/application.svg',
+              color: primaryColor,
+              height: 24,
+              width: 24,
             ),
-          ],
-        ),
-        body: _getPage(bottomBarProvider.page));
+            label: 'Application List',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/icon/calc.svg',
+              color: const Color(0xFF484C52),
+              height: 24,
+              width: 24,
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/icon/calc.svg',
+              color: primaryColor,
+              height: 24,
+              width: 24,
+            ),
+            label: 'Simulation',
+          ),
+        ],
+      ),
+      body: PageView(
+          controller: _controller, onPageChanged: onTap, children: listWidget),
+    );
   }
 }

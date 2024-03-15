@@ -22,7 +22,9 @@ class SimulationMobileScreen extends StatefulWidget {
 }
 
 class _SimulationMobileScreenState extends State<SimulationMobileScreen>
-    with TickerProviderStateMixin {
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<SimulationMobileScreen> {
   final ScrollController _controller = ScrollController();
   AnimationController? animationController;
   List<String> feeType = ['ADVANCE', 'ARREAR'];
@@ -272,7 +274,11 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -309,6 +315,8 @@ class _SimulationMobileScreenState extends State<SimulationMobileScreen>
                   financingAmount = 0.00;
                   firstPaymentType = '';
                   selectInsurance = '';
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  simulationBloc.emit(SimulationInitial());
                 });
               },
               child: Row(

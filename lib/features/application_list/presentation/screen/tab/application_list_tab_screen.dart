@@ -401,59 +401,105 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                             CrossAxisAlignment.start,
                                         children: [
                                           const Text(
-                                            'Entry Type',
+                                            'Upload KTP',
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w500),
                                           ),
                                           const SizedBox(height: 8),
-                                          Container(
-                                            width: 290,
-                                            height: 55,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.1)),
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.1),
-                                                  blurRadius: 6,
-                                                  offset: const Offset(
-                                                      -6, 4), // Shadow position
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 16),
+                                              BlocListener(
+                                                bloc: docUploadOCRBloc,
+                                                listener: (_,
+                                                    DocUploadOCRState state) {
+                                                  if (state
+                                                      is DocUploadOCRLoading) {
+                                                    _uploadAttempt(context);
+                                                  }
+                                                  if (state
+                                                      is DocUploadOCRLoaded) {
+                                                    setStates(() {
+                                                      ctrlKtpNo.text = state
+                                                          .documentUploadOCRResponseModel
+                                                          .data![0]
+                                                          .data![0]
+                                                          .idNumber!;
+                                                      ctrlFullName.text = state
+                                                          .documentUploadOCRResponseModel
+                                                          .data![0]
+                                                          .data![0]
+                                                          .name!;
+                                                      ctrlPob.text = state
+                                                          .documentUploadOCRResponseModel
+                                                          .data![0]
+                                                          .data![0]
+                                                          .birthPlaceBirthday!
+                                                          .substring(
+                                                              0,
+                                                              state
+                                                                  .documentUploadOCRResponseModel
+                                                                  .data![0]
+                                                                  .data![0]
+                                                                  .birthPlaceBirthday!
+                                                                  .indexOf(
+                                                                      ', '));
+                                                      DateTime tempPromDate =
+                                                          DateFormat(
+                                                                  'yyyy/MM/dd')
+                                                              .parse(state
+                                                                  .documentUploadOCRResponseModel
+                                                                  .data![0]
+                                                                  .data![0]
+                                                                  .birthday!);
+
+                                                      dateSend = DateFormat(
+                                                              'yyyy-MM-dd')
+                                                          .format(tempPromDate);
+                                                    });
+                                                    Navigator.pop(context);
+                                                    GeneralUtil().showSnackBar(
+                                                        context,
+                                                        'success upload');
+                                                  }
+                                                  if (state
+                                                      is DocUploadOCRError) {
+                                                    Navigator.pop(context);
+                                                    GeneralUtil().showSnackBar(
+                                                        context, state.error!);
+                                                  }
+                                                  if (state
+                                                      is DocUploadOCRException) {}
+                                                },
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    _showBottomAttachment();
+                                                  },
+                                                  child: Container(
+                                                    width: 200,
+                                                    height: 45,
+                                                    decoration: BoxDecoration(
+                                                      color: primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: const Center(
+                                                        child: Text('Upload',
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600))),
+                                                  ),
                                                 ),
-                                              ],
-                                            ),
-                                            padding: const EdgeInsets.only(
-                                                left: 16.0, right: 16.0),
-                                            child: CustDropDown(
-                                              items: entryType,
-                                              hintText: "Select Entry",
-                                              borderRadius: 5,
-                                              defaultSelectedIndex: 0,
-                                              onChanged: (val) {
-                                                setStates(() {
-                                                  selectedEntryType = val;
-
-                                                  // ctrlMotherMaiden.clear();
-
-                                                  // ctrlKtpNo.clear();
-
-                                                  // ctrlFullName.clear();
-
-                                                  // ctrlPob.clear();
-
-                                                  // ctrlNpwp.clear();
-
-                                                  // dateSend = '';
-                                                });
-                                              },
-                                            ),
-                                          ),
+                                              )
+                                            ],
+                                          )
                                         ],
                                       ),
                                     ),
@@ -461,7 +507,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                 )
                               : const SizedBox(width: 0),
                           const SizedBox(width: 16),
-                          selectedClientType == 0 && selectedEntryType == 0
+                          selectedClientType == 0
                               ? Row(
                                   children: [
                                     ClientDisplayWidget(
@@ -477,48 +523,21 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                     ),
                                   ],
                                 )
-                              : selectedClientType == 1
-                                  ? Row(
-                                      children: [
-                                        ClientDisplayWidget(
-                                          title: 'Document Type',
-                                          content: 'NPWP',
-                                          onTap: () {},
-                                        ),
-                                        const SizedBox(width: 16),
-                                        ClientInputNpwpWidget(
-                                          title: 'NPWP No',
-                                          content: '',
-                                          ctrl: ctrlNpwp,
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        const SizedBox(width: 16),
-                                        InkWell(
-                                          onTap: () {
-                                            _showBottomAttachment();
-                                          },
-                                          child: Container(
-                                            width: 200,
-                                            height: 45,
-                                            decoration: BoxDecoration(
-                                              color: primaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Center(
-                                                child: Text('Upload',
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w600))),
-                                          ),
-                                        )
-                                      ],
+                              : Row(
+                                  children: [
+                                    ClientDisplayWidget(
+                                      title: 'Document Type',
+                                      content: 'NPWP',
+                                      onTap: () {},
                                     ),
+                                    const SizedBox(width: 16),
+                                    ClientInputNpwpWidget(
+                                      title: 'NPWP No',
+                                      content: '',
+                                      ctrl: ctrlNpwp,
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
                     ),
@@ -526,7 +545,7 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, bottom: 32),
-                      child: selectedClientType == 0 && selectedEntryType == 0
+                      child: selectedClientType == 0
                           ? Row(
                               children: [
                                 ClientInputWidget(
@@ -1575,68 +1594,54 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
         context: context,
         builder: (context) {
           return Container(
-            constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
-                  child: Text(
-                    'Select Recource File',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.6),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Padding(
+                    padding: EdgeInsets.only(top: 32.0, left: 24, right: 24),
+                    child: Text(
+                      'Select Recource File',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 24.0),
-                    child: InkWell(
-                      onTap: () {
-                        pickImage().then((value) {
-                          if (value[0] == 'big') {
-                            GeneralUtil()
-                                .showSnackBar(context, 'Size Maximal 5MB');
-                          }
-                          Navigator.pop(context);
-                          _uploadAttempt(context);
-                        });
-                      },
-                      child: Row(
-                        children: const [
-                          Icon(Icons.camera_alt_rounded, size: 18),
-                          SizedBox(width: 16),
-                          Text(
-                            'Camera',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ],
-                      ),
-                    )),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 24.0),
-                    child: BlocListener(
-                      bloc: docUploadOCRBloc,
-                      listener: (_, DocUploadOCRState state) {
-                        if (state is DocUploadOCRLoading) {}
-                        if (state is DocUploadOCRLoaded) {
-                          Navigator.pop(context);
-                          GeneralUtil().showSnackBar(context, 'success upload');
-                        }
-                        if (state is DocUploadOCRError) {
-                          Navigator.pop(context);
-                          GeneralUtil().showSnackBar(context, state.error!);
-                        }
-                        if (state is DocUploadOCRException) {}
-                      },
+                  const SizedBox(height: 24),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 24.0),
+                      child: InkWell(
+                        onTap: () {
+                          pickImage().then((value) {
+                            if (value[0] == 'big') {
+                              GeneralUtil()
+                                  .showSnackBar(context, 'Size Maximal 5MB');
+                            }
+                            Navigator.pop(context);
+                            _uploadAttempt(context);
+                          });
+                        },
+                        child: Row(
+                          children: const [
+                            Icon(Icons.camera_alt_rounded, size: 18),
+                            SizedBox(width: 16),
+                            Text(
+                              'Camera',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 24.0),
                       child: InkWell(
                         onTap: () {
                           pickFile().then((value) async {
@@ -1645,7 +1650,6 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                                   .showSnackBar(context, 'Size Maximal 5MB');
                             }
                             Navigator.pop(context);
-                            _uploadAttempt(context);
 
                             File imagefile = File(value[1]);
                             Uint8List imagebytes =
@@ -1675,12 +1679,10 @@ class _ApplicationListTabScreenState extends State<ApplicationListTabScreen>
                             ),
                           ],
                         ),
-                      ),
-                    )),
-                const SizedBox(height: 24),
-              ],
-            ),
-          );
+                      )),
+                  const SizedBox(height: 24),
+                ],
+              ));
         });
   }
 

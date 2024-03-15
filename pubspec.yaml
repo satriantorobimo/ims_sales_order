@@ -1,7 +1,7 @@
 name: sales_order
 description: A new Flutter project.
 
-version: 1.0.0+17
+version: 1.0.0+19
 
 environment:
   sdk: ">=2.19.6 <3.0.0"

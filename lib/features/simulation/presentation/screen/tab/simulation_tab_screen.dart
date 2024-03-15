@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +22,9 @@ class SimulationTabScreen extends StatefulWidget {
 }
 
 class _SimulationTabScreenState extends State<SimulationTabScreen>
-    with TickerProviderStateMixin {
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<SimulationTabScreen> {
   final ScrollController _controller = ScrollController();
   List<String> feeType = ['ADVANCE', 'ARREAR'];
   AnimationController? animationController;
@@ -274,7 +274,11 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -310,6 +314,8 @@ class _SimulationTabScreenState extends State<SimulationTabScreen>
                   financingAmount = 0.00;
                   firstPaymentType = '';
                   selectInsurance = '';
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  simulationBloc.emit(SimulationInitial());
                 });
               },
               child: Row(
