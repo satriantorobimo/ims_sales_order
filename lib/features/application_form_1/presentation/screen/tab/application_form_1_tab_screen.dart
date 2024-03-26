@@ -1574,7 +1574,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                         controller: ctrlEmail,
                                         inputFormatters: <TextInputFormatter>[
                                           FilteringTextInputFormatter.allow(
-                                              RegExp("[0-9@a-zA-Z.]")),
+                                              RegExp("[0-9@a-zA-Z.-]")),
                                         ],
                                         keyboardType:
                                             TextInputType.emailAddress,
@@ -1737,7 +1737,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children:  [
+                                    children: [
                                       const Text(
                                         '10. Spouse Name',
                                         style: TextStyle(
@@ -1746,14 +1746,14 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       selectMaritalStatus == 'MARRIED'
-                                      ? const Text(
-                                          ' *',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Container(),
+                                          ? const Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -1815,7 +1815,7 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children:  [
+                                    children: [
                                       const Text(
                                         '11. Spouse ID No',
                                         style: TextStyle(
@@ -1824,14 +1824,14 @@ class _ApplicationForm1TabScreenState extends State<ApplicationForm1TabScreen> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       selectMaritalStatus == 'MARRIED'
-                                      ? const Text(
-                                          ' *',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Container(),
+                                          ? const Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                   const SizedBox(height: 8),

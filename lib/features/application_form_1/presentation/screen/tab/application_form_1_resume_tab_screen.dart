@@ -1874,7 +1874,7 @@ class _ApplicationForm1ResumeTabScreenState
                                                       TextInputFormatter>[
                                                     FilteringTextInputFormatter
                                                         .allow(RegExp(
-                                                            "[0-9@a-zA-Z.]")),
+                                                            "[0-9@a-zA-Z.-]")),
                                                   ],
                                                   keyboardType: TextInputType
                                                       .emailAddress,

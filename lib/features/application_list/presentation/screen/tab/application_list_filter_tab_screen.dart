@@ -1022,34 +1022,34 @@ class _ApplicationListFilterTabScreenState
                                                                 ),
                                                               ],
                                                             ),
-                                                            Container(
-                                                              height: 25,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(6.0),
-                                                              decoration: BoxDecoration(
-                                                                  color:
-                                                                      secondaryColor,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              6)),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  dataFilter[index]
-                                                                          .facilityDesc ??
-                                                                      '-',
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          10,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w300,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            // Container(
+                                                            //   height: 25,
+                                                            //   padding:
+                                                            //       const EdgeInsets
+                                                            //           .all(6.0),
+                                                            //   decoration: BoxDecoration(
+                                                            //       color:
+                                                            //           secondaryColor,
+                                                            //       borderRadius:
+                                                            //           BorderRadius
+                                                            //               .circular(
+                                                            //                   6)),
+                                                            //   child: Center(
+                                                            //     child: Text(
+                                                            //       dataFilter[index]
+                                                            //               .facilityDesc ??
+                                                            //           '-',
+                                                            //       style: const TextStyle(
+                                                            //           fontSize:
+                                                            //               10,
+                                                            //           fontWeight:
+                                                            //               FontWeight
+                                                            //                   .w300,
+                                                            //           color: Colors
+                                                            //               .black),
+                                                            //     ),
+                                                            //   ),
+                                                            // ),
                                                           ],
                                                         ),
                                                       ],

@@ -2116,7 +2116,7 @@ class _ApplicationForm1UseTabScreenState
                                                       TextInputFormatter>[
                                                     FilteringTextInputFormatter
                                                         .allow(RegExp(
-                                                            "[0-9@a-zA-Z.]")),
+                                                            "[0-9@a-zA-Z.-]")),
                                                   ],
                                                   keyboardType: TextInputType
                                                       .emailAddress,
@@ -2325,14 +2325,16 @@ class _ApplicationForm1UseTabScreenState
                                                           FontWeight.bold),
                                                 ),
                                                 selectMaritalStatus == 'MARRIED'
-                                      ? const Text(
-                                          ' *',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Container(),
+                                                    ? const Text(
+                                                        ' *',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                                    : Container(),
                                               ],
                                             ),
                                             const SizedBox(height: 8),
@@ -2424,14 +2426,16 @@ class _ApplicationForm1UseTabScreenState
                                                           FontWeight.bold),
                                                 ),
                                                 selectMaritalStatus == 'MARRIED'
-                                      ? const Text(
-                                          ' *',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Container(),
+                                                    ? const Text(
+                                                        ' *',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                                    : Container(),
                                               ],
                                             ),
                                             const SizedBox(height: 8),

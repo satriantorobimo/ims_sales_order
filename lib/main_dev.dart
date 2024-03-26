@@ -27,8 +27,8 @@ Future main() async {
   });
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black, // status bar color
-    statusBarBrightness: Brightness.light,
+    statusBarColor: Colors.transparent, // status bar color
+    // statusBarBrightness: Brightness.light,
   ));
 
   HttpProxy httpProxy = await HttpProxy.createHttpProxy();

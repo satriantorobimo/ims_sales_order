@@ -735,7 +735,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: const [
                                                     Text(
-                                                      'Asset Amount',
+                                                      '4. Asset Amount',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -830,7 +830,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: const [
                                                     Text(
-                                                      '4. Condition',
+                                                      '5. Condition',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -933,7 +933,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: const [
                                                     Text(
-                                                      '5. Colour',
+                                                      '6. Colour',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -1019,7 +1019,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: const [
                                                     Text(
-                                                      '6. Asset Year',
+                                                      '7. Asset Year',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -1114,7 +1114,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     const Text(
-                                                      '7. Chasis No',
+                                                      '8. Chasis No',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -1204,7 +1204,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     const Text(
-                                                      '8. Engine No',
+                                                      '9. Engine No',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,
@@ -1294,7 +1294,7 @@ class _ApplicationForm4ViewTabScreenState
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     const Text(
-                                                      '9. Plat no',
+                                                      '10. Plat no',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: 18,

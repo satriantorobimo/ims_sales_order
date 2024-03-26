@@ -659,7 +659,8 @@ class _ApplicationForm1MobileScreenState
                         size: 24,
                       ),
                       SizedBox(width: 8),
-                    ],),
+                    ],
+                  ),
                 ))
           ],
           iconTheme: const IconThemeData(
@@ -1204,7 +1205,7 @@ class _ApplicationForm1MobileScreenState
                               controller: ctrlEmail,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.allow(
-                                    RegExp("[0-9@a-zA-Z.]")),
+                                    RegExp("[0-9@a-zA-Z.-]")),
                               ],
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.done,

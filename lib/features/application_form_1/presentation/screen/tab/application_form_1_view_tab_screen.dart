@@ -1435,7 +1435,7 @@ class _ApplicationForm1ViewTabScreenState
                                           Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children:  [
+                                            children: [
                                               const Text(
                                                 '11. Spouse ID No',
                                                 style: TextStyle(
@@ -1445,14 +1445,15 @@ class _ApplicationForm1ViewTabScreenState
                                                         FontWeight.bold),
                                               ),
                                               selectMaritalStatus == 'MARRIED'
-                                      ? const Text(
-                                          ' *',
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : Container(),
+                                                  ? const Text(
+                                                      ' *',
+                                                      style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    )
+                                                  : Container(),
                                             ],
                                           ),
                                           const SizedBox(height: 8),

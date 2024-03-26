@@ -1602,7 +1602,7 @@ class _ApplicationForm1UseMobileScreenState
                                         controller: ctrlEmail,
                                         inputFormatters: <TextInputFormatter>[
                                           FilteringTextInputFormatter.allow(
-                                              RegExp("[0-9@a-zA-Z.]")),
+                                              RegExp("[0-9@a-zA-Z.-]")),
                                         ],
                                         keyboardType:
                                             TextInputType.emailAddress,

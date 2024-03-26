@@ -564,6 +564,10 @@ class _ApplicationForm5MobileScreenState
               selectInsurance = state
                   .tncDataDetailResponseModel.data![0].insurancePackageDesc!;
               // });
+              log(state
+                  .tncDataDetailResponseModel.data![0].insurancePackageCode!);
+              log(state
+                  .tncDataDetailResponseModel.data![0].insurancePackageDesc!);
             }
           }
           if (state is TncDataError) {}
